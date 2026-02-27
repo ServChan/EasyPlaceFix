@@ -2,7 +2,7 @@ package org.uiop.easyplacefix.Mixin.block;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShelfBlock;
+import net.minecraft.block.LecternBlock;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Pair;
@@ -15,11 +15,11 @@ import org.uiop.easyplacefix.until.PlayerInputAction;
 
 import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
 
-@Mixin(ShelfBlock.class)
-public class MixinShelfBlock implements IBlock {
+@Mixin(LecternBlock.class)
+public class MixinLecternBlock implements IBlock {
     @ModifyReturnValue(method = "getPlacementState", at = @At("RETURN"))
     private BlockState easyplacefix$overridePlacementState(BlockState original, ItemPlacementContext context) {
-        BlockState override = consumePlacementStateOverrideFor(ShelfBlock.class, context.getBlockPos());
+        BlockState override = consumePlacementStateOverrideFor(LecternBlock.class, context.getBlockPos());
         if (override == null || original == null) {
             return original;
         }
@@ -50,3 +50,4 @@ public class MixinShelfBlock implements IBlock {
         PlayerInputAction.SetShift(false);
     }
 }
+

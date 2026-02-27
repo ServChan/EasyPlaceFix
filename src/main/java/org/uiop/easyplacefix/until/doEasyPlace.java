@@ -2,6 +2,7 @@ package org.uiop.easyplacefix.until;
 
 import com.tick_ins.tick.RunnableWithLast;
 import com.tick_ins.tick.TickThread;
+import com.tick_ins.tick.RunnableWithCountDown;
 import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.litematica.data.DataManager;
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacementManager;
@@ -193,43 +194,67 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
 //                Pair<Float, Float> lookAtPair = ((IBlock) block).getLimitYawAndPitch(stateSchematic);
                 boolean hasSleep = ((IBlock) block).HasSleepTime(stateSchematic);
                 var YawAndPitch = ((IBlock) block).getYawAndPitch(stateSchematic);
-                if (YawAndPitch != null) {
-                    yawLock = YawAndPitch.getLeft().Value();
-                    pitchLock = YawAndPitch.getRight().Value();
+                boolean hasRotation = YawAndPitch != null;
+                float rotationYaw = hasRotation ? YawAndPitch.getLeft().Value() : 0.0F;
+                float rotationPitch = hasRotation ? YawAndPitch.getRight().Value() : 0.0F;
+                if (hasRotation) {
+                    yawLock = rotationYaw;
+                    pitchLock = rotationPitch;
                 }
                 if (hasSleep) {
                     TickThread.addLastTask(
                             new RunnableWithLast.Builder()
                                     .setTask(() -> {
-                                        PlayerRotationAction.setServerBoundPlayerRotation(
-                                                yawLock,
-                                                pitchLock,
-                                                mc.player.horizontalCollision
-                                        );
+                                        if (hasRotation) {
+                                            yawLock = rotationYaw;
+                                            pitchLock = rotationPitch;
+                                            PlayerRotationAction.setServerBoundPlayerRotation(
+                                                    rotationYaw,
+                                                    rotationPitch,
+                                                    mc.player.horizontalCollision
+                                            );
+                                        }
                                         pickItem(mc, finalStack);
                                         hand.set(EntityUtils.getUsedHandForItem(mc.player, finalStack));
                                         ((IClientPlayerInteractionManager) interactionManager).syn();
                                     })
-                                    .setYawAndPitch(new oshi.util.tuples.Pair<>(yawLock, pitchLock))
+                                    .setYawAndPitch(hasRotation ? new oshi.util.tuples.Pair<>(rotationYaw, rotationPitch) : null)
                                     .cache(() -> {
+                                        pickItem(mc, finalStack);
+                                        hand.set(EntityUtils.getUsedHandForItem(mc.player, finalStack));
+                                        ((IClientPlayerInteractionManager) interactionManager).syn();
+                                        Hand usedHand = hand.get();
+                                        if (usedHand == null) {
+                                            return;
+                                        }
+                                        if (hasRotation) {
+                                            yawLock = rotationYaw;
+                                            pitchLock = rotationPitch;
+                                            PlayerRotationAction.setServerBoundPlayerRotation(
+                                                    rotationYaw,
+                                                    rotationPitch,
+                                                    mc.player.horizontalCollision
+                                            );
+                                        }
                                         ((IBlock) block).firstAction(stateSchematic, trace);
+                                        if (usePlacementStateOverride(stateSchematic)) {
+                                            armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getSide());
+                                        }
                                         interactionManager.interactBlock(
                                                 mc.player,
-                                                hand.get(),
+                                                usedHand,
                                                 offsetBlockHitResult
                                         );
-                                        mc.player.swingHand(hand.get());
-                                        int i = 1;
-                                        while (i < blockHitResultIntegerPair.getRight()) {
-                                            interactionManager.interactBlock(
-                                                    mc.player,
-                                                    hand.get(),
-                                                    trace
-                                            );
-                                            mc.player.swingHand(hand.get());
-
-                                            i++;
-                                        }
+                                        mc.player.swingHand(usedHand);
+                                        runExtraInteractions(
+                                                mc,
+                                                interactionManager,
+                                                usedHand,
+                                                offsetBlockHitResult,
+                                                blockHitResultIntegerPair.getRight(),
+                                                block,
+                                                trace.getBlockPos()
+                                        );
                                         ((IBlock) block).afterAction(stateSchematic, trace);
                                         ((IBlock) block).BlockAction(stateSchematic, trace);
                                         if (CLIENT_ROTATION_REVERT.getBooleanValue()) {
@@ -242,10 +267,12 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                 } else {
                     TickThread.addTask(new RunnableWithLast.Builder()
                                     .setTask(() -> {
-                                        if (YawAndPitch != null) {
+                                        if (hasRotation) {
+                                            yawLock = rotationYaw;
+                                            pitchLock = rotationPitch;
                                             PlayerRotationAction.setServerBoundPlayerRotation(
-                                                    yawLock,
-                                                    pitchLock,
+                                                    rotationYaw,
+                                                    rotationPitch,
                                                     mc.player.horizontalCollision
                                             );
                                         }
@@ -254,29 +281,46 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                         hand.set(EntityUtils.getUsedHandForItem(mc.player, finalStack));
                                         ((IClientPlayerInteractionManager) interactionManager).syn();
                                     })
-                                    .setYawAndPitch((YawAndPitch == null) ? null : new oshi.util.tuples.Pair<>(yawLock, pitchLock))
+                                    .setYawAndPitch(hasRotation ? new oshi.util.tuples.Pair<>(rotationYaw, rotationPitch) : null)
                                     .build()
                             ,
                             new RunnableWithLast.Builder()
                                     .setTask(() -> {
+                                        pickItem(mc, finalStack);
+                                        hand.set(EntityUtils.getUsedHandForItem(mc.player, finalStack));
+                                        ((IClientPlayerInteractionManager) interactionManager).syn();
+                                        Hand usedHand = hand.get();
+                                        if (usedHand == null) {
+                                            return;
+                                        }
+                                        if (hasRotation) {
+                                            yawLock = rotationYaw;
+                                            pitchLock = rotationPitch;
+                                            PlayerRotationAction.setServerBoundPlayerRotation(
+                                                    rotationYaw,
+                                                    rotationPitch,
+                                                    mc.player.horizontalCollision
+                                            );
+                                        }
                                         ((IBlock) block).firstAction(stateSchematic, trace);
+                                        if (usePlacementStateOverride(stateSchematic)) {
+                                            armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getSide());
+                                        }
                                         interactionManager.interactBlock(
                                                 mc.player,
-                                                hand.get(),
+                                                usedHand,
                                                 offsetBlockHitResult
                                         );
-                                        mc.player.swingHand(hand.get());
-                                        int i = 1;
-                                        while (i < blockHitResultIntegerPair.getRight()) {
-                                            interactionManager.interactBlock(
-                                                    mc.player,
-                                                    hand.get(),
-                                                    trace
-                                            );
-                                            mc.player.swingHand(hand.get());
-
-                                            i++;
-                                        }
+                                        mc.player.swingHand(usedHand);
+                                        runExtraInteractions(
+                                                mc,
+                                                interactionManager,
+                                                usedHand,
+                                                offsetBlockHitResult,
+                                                blockHitResultIntegerPair.getRight(),
+                                                block,
+                                                trace.getBlockPos()
+                                        );
                                         ((IBlock) block).afterAction(stateSchematic, trace);
                                         ((IBlock) block).BlockAction(stateSchematic, trace);
                                         if (CLIENT_ROTATION_REVERT.getBooleanValue()){
@@ -372,6 +416,83 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
             return sameFacing && sameHalf;
         }
 
+        if (schematic.getBlock() instanceof TrapdoorBlock) {
+            boolean sameFacing = schematic.get(Properties.HORIZONTAL_FACING) == world.get(Properties.HORIZONTAL_FACING);
+            boolean sameHalf = schematic.get(Properties.BLOCK_HALF) == world.get(Properties.BLOCK_HALF);
+            if (!sameFacing || !sameHalf) {
+                return false;
+            }
+
+            // OPEN can be controlled by redstone on servers; don't force retries in powered state.
+            boolean schematicPowered = schematic.contains(Properties.POWERED) && schematic.get(Properties.POWERED);
+            boolean worldPowered = world.contains(Properties.POWERED) && world.get(Properties.POWERED);
+            if (schematicPowered || worldPowered) {
+                return true;
+            }
+
+            return schematic.get(Properties.OPEN) == world.get(Properties.OPEN);
+        }
+
+        if (schematic.getBlock() instanceof ShelfBlock || schematic.getBlock() instanceof LecternBlock) {
+            return schematic.get(Properties.HORIZONTAL_FACING) == world.get(Properties.HORIZONTAL_FACING);
+        }
+
         return schematic.equals(world);
+    }
+
+    private static boolean usePlacementStateOverride(BlockState blockState) {
+        return blockState.getBlock() instanceof StairsBlock
+                || blockState.getBlock() instanceof TrapdoorBlock
+                || blockState.getBlock() instanceof ShelfBlock
+                || blockState.getBlock() instanceof LecternBlock;
+    }
+
+    private static void runExtraInteractions(
+            MinecraftClient mc,
+            ClientPlayerInteractionManager interactionManager,
+            Hand usedHand,
+            RelativeBlockHitResult hitResult,
+            int totalClicks,
+            Block block,
+            BlockPos targetPos
+    ) {
+        int extraClicks = Math.max(0, totalClicks - 1);
+        if (extraClicks == 0) {
+            return;
+        }
+
+        if (block instanceof TrapdoorBlock) {
+            // Delay trapdoor toggles to avoid neighbor placements during high-speed desync windows.
+            for (int i = 1; i <= extraClicks; i++) {
+                int delay = i;
+                TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(delay).build(() -> {
+                    if (mc.player == null || mc.world == null) {
+                        return;
+                    }
+                    BlockState current = mc.world.getBlockState(targetPos);
+                    if (!(current.getBlock() instanceof TrapdoorBlock)) {
+                        return;
+                    }
+                    interactionManager.interactBlock(
+                            mc.player,
+                            usedHand,
+                            hitResult
+                    );
+                    mc.player.swingHand(usedHand);
+                }));
+            }
+            return;
+        }
+
+        int i = 1;
+        while (i < totalClicks) {
+            interactionManager.interactBlock(
+                    mc.player,
+                    usedHand,
+                    hitResult
+            );
+            mc.player.swingHand(usedHand);
+            i++;
+        }
     }
 }

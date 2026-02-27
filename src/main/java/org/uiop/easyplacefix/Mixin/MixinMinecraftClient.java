@@ -16,8 +16,11 @@ public class MixinMinecraftClient {
             require = 0)
     private void disconnect(CallbackInfo ci) {
         EasyPlaceFix.screenId = 1;
+        EasyPlaceFix.crafterOperation = false;
         PlayerBlockAction.openScreenAction.count = 0;
+        PlayerBlockAction.openSignEditorAction.count = 0;
         PlayerBlockAction.useItemOnAction.modifyBoolean = false;
+        PlayerBlockAction.useItemOnAction.clearPlacementStateOverride();
         PlayerBlockAction.useItemOnAction.lastPlacementTimeMap.clear();
         PlayerBlockAction.useItemOnAction.pistonBlockState = null;
         TickThread.onClientDisconnected();

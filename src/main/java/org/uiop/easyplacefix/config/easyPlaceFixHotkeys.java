@@ -2,7 +2,6 @@ package org.uiop.easyplacefix.config;
 
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
 import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
-import net.minecraft.client.MinecraftClient;
 
 public final class easyPlaceFixHotkeys {
     public static final ConfigHotkey LOOSEN_MODE_HOTKEY =
@@ -20,7 +19,7 @@ public final class easyPlaceFixHotkeys {
         };
     }
 
-    public static void addCallbacks(MinecraftClient mc) {
+    public static void addCallbacks() {
         LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.LOOSEN_MODE));
         IGNORE_NBT_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.IGNORE_NBT));
         Allow_Interaction_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.Allow_Interaction));

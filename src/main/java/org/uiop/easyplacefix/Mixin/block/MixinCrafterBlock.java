@@ -24,6 +24,7 @@ import net.minecraft.util.math.Direction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.EasyPlaceFix;
 import org.uiop.easyplacefix.IBlock;
+import org.uiop.easyplacefix.IClientWorld;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
@@ -73,7 +74,17 @@ public class MixinCrafterBlock implements IBlock {
     @Override
     public void BlockAction(BlockState blockState, BlockHitResult blockHitResult) {
         ClientPlayNetworkHandler clientPlayNetworkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        if (clientPlayNetworkHandler == null || MinecraftClient.getInstance().world == null) {
+            return;
+        }
+        crafterOperation = false;
         CrafterBlockEntity blockEntity = (CrafterBlockEntity) SchematicWorldHandler.getSchematicWorld().getBlockEntity(blockHitResult.getBlockPos());
+        if (blockEntity == null) {
+            TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
+                    .setCount(3).build(() -> PlayerBlockAction.openScreenAction.count = Math.max(PlayerBlockAction.openScreenAction.count - 1, 0))
+            );
+            return;
+        }
         for (int i = 0; i < 9; i++) {//TODO
             boolean isDisabled = blockEntity.isSlotDisabled(i);
             crafterSlot.set(i, isDisabled);
@@ -82,7 +93,8 @@ public class MixinCrafterBlock implements IBlock {
             }
         }
         if (crafterOperation) {
-            clientPlayNetworkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, blockHitResult, 0));
+            int sequence = ((IClientWorld) MinecraftClient.getInstance().world).Sequence();
+            clientPlayNetworkHandler.sendPacket(new PlayerInteractBlockC2SPacket(Hand.MAIN_HAND, blockHitResult, sequence));
 //            TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(5).build(()->{
                 for (short slot = 0; slot < crafterSlot.size(); slot++) {
                     boolean isDisable = crafterSlot.get(slot);
@@ -99,7 +111,7 @@ public class MixinCrafterBlock implements IBlock {
 
         }
         TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
-                .setCount(3).build(() -> PlayerBlockAction.openScreenAction.count--)
+                .setCount(3).build(() -> PlayerBlockAction.openScreenAction.count = Math.max(PlayerBlockAction.openScreenAction.count - 1, 0))
         );
 
 //        var BlockActionPacket = new PlayerInteractBlockC2SPacket(

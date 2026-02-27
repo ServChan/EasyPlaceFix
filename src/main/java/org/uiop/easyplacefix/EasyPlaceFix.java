@@ -9,12 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uiop.easyplacefix.Mixin.config.ConfigGuiTabAccessor;
 import org.uiop.easyplacefix.config.Hotkeys;
+import org.uiop.easyplacefix.config.easyPlaceFixHotkeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Predicate;
 
 public class EasyPlaceFix implements ModInitializer {
@@ -29,6 +28,7 @@ public class EasyPlaceFix implements ModInitializer {
     public void onInitialize() {
 
         Hotkeys.init();
+        easyPlaceFixHotkeys.addCallbacks();
 //        ClientCommandRegistrationCallback.
 //                EVENT.
 //                register((dispatcher, registryAccess) ->

@@ -15,6 +15,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
+import org.uiop.easyplacefix.IClientWorld;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
 @Mixin(AbstractSignBlock.class)
@@ -23,7 +24,17 @@ public class MixinAbstractSignBlock implements IBlock {
     @Override
     public void BlockAction(BlockState blockState, BlockHitResult blockHitResult) {
         ClientPlayNetworkHandler clientPlayNetworkHandler = MinecraftClient.getInstance().getNetworkHandler();
+        if (clientPlayNetworkHandler == null || MinecraftClient.getInstance().world == null) {
+            return;
+        }
         SignBlockEntity blockEntity = (SignBlockEntity) SchematicWorldHandler.getSchematicWorld().getBlockEntity(blockHitResult.getBlockPos());
+        if (blockEntity == null) {
+            TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
+                    .setCount(3)
+                    .build(() -> PlayerBlockAction.openSignEditorAction.count = Math.max(PlayerBlockAction.openSignEditorAction.count - 1, 0))
+            );
+            return;
+        }
         SignText backText = blockEntity.getBackText();
         SignText frontText = blockEntity.getFrontText();
 
@@ -45,7 +56,7 @@ public class MixinAbstractSignBlock implements IBlock {
                 clientPlayNetworkHandler.sendPacket(new PlayerInteractBlockC2SPacket(
                         Hand.MAIN_HAND,
                         blockHitResult,
-                        0
+                        ((IClientWorld) MinecraftClient.getInstance().world).Sequence()
 
                 ));
 
@@ -69,7 +80,7 @@ public class MixinAbstractSignBlock implements IBlock {
 
         TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
                 .setCount(3)
-                .build(() -> PlayerBlockAction.openSignEditorAction.count--)
+                .build(() -> PlayerBlockAction.openSignEditorAction.count = Math.max(PlayerBlockAction.openSignEditorAction.count - 1, 0))
         );
     }
 }
