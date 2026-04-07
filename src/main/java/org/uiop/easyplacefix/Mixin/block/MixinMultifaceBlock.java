@@ -86,9 +86,9 @@ public abstract class MixinMultifaceBlock implements IBlock {
 
         return new Pair<>(
                 new RelativeBlockHitResult(
-                        getFaceCenter(attachedFace),
-                        attachedFace,
-                        blockPos.offset(attachedFace.getOpposite()),
+                        getFaceCenter(attachedFace.getOpposite()),
+                        attachedFace.getOpposite(),
+                        blockPos.offset(attachedFace),
                         false
                 ),
                 1
