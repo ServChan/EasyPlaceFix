@@ -39,8 +39,8 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "maven.modrinth:litematica:7LGBHMu9"
-    modImplementation "maven.modrinth:malilib:4KeJMj6s"
+    modImplementation "maven.modrinth:litematica:ZF7nARQU"
+    modImplementation "maven.modrinth:malilib:APEEwSfs"
     modRuntimeOnly(modApi(fabricApi.module("fabric-api-base", project.fabric_api_version)))
     modRuntimeOnly(modApi(fabricApi.module("fabric-networking-api-v1", project.fabric_api_version)))
     modRuntimeOnly(modApi(fabricApi.module("fabric-resource-loader-v0", project.fabric_api_version)))

@@ -82,7 +82,7 @@ EasyPlaceFix добавляет к обычному Easy Place:
 - Minecraft `1.21.11`
 - Java `17`
 - Fabric Loader `0.18.4`
-- Текущая версия мода в проекте: `0.5.8`
+- Текущая версия мода в проекте: `0.5.9`
 
 ### Сборка
 
@@ -182,7 +182,7 @@ Important:
 - Minecraft `1.21.11`
 - Java `17`
 - Fabric Loader `0.18.4`
-- Current project mod version: `0.5.8`
+- Current project mod version: `0.5.9`
 
 ### Build
 
