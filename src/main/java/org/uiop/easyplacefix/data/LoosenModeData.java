@@ -5,9 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -34,12 +33,12 @@ public class LoosenModeData {
                 }
                 HashSet<ItemStack> itemStackHashSet = itemIds.stream()
                         .map(id -> {
-                            Item item = Item.byRawId(id);
+                            Item item = Item.byId(id);
                             if (item == null) {
                                 return null;
                             }
                             items.add(item);
-                            return item.getDefaultStack();
+                            return item.getDefaultInstance();
                         })
                         .filter(itemStack -> itemStack != null && !itemStack.isEmpty())
                         .collect(Collectors.toCollection(HashSet::new));
@@ -61,7 +60,7 @@ public class LoosenModeData {
                 .map(itemStack -> {
                     Item item = itemStack.getItem();
                     items.add(item);
-                    return Item.getRawId(item);
+                    return Item.getId(item);
                 })
                 .collect(Collectors.toCollection(HashSet::new));
 

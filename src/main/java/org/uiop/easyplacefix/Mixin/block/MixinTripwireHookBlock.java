@@ -1,37 +1,36 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.TripwireHookBlock;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.TripWireHookBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 import org.uiop.easyplacefix.until.PlayerInputAction;
 
-@Mixin(TripwireHookBlock.class)
+@Mixin(TripWireHookBlock.class)
 public class MixinTripwireHookBlock implements IBlock {
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        Direction direction = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
 
-        return new Pair<>(
+        return new Tuple<>(
                 new RelativeBlockHitResult(
                         switch (direction) {
-                            case EAST -> new Vec3d(1, 0.5, 0.5);
-                            case SOUTH -> new Vec3d(0.5, 0.5, 1);
-                            case WEST -> new Vec3d(0, 0.5, 0.5);
-                            default -> new Vec3d(0.5, 0.5, 0);
+                            case EAST -> new Vec3(1, 0.5, 0.5);
+                            case SOUTH -> new Vec3(0.5, 0.5, 1);
+                            case WEST -> new Vec3(0, 0.5, 0.5);
+                            default -> new Vec3(0.5, 0.5, 0);
                         },
                         direction,
-                        blockPos.offset(direction.getOpposite()),
+                        blockPos.relative(direction.getOpposite()),
                         false
                 ), 1);
     }
@@ -39,7 +38,7 @@ public class MixinTripwireHookBlock implements IBlock {
     @Override
     public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
 
-        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.HORIZONTAL_FACING).getOpposite()));
+        BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().relative(stateSchematic.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite()));
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(false);
         }
@@ -50,7 +49,7 @@ public class MixinTripwireHookBlock implements IBlock {
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
 
-        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.HORIZONTAL_FACING).getOpposite()));
+        BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().relative(stateSchematic.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite()));
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }

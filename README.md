@@ -79,15 +79,18 @@ EasyPlaceFix добавляет к обычному Easy Place:
 
 ### Совместимость
 
-- Minecraft `1.21.11`
-- Java `17`
-- Fabric Loader `0.18.4`
+- Minecraft `26.1.1`
+- Java `25`
+- Fabric Loader `0.19.0+`
+- Fabric API `0.145.4+26.1.1`
+- Litematica `0.27.1`
+- MaLiLib `0.28.2`
 - Текущая версия мода в проекте: `0.5.9`
 
 ### Сборка
 
 Требования:
-- JDK 17
+- JDK 25
 
 Команда сборки:
 ```bash
@@ -179,15 +182,18 @@ Important:
 
 ### Compatibility
 
-- Minecraft `1.21.11`
-- Java `17`
-- Fabric Loader `0.18.4`
+- Minecraft `26.1.1`
+- Java `25`
+- Fabric Loader `0.19.0+`
+- Fabric API `0.145.4+26.1.1`
+- Litematica `0.27.1`
+- MaLiLib `0.28.2`
 - Current project mod version: `0.5.9`
 
 ### Build
 
 Requirements:
-- JDK 17
+- JDK 25
 
 Build command:
 ```bash

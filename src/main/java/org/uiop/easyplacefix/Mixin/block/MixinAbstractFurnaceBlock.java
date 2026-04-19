@@ -1,9 +1,9 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.AbstractFurnaceBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
@@ -12,12 +12,12 @@ import org.uiop.easyplacefix.LookAt;
 public class MixinAbstractFurnaceBlock implements IBlock {
 
     @Override
-    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-        return switch (blockState.get(Properties.HORIZONTAL_FACING)) {
-            case SOUTH -> new Pair<>(LookAt.North, LookAt.Horizontal);
-            case WEST -> new Pair<>(LookAt.East, LookAt.Horizontal);
-            case EAST -> new Pair<>(LookAt.West, LookAt.Horizontal);
-            default -> new Pair<>(LookAt.South, LookAt.Horizontal);
+    public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+        return switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            case SOUTH -> new Tuple<>(LookAt.North, LookAt.Horizontal);
+            case WEST -> new Tuple<>(LookAt.East, LookAt.Horizontal);
+            case EAST -> new Tuple<>(LookAt.West, LookAt.Horizontal);
+            default -> new Tuple<>(LookAt.South, LookAt.Horizontal);
         };
     }
 }

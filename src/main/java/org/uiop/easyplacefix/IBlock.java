@@ -1,29 +1,30 @@
 package org.uiop.easyplacefix;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
 import static org.uiop.easyplacefix.until.PlayerRotationAction.limitYawRotation;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public interface IBlock {
     default boolean hasYawPitch() {
         return false;
     }
     default boolean HasSleepTime(BlockState blockState){return false;}
-    default Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+    default Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
         return null;
     }
-    default Pair<Float, Float> getLimitYawAndPitch(BlockState blockState) {
-        Pair<LookAt, LookAt> lookAtPair = getYawAndPitch(blockState);
+    default Tuple<Float, Float> getLimitYawAndPitch(BlockState blockState) {
+        Tuple<LookAt, LookAt> lookAtPair = getYawAndPitch(blockState);
         if (lookAtPair!=null){
-            return new Pair<>(limitYawRotation(Direction.fromHorizontalDegrees(lookAtPair.getLeft().Value())),lookAtPair.getRight().Value());
+            return new Tuple<>(limitYawRotation(Direction.fromYRot(lookAtPair.getA().Value())),lookAtPair.getB().Value());
         }
        return null;
     }
@@ -32,9 +33,9 @@ public interface IBlock {
         return null;
     }
 
-    default Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        return new Pair<>(new RelativeBlockHitResult(
-                new Vec3d(0.5, 0.5, 0.5),
+    default Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        return new Tuple<>(new RelativeBlockHitResult(
+                new Vec3(0.5, 0.5, 0.5),
                 Direction.UP,
                 blockPos, false
         ), 1);
@@ -44,7 +45,7 @@ public interface IBlock {
     }
     default void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult){}
     default void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult){}
-    default ActionResult isSchemaTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate){return null;}
-    default ActionResult isWorldTermination(BlockPos pos, BlockState blockState,BlockState worldBlockstate){return null;}
+    default InteractionResult isSchemaTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate){return null;}
+    default InteractionResult isWorldTermination(BlockPos pos, BlockState blockState,BlockState worldBlockstate){return null;}
     default Item getItemForBlockState(BlockState blockState){return null;}
 }

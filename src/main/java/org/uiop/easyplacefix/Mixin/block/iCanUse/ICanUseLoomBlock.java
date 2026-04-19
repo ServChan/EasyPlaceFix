@@ -1,6 +1,6 @@
 package org.uiop.easyplacefix.Mixin.block.iCanUse;
 
-import net.minecraft.block.LoomBlock;
+import net.minecraft.world.level.block.LoomBlock;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.ICanUse;
 @Mixin(LoomBlock.class)

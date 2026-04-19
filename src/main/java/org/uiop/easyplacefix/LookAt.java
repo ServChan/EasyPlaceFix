@@ -1,6 +1,6 @@
 package org.uiop.easyplacefix;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 
 public final class LookAt {
     private static final int TYPE_STATIC = 0;
@@ -31,8 +31,8 @@ public final class LookAt {
 
     public float Value() {
         return switch (type) {
-            case TYPE_PLAYER_YAW -> MinecraftClient.getInstance().player.getYaw();
-            case TYPE_PLAYER_PITCH -> MinecraftClient.getInstance().player.getPitch();
+            case TYPE_PLAYER_YAW -> Minecraft.getInstance().player.getYRot();
+            case TYPE_PLAYER_PITCH -> Minecraft.getInstance().player.getXRot();
             default -> yawPitch;
         };
     }

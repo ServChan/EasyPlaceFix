@@ -1,6 +1,6 @@
 package org.uiop.easyplacefix.struct;
 
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.Direction;
 
 public enum DirectionRange {
     North_Range(136f,-136f,Direction.NORTH ),

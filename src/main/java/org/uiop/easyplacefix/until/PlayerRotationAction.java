@@ -1,31 +1,31 @@
 package org.uiop.easyplacefix.until;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
-import net.minecraft.util.math.Direction;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import org.uiop.easyplacefix.struct.DirectionRange;
 
 public class PlayerRotationAction {
 
     public static void setServerBoundPlayerRotation(Float yaw, Float pitch, Boolean hor) {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        minecraftClient.getNetworkHandler().sendPacket(
-                new PlayerMoveC2SPacket.LookAndOnGround(
+        Minecraft minecraftClient = Minecraft.getInstance();
+        minecraftClient.getConnection().send(
+                new ServerboundMovePlayerPacket.Rot(
                         yaw,
                         pitch,
-                        MinecraftClient.getInstance().player.isOnGround(), hor//parameter kept from vanilla packet format
+                        Minecraft.getInstance().player.onGround(), hor//parameter kept from vanilla packet format
 
                 )
         );
     }
 
     public static void restRotation() {
-        MinecraftClient minecraftClient = MinecraftClient.getInstance();
-        minecraftClient.getNetworkHandler().sendPacket(
-                new PlayerMoveC2SPacket.LookAndOnGround(
-                        minecraftClient.player.getYaw(),
-                        minecraftClient.player.getPitch(),
-                        MinecraftClient.getInstance().player.isOnGround(),
+        Minecraft minecraftClient = Minecraft.getInstance();
+        minecraftClient.getConnection().send(
+                new ServerboundMovePlayerPacket.Rot(
+                        minecraftClient.player.getYRot(),
+                        minecraftClient.player.getXRot(),
+                        Minecraft.getInstance().player.onGround(),
                         minecraftClient.player.horizontalCollision//parameter kept from vanilla packet format
 
                 )
@@ -36,12 +36,12 @@ public class PlayerRotationAction {
 
         DirectionRange directionRange = DirectionRange.DirectionToRange(direction);
         if (directionRange == null) return null;
-        Direction playerFacing = MinecraftClient.getInstance().player.getMovementDirection();
+        Direction playerFacing = Minecraft.getInstance().player.getMotionDirection();
         if (directionRange.isInRange(playerFacing)) {
-            return MinecraftClient.getInstance().player.getYaw();
+            return Minecraft.getInstance().player.getYRot();
         } else {
-            float range1 = Math.abs(directionRange.getFirstValue() - MinecraftClient.getInstance().player.getYaw());
-            float range2 = Math.abs(directionRange.getSecondValue() - MinecraftClient.getInstance().player.getYaw());
+            float range1 = Math.abs(directionRange.getFirstValue() - Minecraft.getInstance().player.getYRot());
+            float range2 = Math.abs(directionRange.getSecondValue() - Minecraft.getInstance().player.getYRot());
             return range1 < range2 ? directionRange.getFirstValue() : directionRange.getSecondValue();
         }
     }
@@ -49,13 +49,13 @@ public class PlayerRotationAction {
     public static Float limitPitchRotation(Direction direction) {
         DirectionRange directionRange = DirectionRange.DirectionToRange(direction);
         if (directionRange == null) return null;
-        Direction playerFacing = getVertical(MinecraftClient.getInstance().player.getPitch());
+        Direction playerFacing = getVertical(Minecraft.getInstance().player.getXRot());
 
         if (directionRange.isInRange(playerFacing)) {
-            return MinecraftClient.getInstance().player.getPitch();
+            return Minecraft.getInstance().player.getXRot();
         } else {
-            float range1 = Math.abs(directionRange.getFirstValue() - MinecraftClient.getInstance().player.getPitch());
-            float range2 = Math.abs(directionRange.getSecondValue() - MinecraftClient.getInstance().player.getPitch());
+            float range1 = Math.abs(directionRange.getFirstValue() - Minecraft.getInstance().player.getXRot());
+            float range2 = Math.abs(directionRange.getSecondValue() - Minecraft.getInstance().player.getXRot());
             return range1 < range2 ? directionRange.getFirstValue() : directionRange.getSecondValue();
         }
     }

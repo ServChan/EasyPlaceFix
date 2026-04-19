@@ -1,23 +1,23 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.AbstractRailBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.RailShape;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.BaseRailBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.RailShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
 
-@Mixin(AbstractRailBlock.class)
+@Mixin(BaseRailBlock.class)
 public class MixinAbstractRailBlock implements IBlock {
     @Override
-    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-        RailShape railShape = blockState.get(Properties.STRAIGHT_RAIL_SHAPE);
+    public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+        RailShape railShape = blockState.getValue(BlockStateProperties.RAIL_SHAPE_STRAIGHT);
         if (railShape == RailShape.NORTH_SOUTH) {
-            return new Pair<>(LookAt.North, LookAt.PlayerPitch);
+            return new Tuple<>(LookAt.North, LookAt.PlayerPitch);
         } else {
-            return new Pair<>(LookAt.East, LookAt.PlayerPitch);
+            return new Tuple<>(LookAt.East, LookAt.PlayerPitch);
         }
     }
 }

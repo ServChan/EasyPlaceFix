@@ -6,8 +6,8 @@ import fi.dy.masa.litematica.util.EasyPlaceProtocol;
 import fi.dy.masa.litematica.util.PlacementHandler;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.util.WorldUtils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.ActionResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -40,7 +40,7 @@ public abstract class MixinWorldUtils {
 //        return original.call(mc);
 //    }
     @Inject(method = "doEasyPlaceAction", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper;getHitType()Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper$HitType;",ordinal = 0), cancellable = true,remap = false)
-    private static void t1(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir, @Local RayTraceUtils.RayTraceWrapper traceWrapper){
+    private static void t1(Minecraft mc, CallbackInfoReturnable<InteractionResult> cir, @Local RayTraceUtils.RayTraceWrapper traceWrapper){
         if (!easyPlacefixConfig.ENABLE_FIX.getBooleanValue()) {
             return;
         }
@@ -49,10 +49,10 @@ public abstract class MixinWorldUtils {
             return;
         }
 
-        ActionResult result = doEasyPlace2(mc, traceWrapper);
+        InteractionResult result = doEasyPlace2(mc, traceWrapper);
         // Consume both SUCCESS and FAIL so vanilla EasyPlace won't run as a fallback
         // and cause duplicate/contradicting interactions on servers.
-        if (result != ActionResult.PASS) {
+        if (result != InteractionResult.PASS) {
             cir.setReturnValue(result);
         }
     }

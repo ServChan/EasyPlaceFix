@@ -1,19 +1,19 @@
 package com.tick_ins.packet;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.PlayerListEntry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.PlayerInfo;
 
 public final class Ping2Server {
     private Ping2Server() {
     }
 
     public static int getRtt() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null || client.getNetworkHandler() == null) {
+        Minecraft client = Minecraft.getInstance();
+        if (client == null || client.player == null || client.getConnection() == null) {
             return 150;
         }
 
-        PlayerListEntry entry = client.getNetworkHandler().getPlayerListEntry(client.player.getUuid());
+        PlayerInfo entry = client.getConnection().getPlayerInfo(client.player.getUUID());
         if (entry == null) {
             return 150;
         }

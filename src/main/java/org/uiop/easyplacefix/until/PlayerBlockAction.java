@@ -1,10 +1,6 @@
 package org.uiop.easyplacefix.until;
 
 import com.tick_ins.packet.Ping2Server;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import org.uiop.easyplacefix.config.easyPlacefixConfig;
 
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
@@ -12,6 +8,10 @@ import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class PlayerBlockAction {
     // Single-thread state holder
@@ -102,7 +102,7 @@ public class PlayerBlockAction {
 
             pruneExpiredOverrides();
             placementStateOverrides.addLast(new PlacementStateOverride(
-                    targetPos.toImmutable(),
+                    targetPos.immutable(),
                     state.getBlock().getClass(),
                     hitSide,
                     state,
@@ -163,7 +163,7 @@ public class PlayerBlockAction {
             }
             return allowOffsetFallback
                     && entry.hitSide != null
-                    && entry.targetPos.offset(entry.hitSide).equals(targetPos);
+                    && entry.targetPos.relative(entry.hitSide).equals(targetPos);
         }
 
         public static void clearPlacementStateOverride() {

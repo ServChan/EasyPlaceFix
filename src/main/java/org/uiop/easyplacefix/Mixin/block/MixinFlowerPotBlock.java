@@ -4,21 +4,21 @@ import fi.dy.masa.litematica.materials.MaterialCache;
 import fi.dy.masa.litematica.util.EntityUtils;
 import fi.dy.masa.litematica.util.InventoryUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowerPotBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FlowerPotBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.uiop.easyplacefix.IBlock;
 @Mixin(FlowerPotBlock.class)
 public abstract class MixinFlowerPotBlock implements IBlock {
-    @Shadow public abstract Block getContent();
+    @Shadow public abstract Block getPotted();
 
     @Shadow protected abstract boolean isEmpty();
 
@@ -31,12 +31,12 @@ public abstract class MixinFlowerPotBlock implements IBlock {
     public void BlockAction(BlockState blockState, BlockHitResult blockHitResult) {
         if (!this.isEmpty()){//TODO extract placement logic and include block-to-item conversion
 
-            Block flower = this.getContent();
+            Block flower = this.getPotted();
             ItemStack stack = new ItemStack(flower.asItem());
-            InventoryUtils.schematicWorldPickBlock(stack, blockHitResult.getBlockPos(),  SchematicWorldHandler.getSchematicWorld(), MinecraftClient.getInstance());
-            Hand hand2 = EntityUtils.getUsedHandForItem(MinecraftClient.getInstance().player, stack);
+            InventoryUtils.schematicWorldPickBlock(stack, blockHitResult.getBlockPos(),  SchematicWorldHandler.getSchematicWorld(), Minecraft.getInstance());
+            InteractionHand hand2 = EntityUtils.getUsedHandForItem(Minecraft.getInstance().player, stack);
             if (hand2==null)return;
-            MinecraftClient.getInstance().interactionManager.interactBlock(MinecraftClient.getInstance().player, hand2, blockHitResult);
+            Minecraft.getInstance().gameMode.useItemOn(Minecraft.getInstance().player, hand2, blockHitResult);
 
         }
 

@@ -1,9 +1,9 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CommandBlock;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.CommandBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
@@ -11,14 +11,14 @@ import org.uiop.easyplacefix.LookAt;
 @Mixin(CommandBlock.class)
 public class MixinCommandBlock implements IBlock {
     @Override
-    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-        return switch (blockState.get(Properties.FACING)) {
-            case DOWN -> new Pair<>(LookAt.PlayerYaw, LookAt.Up);
-            case UP -> new Pair<>(LookAt.PlayerYaw, LookAt.Down);
-            case SOUTH -> new Pair<>(LookAt.North, LookAt.Horizontal);
-            case WEST -> new Pair<>(LookAt.East, LookAt.Horizontal);
-            case EAST -> new Pair<>(LookAt.West, LookAt.Horizontal);
-            case NORTH -> new Pair<>(LookAt.South, LookAt.Horizontal);
+    public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+        return switch (blockState.getValue(BlockStateProperties.FACING)) {
+            case DOWN -> new Tuple<>(LookAt.PlayerYaw, LookAt.Up);
+            case UP -> new Tuple<>(LookAt.PlayerYaw, LookAt.Down);
+            case SOUTH -> new Tuple<>(LookAt.North, LookAt.Horizontal);
+            case WEST -> new Tuple<>(LookAt.East, LookAt.Horizontal);
+            case EAST -> new Tuple<>(LookAt.West, LookAt.Horizontal);
+            case NORTH -> new Tuple<>(LookAt.South, LookAt.Horizontal);
         };
     }
 }

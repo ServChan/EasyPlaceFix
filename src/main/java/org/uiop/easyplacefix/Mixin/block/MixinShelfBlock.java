@@ -1,12 +1,12 @@
 package org.uiop.easyplacefix.Mixin.block;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShelfBlock;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.IBlock;
@@ -17,26 +17,26 @@ import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.cons
 
 @Mixin(ShelfBlock.class)
 public class MixinShelfBlock implements IBlock {
-    @ModifyReturnValue(method = "getPlacementState", at = @At("RETURN"))
-    private BlockState easyplacefix$overridePlacementState(BlockState original, ItemPlacementContext context) {
-        BlockState override = consumePlacementStateOverrideFor(ShelfBlock.class, context.getBlockPos());
+    @ModifyReturnValue(method = "getStateForPlacement", at = @At("RETURN"))
+    private BlockState easyplacefix$overridePlacementState(BlockState original, BlockPlaceContext context) {
+        BlockState override = consumePlacementStateOverrideFor(ShelfBlock.class, context.getClickedPos());
         if (override == null || original == null) {
             return original;
         }
 
-        if (original.contains(Properties.HORIZONTAL_FACING) && override.contains(Properties.HORIZONTAL_FACING)) {
-            return original.with(Properties.HORIZONTAL_FACING, override.get(Properties.HORIZONTAL_FACING));
+        if (original.hasProperty(BlockStateProperties.HORIZONTAL_FACING) && override.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            return original.setValue(BlockStateProperties.HORIZONTAL_FACING, override.getValue(BlockStateProperties.HORIZONTAL_FACING));
         }
         return original;
     }
 
     @Override
-    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-        return switch (blockState.get(Properties.HORIZONTAL_FACING)) {
-            case SOUTH -> new Pair<>(LookAt.North, LookAt.Horizontal);
-            case WEST -> new Pair<>(LookAt.East, LookAt.Horizontal);
-            case EAST -> new Pair<>(LookAt.West, LookAt.Horizontal);
-            default -> new Pair<>(LookAt.South, LookAt.Horizontal);
+    public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+        return switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            case SOUTH -> new Tuple<>(LookAt.North, LookAt.Horizontal);
+            case WEST -> new Tuple<>(LookAt.East, LookAt.Horizontal);
+            case EAST -> new Tuple<>(LookAt.West, LookAt.Horizontal);
+            default -> new Tuple<>(LookAt.South, LookAt.Horizontal);
         };
     }
 

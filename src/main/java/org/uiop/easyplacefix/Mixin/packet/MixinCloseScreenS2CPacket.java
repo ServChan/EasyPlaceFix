@@ -1,23 +1,22 @@
 package org.uiop.easyplacefix.Mixin.packet;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.CloseScreenS2CPacket;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundContainerClosePacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
 
-@Mixin(CloseScreenS2CPacket.class)
+@Mixin(ClientboundContainerClosePacket.class)
 public class MixinCloseScreenS2CPacket {//Packet forcibly closes current screen from server
 
     @WrapWithCondition(
-            method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",
+            method = "handle(Lnet/minecraft/network/protocol/game/ClientGamePacketListener;)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/network/listener/ClientPlayPacketListener;" +
-                            "onCloseScreen(Lnet/minecraft/network/packet/s2c/play/CloseScreenS2CPacket;)V"
+                    target = "Lnet/minecraft/network/protocol/game/ClientGamePacketListener;handleContainerClose(Lnet/minecraft/network/protocol/game/ClientboundContainerClosePacket;)V"
             ))
-    private boolean closeScreenFail(ClientPlayPacketListener instance, CloseScreenS2CPacket closeScreenS2CPacket) {
+    private boolean closeScreenFail(ClientGamePacketListener instance, ClientboundContainerClosePacket closeScreenS2CPacket) {
         return PlayerBlockAction.openScreenAction.run();
     }
 }

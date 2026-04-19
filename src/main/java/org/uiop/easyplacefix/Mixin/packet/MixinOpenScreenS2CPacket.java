@@ -1,23 +1,21 @@
 package org.uiop.easyplacefix.Mixin.packet;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.EasyPlaceFix;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
-@Mixin(OpenScreenS2CPacket.class)
+@Mixin(ClientboundOpenScreenPacket.class)
 public class MixinOpenScreenS2CPacket {
     @WrapWithCondition(
-            method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",
+            method = "handle(Lnet/minecraft/network/protocol/game/ClientGamePacketListener;)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/network/listener/ClientPlayPacketListener;" +
-                            "onOpenScreen(Lnet/minecraft/network/packet/s2c/play/OpenScreenS2CPacket;)V"))
-    private boolean OpenScreenFail(ClientPlayPacketListener instance, OpenScreenS2CPacket openScreenS2CPacket) {
-        EasyPlaceFix.screenId= openScreenS2CPacket.getSyncId()+1;
+                    target = "Lnet/minecraft/network/protocol/game/ClientGamePacketListener;handleOpenScreen(Lnet/minecraft/network/protocol/game/ClientboundOpenScreenPacket;)V"))
+    private boolean OpenScreenFail(ClientGamePacketListener instance, ClientboundOpenScreenPacket openScreenS2CPacket) {
+        EasyPlaceFix.screenId= openScreenS2CPacket.getContainerId()+1;
         return PlayerBlockAction.openScreenAction.run();
     }
 }

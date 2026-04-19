@@ -1,10 +1,10 @@
 package org.uiop.easyplacefix;
 
 import fi.dy.masa.litematica.gui.GuiConfigs;
-import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.fabricmc.api.ClientModInitializer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uiop.easyplacefix.Mixin.config.ConfigGuiTabAccessor;
@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class EasyPlaceFix implements ModInitializer {
+public class EasyPlaceFix implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("easyplacefix");
 
     public static final GuiConfigs.ConfigGuiTab EASY_FIX = ConfigGuiTabAccessor.init("EASY_FIX", 6, "litematica.gui.button.config_gui.easy_fix");
@@ -25,7 +25,7 @@ public class EasyPlaceFix implements ModInitializer {
     public static volatile int screenId=1;
 
     @Override
-    public void onInitialize() {
+    public void onInitializeClient() {
 
         Hotkeys.init();
         easyPlaceFixHotkeys.addCallbacks();
@@ -48,11 +48,11 @@ public class EasyPlaceFix implements ModInitializer {
 //                );
     }
 
-    public static ItemStack findBlockInInventory(PlayerInventory inv, Predicate<Block> predicate) {
-        for (int slot = 0; slot < inv.size(); slot++) {
-            ItemStack stack = inv.getStack(slot);
+    public static ItemStack findBlockInInventory(Inventory inv, Predicate<Block> predicate) {
+        for (int slot = 0; slot < inv.getContainerSize(); slot++) {
+            ItemStack stack = inv.getItem(slot);
             if (!stack.isEmpty()) {
-                Block block = Block.getBlockFromItem(stack.getItem());
+                Block block = Block.byItem(stack.getItem());
                 if (predicate.test(block)) {
 //                    InventoryUtils.setPickedItemToHand(slot, stack, MinecraftClient.getInstance());
                     return stack; // Found a matching item stack and return it

@@ -1,29 +1,28 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PlantBlock;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldView;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.VegetationBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-@Mixin(PlantBlock.class)
+@Mixin(VegetationBlock.class)
 public abstract class MixinPlantBlock implements IBlock {
     @Shadow
-    protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
+    protected abstract boolean canSurvive(BlockState state, LevelReader world, BlockPos pos);
 
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        return canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos) ? new Pair<>(
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        return canSurvive(blockState, Minecraft.getInstance().level, blockPos) ? new Tuple<>(
                 new RelativeBlockHitResult(
-                        new Vec3d(0.5, 0.5, 0.5),
+                        new Vec3(0.5, 0.5, 0.5),
                         Direction.UP,
                         blockPos, false
                 ), 1

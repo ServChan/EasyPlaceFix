@@ -1,16 +1,16 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.LeverBlock;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.LeverBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,53 +27,53 @@ public abstract class MixinLeverBlock extends MixinWallMountedBlock implements I
 
 
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        BlockFace blockFace = blockState.get(Properties.BLOCK_FACE);
-        Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
-        return canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos) ?
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        AttachFace blockFace = blockState.getValue(BlockStateProperties.ATTACH_FACE);
+        Direction direction = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        return blockState.canSurvive(Minecraft.getInstance().level, blockPos) ?
                 switch (blockFace) {//TODO TODO replace null with chained placement flow using position-aware easy place
-                    case FLOOR -> new Pair<>(
-                            new RelativeBlockHitResult(new Vec3d(0.5, 1, 0.5),
+                    case FLOOR -> new Tuple<>(
+                            new RelativeBlockHitResult(new Vec3(0.5, 1, 0.5),
                                     Direction.UP,
-                                    blockPos.down(), false
-                            ), blockState.get(Properties.POWERED) ? 2 : 1);
-                    case CEILING -> new Pair<>(
-                            new RelativeBlockHitResult(new Vec3d(0.5, 0, 0.5),
+                                    blockPos.below(), false
+                            ), blockState.getValue(BlockStateProperties.POWERED) ? 2 : 1);
+                    case CEILING -> new Tuple<>(
+                            new RelativeBlockHitResult(new Vec3(0.5, 0, 0.5),
                                     Direction.DOWN,
-                                    blockPos.up(), false
-                            ), blockState.get(Properties.POWERED) ? 2 : 1);
+                                    blockPos.above(), false
+                            ), blockState.getValue(BlockStateProperties.POWERED) ? 2 : 1);
 
-                    case WALL -> new Pair<>(
+                    case WALL -> new Tuple<>(
                             new RelativeBlockHitResult(
                                     switch (direction) {
-                                        case EAST -> new Vec3d(1, 0.5, 0.5);
-                                        case SOUTH -> new Vec3d(0.5, 0.5, 1);
-                                        case WEST -> new Vec3d(0, 0.5, 0.5);
-                                        default -> new Vec3d(0.5, 0.5, 0);
+                                        case EAST -> new Vec3(1, 0.5, 0.5);
+                                        case SOUTH -> new Vec3(0.5, 0.5, 1);
+                                        case WEST -> new Vec3(0, 0.5, 0.5);
+                                        default -> new Vec3(0.5, 0.5, 0);
                                     },
                                     direction,
-                                    blockPos.offset(direction.getOpposite()),
+                                    blockPos.relative(direction.getOpposite()),
                                     false
-                            ), blockState.get(Properties.POWERED) ? 2 : 1);
+                            ), blockState.getValue(BlockStateProperties.POWERED) ? 2 : 1);
                 } : null;
     }
 
 
     @Override
     public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-        if (stateSchematic.get(Properties.BLOCK_FACE) == BlockFace.CEILING) {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().up());
+        if (stateSchematic.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING) {
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().above());
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(false);
             }
 
-        } else if (stateSchematic.get(Properties.BLOCK_FACE) == BlockFace.FLOOR) {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().down());
+        } else if (stateSchematic.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.FLOOR) {
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().below());
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(false);
             }
         } else {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.HORIZONTAL_FACING).getOpposite()));
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().relative(stateSchematic.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite()));
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(false);
             }
@@ -83,19 +83,19 @@ public abstract class MixinLeverBlock extends MixinWallMountedBlock implements I
 
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-        if (stateSchematic.get(Properties.BLOCK_FACE) == BlockFace.CEILING) {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().up());
+        if (stateSchematic.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING) {
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().above());
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(true);
             }
 
-        } else if (stateSchematic.get(Properties.BLOCK_FACE) == BlockFace.FLOOR) {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().down());
+        } else if (stateSchematic.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.FLOOR) {
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().below());
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(true);
             }
         } else {
-            BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.HORIZONTAL_FACING).getOpposite()));
+            BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().relative(stateSchematic.getValue(BlockStateProperties.HORIZONTAL_FACING).getOpposite()));
             if (blockState.getBlock() instanceof ICanUse) {
                 PlayerInputAction.SetShift(true);
             }

@@ -1,22 +1,21 @@
 package org.uiop.easyplacefix.Mixin.packet;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.s2c.play.InventoryS2CPacket;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundContainerSetContentPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
-@Mixin(InventoryS2CPacket.class)
+@Mixin(ClientboundContainerSetContentPacket.class)
 public class MixinInventoryS2CPacket {//Packet sends inventory slot contents
 
     @WrapWithCondition(
-            method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",
+            method = "handle(Lnet/minecraft/network/protocol/game/ClientGamePacketListener;)V",
             at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/network/listener/ClientPlayPacketListener;" +
-                            "onInventory(Lnet/minecraft/network/packet/s2c/play/InventoryS2CPacket;)V"
+                    target = "Lnet/minecraft/network/protocol/game/ClientGamePacketListener;handleContainerContent(Lnet/minecraft/network/protocol/game/ClientboundContainerSetContentPacket;)V"
             ))
-    private boolean InventoryFail(ClientPlayPacketListener instance, InventoryS2CPacket inventoryS2CPacket) {
+    private boolean InventoryFail(ClientGamePacketListener instance, ClientboundContainerSetContentPacket inventoryS2CPacket) {
         return PlayerBlockAction.openScreenAction.run();
     }
 }

@@ -1,19 +1,19 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ChestBlock;
-import net.minecraft.block.enums.ChestType;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
-import net.minecraft.state.property.EnumProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
-import net.minecraft.util.PlayerInput;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.ChestType;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,7 +25,7 @@ import org.uiop.easyplacefix.until.PlayerInputAction;
 public class MixinChestBlock implements IBlock {
     @Shadow
     @Final
-    public static EnumProperty<ChestType> CHEST_TYPE;
+    public static EnumProperty<ChestType> TYPE;
 
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
@@ -43,36 +43,36 @@ public class MixinChestBlock implements IBlock {
     }
 
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
 
-        ChestType chestType = blockState.get(Properties.CHEST_TYPE);
+        ChestType chestType = blockState.getValue(BlockStateProperties.CHEST_TYPE);
         if (chestType == ChestType.SINGLE) {
-            MinecraftClient.getInstance().getNetworkHandler().sendPacket(new PlayerInputC2SPacket(new PlayerInput(false, false, false, false, false, true, false)));
+            Minecraft.getInstance().getConnection().send(new ServerboundPlayerInputPacket(new Input(false, false, false, false, false, true, false)));
 
-            return new Pair<>(new RelativeBlockHitResult(
-                    new Vec3d(0.5, 0.5, 0.5),
+            return new Tuple<>(new RelativeBlockHitResult(
+                    new Vec3(0.5, 0.5, 0.5),
                     Direction.UP,
                     blockPos, false
             ), 1);
         }
-        Direction blockFace = blockState.get(Properties.HORIZONTAL_FACING);
+        Direction blockFace = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
 
         if (chestType == ChestType.LEFT) {
-            blockFace = blockFace.rotateYCounterclockwise();
+            blockFace = blockFace.getCounterClockWise();
         } else {
-            blockFace = blockFace.rotateYClockwise();
+            blockFace = blockFace.getClockWise();
         }
-        BlockPos offset = blockPos.offset(blockFace.getOpposite());
+        BlockPos offset = blockPos.relative(blockFace.getOpposite());
 
-        return new Pair<>(new RelativeBlockHitResult(
+        return new Tuple<>(new RelativeBlockHitResult(
                 switch (blockFace) {
-                    case EAST -> new Vec3d(0.9, 0.5, 0.5);
-                    case SOUTH -> new Vec3d(0.5, 0.5, 0.9);
-                    case WEST -> new Vec3d(0.1, 0.5, 0.5);
-                    default -> new Vec3d(0.5, 0.5, 0.1);
+                    case EAST -> new Vec3(0.9, 0.5, 0.5);
+                    case SOUTH -> new Vec3(0.5, 0.5, 0.9);
+                    case WEST -> new Vec3(0.1, 0.5, 0.5);
+                    default -> new Vec3(0.5, 0.5, 0.1);
                 },
                 blockFace,
-                MinecraftClient.getInstance().world.
+                Minecraft.getInstance().level.
                         getBlockState(offset).
                         getBlock() == Blocks.AIR ? blockPos : offset
                 , false

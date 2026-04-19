@@ -1,6 +1,5 @@
 package com.tick_ins.tick;
 
-import net.minecraft.client.MinecraftClient;
 import oshi.util.tuples.Pair;
 
 import java.util.concurrent.RejectedExecutionException;
@@ -8,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import net.minecraft.client.Minecraft;
 
 public final class TickThread {
     private static final ScheduledExecutorService EXECUTOR =
@@ -72,8 +72,8 @@ public final class TickThread {
         if (runnable == null || clientStopping) {
             return;
         }
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client == null || client.player == null || client.world == null) {
+        Minecraft client = Minecraft.getInstance();
+        if (client == null || client.player == null || client.level == null) {
             return;
         }
         try {

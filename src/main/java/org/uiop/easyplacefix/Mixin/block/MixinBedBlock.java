@@ -1,14 +1,13 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.BedBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.enums.BedPart;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
@@ -19,21 +18,21 @@ public class MixinBedBlock implements IBlock {
 
 
     @Override
-    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-        return switch (blockState.get(Properties.HORIZONTAL_FACING)) {
-            case SOUTH -> new Pair<>(LookAt.South, LookAt.Horizontal);
-            case WEST -> new Pair<>(LookAt.West, LookAt.Horizontal);
-            case EAST -> new Pair<>(LookAt.East, LookAt.Horizontal);
-            default -> new Pair<>(LookAt.North, LookAt.Horizontal);
+    public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
+        return switch (blockState.getValue(BlockStateProperties.HORIZONTAL_FACING)) {
+            case SOUTH -> new Tuple<>(LookAt.South, LookAt.Horizontal);
+            case WEST -> new Tuple<>(LookAt.West, LookAt.Horizontal);
+            case EAST -> new Tuple<>(LookAt.East, LookAt.Horizontal);
+            default -> new Tuple<>(LookAt.North, LookAt.Horizontal);
         };
     }
 
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
-        if (blockState.get(Properties.BED_PART) == BedPart.HEAD) blockPos = blockPos.offset(direction.getOpposite());
-        return new Pair<>(new RelativeBlockHitResult(
-                new Vec3d(0.5, 0.5, 0.5),
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        Direction direction = blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
+        if (blockState.getValue(BlockStateProperties.BED_PART) == BedPart.HEAD) blockPos = blockPos.relative(direction.getOpposite());
+        return new Tuple<>(new RelativeBlockHitResult(
+                new Vec3(0.5, 0.5, 0.5),
                 Direction.UP,
                 blockPos, false
         ), 1);

@@ -1,16 +1,16 @@
 package org.uiop.easyplacefix.until;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.network.packet.c2s.play.PlayerInputC2SPacket;
-import net.minecraft.util.PlayerInput;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;
+import net.minecraft.world.entity.player.Input;
 
 public class PlayerInputAction {
 
     public static void SetShift(boolean isPressed) {
-        PlayerInput playerInput = MinecraftClient.getInstance().player.getLastPlayerInput();
-        MinecraftClient.getInstance().getNetworkHandler().sendPacket(
-                new PlayerInputC2SPacket(
-                        new PlayerInput(
+        Input playerInput = Minecraft.getInstance().player.getLastSentInput();
+        Minecraft.getInstance().getConnection().send(
+                new ServerboundPlayerInputPacket(
+                        new Input(
                                 playerInput.forward(),
                                 playerInput.backward(),
                                 playerInput.left(), playerInput.

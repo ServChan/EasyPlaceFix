@@ -3,28 +3,28 @@ package org.uiop.easyplacefix.Mixin.block.signBlock;
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
-import net.minecraft.block.AbstractSignBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.block.entity.SignText;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
-import net.minecraft.network.packet.c2s.play.UpdateSignC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.protocol.game.ServerboundSignUpdatePacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.block.SignBlock;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.IClientWorld;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
-@Mixin(AbstractSignBlock.class)
+@Mixin(SignBlock.class)
 public class MixinAbstractSignBlock implements IBlock {
 
     @Override
     public void BlockAction(BlockState blockState, BlockHitResult blockHitResult) {
-        ClientPlayNetworkHandler clientPlayNetworkHandler = MinecraftClient.getInstance().getNetworkHandler();
-        if (clientPlayNetworkHandler == null || MinecraftClient.getInstance().world == null) {
+        ClientPacketListener clientPlayNetworkHandler = Minecraft.getInstance().getConnection();
+        if (clientPlayNetworkHandler == null || Minecraft.getInstance().level == null) {
             return;
         }
         SignBlockEntity blockEntity = (SignBlockEntity) SchematicWorldHandler.getSchematicWorld().getBlockEntity(blockHitResult.getBlockPos());
@@ -38,8 +38,8 @@ public class MixinAbstractSignBlock implements IBlock {
         SignText backText = blockEntity.getBackText();
         SignText frontText = blockEntity.getFrontText();
 
-        clientPlayNetworkHandler.sendPacket(
-                new UpdateSignC2SPacket(
+        clientPlayNetworkHandler.send(
+                new ServerboundSignUpdatePacket(
                         blockHitResult.getBlockPos(),
                         true,
                         frontText.getMessage(0, false).getString(),
@@ -53,15 +53,15 @@ public class MixinAbstractSignBlock implements IBlock {
 
         for (int i = 0; i < backText.getMessages(false).length; i++) {
             if (!backText.getMessage(i, false).getString().isEmpty()) {
-                clientPlayNetworkHandler.sendPacket(new PlayerInteractBlockC2SPacket(
-                        Hand.MAIN_HAND,
+                clientPlayNetworkHandler.send(new ServerboundUseItemOnPacket(
+                        InteractionHand.MAIN_HAND,
                         blockHitResult,
-                        ((IClientWorld) MinecraftClient.getInstance().world).Sequence()
+                        ((IClientWorld) Minecraft.getInstance().level).Sequence()
 
                 ));
 
-                clientPlayNetworkHandler.sendPacket(
-                        new UpdateSignC2SPacket(
+                clientPlayNetworkHandler.send(
+                        new ServerboundSignUpdatePacket(
                                 blockHitResult.getBlockPos(),
                                 false,
                                 backText.getMessage(0, false).getString(),

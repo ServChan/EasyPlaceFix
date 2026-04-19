@@ -1,7 +1,5 @@
 package org.uiop.easyplacefix.Mixin.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -13,34 +11,37 @@ import static com.tick_ins.tick.TickThread.notChangPlayerLook;
 import static com.tick_ins.tick.TickThread.pitchLock;
 import static com.tick_ins.tick.TickThread.yawLock;
 
-@Mixin(PlayerMoveC2SPacket.class)
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
+
+@Mixin(ServerboundMovePlayerPacket.class)
 public interface MixinPlayerMoveC2SPacket {
     @Mutable
     @Accessor
-    void setYaw(float yaw);
+    void setYRot(float yaw);
 
     @Mutable
     @Accessor
-    void setPitch(float pitch);
+    void setXRot(float pitch);
 
-    @Mixin(PlayerMoveC2SPacket.Full.class)
+    @Mixin(ServerboundMovePlayerPacket.PosRot.class)
     class Full {
         @Inject(method = "write", at = @At("HEAD"))
-        private void lockLook(PacketByteBuf buf, CallbackInfo ci) {
+        private void lockLook(FriendlyByteBuf buf, CallbackInfo ci) {
             if (notChangPlayerLook) {
-                ((MixinPlayerMoveC2SPacket) this).setYaw(yawLock);
-                ((MixinPlayerMoveC2SPacket) this).setPitch(pitchLock);
+                ((MixinPlayerMoveC2SPacket) this).setYRot(yawLock);
+                ((MixinPlayerMoveC2SPacket) this).setXRot(pitchLock);
             }
         }
     }
 
-    @Mixin(PlayerMoveC2SPacket.LookAndOnGround.class)
+    @Mixin(ServerboundMovePlayerPacket.Rot.class)
     class LookAndOnGround {
         @Inject(method = "write", at = @At("HEAD"))
-        private void lockLook(PacketByteBuf buf, CallbackInfo ci) {
+        private void lockLook(FriendlyByteBuf buf, CallbackInfo ci) {
             if (notChangPlayerLook) {
-                ((MixinPlayerMoveC2SPacket) this).setYaw(yawLock);
-                ((MixinPlayerMoveC2SPacket) this).setPitch(pitchLock);
+                ((MixinPlayerMoveC2SPacket) this).setYRot(yawLock);
+                ((MixinPlayerMoveC2SPacket) this).setXRot(pitchLock);
             }
         }
     }

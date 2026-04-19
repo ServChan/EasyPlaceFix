@@ -1,11 +1,11 @@
 package org.uiop.easyplacefix.Mixin.packet;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.packet.c2s.play.PlayerInteractBlockC2SPacket;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -15,14 +15,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.uiop.easyplacefix.IisSimpleHitPos;
 
-@Mixin(PlayerInteractBlockC2SPacket.class)
+@Mixin(ServerboundUseItemOnPacket.class)
 public class MixinPlayerInteractBlockC2SPacket implements IisSimpleHitPos {
     @Shadow
     @Final
-    private Hand hand;
+    private InteractionHand hand;
     @Shadow
     @Final
-    private BlockHitResult blockHitResult;
+    private BlockHitResult blockHit;
     @Shadow
     @Final
     private int sequence;
@@ -35,17 +35,17 @@ public class MixinPlayerInteractBlockC2SPacket implements IisSimpleHitPos {
     }
 
     @Inject(method = "write", at = @At(value = "HEAD"), cancellable = true)
-    public void operationWrite(PacketByteBuf buf, CallbackInfo ci) {
+    public void operationWrite(FriendlyByteBuf buf, CallbackInfo ci) {
         if (isSimpleHitPos) {
-            buf.writeEnumConstant(hand);
-            BlockPos blockPos = blockHitResult.getBlockPos();
+            buf.writeEnum(hand);
+            BlockPos blockPos = blockHit.getBlockPos();
             buf.writeBlockPos(blockPos);
-            buf.writeEnumConstant(blockHitResult.getSide());
-            Vec3d vec3d = blockHitResult.getPos();
+            buf.writeEnum(blockHit.getDirection());
+            Vec3 vec3d = blockHit.getLocation();
             buf.writeFloat((float) vec3d.x);
             buf.writeFloat((float) vec3d.y);
             buf.writeFloat((float) vec3d.z);
-            buf.writeBoolean(blockHitResult.isInsideBlock());
+            buf.writeBoolean(blockHit.isInside());
             buf.writeVarInt(sequence);
             ci.cancel();
         }

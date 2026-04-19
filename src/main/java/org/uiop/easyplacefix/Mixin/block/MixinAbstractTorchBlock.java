@@ -1,14 +1,14 @@
 package org.uiop.easyplacefix.Mixin.block;
 
-import net.minecraft.block.AbstractTorchBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.WorldView;
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseTorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.uiop.easyplacefix.IBlock;
@@ -17,13 +17,13 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 import org.uiop.easyplacefix.until.PlayerInputAction;
 
-@Mixin(AbstractTorchBlock.class)
+@Mixin(BaseTorchBlock.class)
 public abstract class MixinAbstractTorchBlock implements IBlock {
     @Shadow
-    protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
+    protected abstract boolean canSurvive(BlockState state, LevelReader world, BlockPos pos);
     @Override
     public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().down());
+        BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().below());
         if (blockState.getBlock() instanceof ICanUse){
             PlayerInputAction.SetShift(false);
         }
@@ -31,18 +31,18 @@ public abstract class MixinAbstractTorchBlock implements IBlock {
 
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().down());
+        BlockState blockState = Minecraft.getInstance().level.getBlockState(blockHitResult.getBlockPos().below());
         if (blockState.getBlock() instanceof ICanUse){
             PlayerInputAction.SetShift(true);
         }
     }
     @Override
-    public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
-        return canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos) ?
-                new Pair<>(new RelativeBlockHitResult(
-                        new Vec3d(0.5, 1, 0.5),
+    public Tuple<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
+        return canSurvive(blockState, Minecraft.getInstance().level, blockPos) ?
+                new Tuple<>(new RelativeBlockHitResult(
+                        new Vec3(0.5, 1, 0.5),
                         Direction.UP,
-                        blockPos.down(),
+                        blockPos.below(),
                         false
                 ), 1) : null;
     }
