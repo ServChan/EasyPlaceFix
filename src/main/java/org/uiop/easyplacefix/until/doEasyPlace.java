@@ -2,8 +2,6 @@ package org.uiop.easyplacefix.until;
 
 import com.tick_ins.tick.RunnableWithLast;
 import com.tick_ins.tick.TickThread;
-import com.tick_ins.tick.RunnableWithCountDown;
-import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.litematica.data.DataManager;
 import fi.dy.masa.litematica.schematic.placement.SchematicPlacementManager;
 import fi.dy.masa.litematica.util.EntityUtils;
@@ -18,21 +16,14 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.DecoratedPotBlock;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CoralFanBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.LecternBlock;
-import net.minecraft.world.level.block.ShelfBlock;
-import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WallBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.DecoratedPotBlockEntity;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.uiop.easyplacefix.IBlock;
@@ -45,17 +36,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
-import static fi.dy.masa.litematica.util.InventoryUtils.findSlotWithBoxWithItem;
-import static fi.dy.masa.litematica.util.InventoryUtils.setPickedItemToHand;
 import static fi.dy.masa.litematica.util.WorldUtils.getValidBlockRange;
 import static fi.dy.masa.litematica.util.WorldUtils.isPositionWithinRangeOfSchematicRegions;
 import static org.uiop.easyplacefix.EasyPlaceFix.findBlockInInventory;
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.*;
 import static org.uiop.easyplacefix.data.LoosenModeData.items;
+import static org.uiop.easyplacefix.until.PlacementDiagnostics.report;
+import static org.uiop.easyplacefix.until.PlacementInventory.pickItem;
 import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
 
-public class doEasyPlace {//TODO Easy Place rewrite plan
+public class doEasyPlace {
 
     // Whether the position belongs to any schematic area
     public static boolean isSchematicBlock(BlockPos pos) {
@@ -132,37 +123,52 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
         BlockHitResult trace = traceWrapper.getBlockHitResult();//Ray-traced hit from schematic
         Level schematicWorld = SchematicWorldHandler.getSchematicWorld();
         if (schematicWorld == null) {
+            report("easyplacefix.diagnostic.no_schematic_world");
             return InteractionResult.PASS;
         }
         BlockPos pos = trace.getBlockPos();//Target position from schematic hit
 
-        if (isGlobalPlacementCooling()) return InteractionResult.FAIL;// Global rate limit (anti-cheat)
-        if (isPlacementCooling(pos)) return InteractionResult.FAIL;// Per-position cooldown check
+        if (isGlobalPlacementCooling()) {
+            report("easyplacefix.diagnostic.global_cooldown", getEffectivePlacementDelayTicks());
+            return InteractionResult.FAIL;
+        }// Global rate limit (anti-cheat)
+        if (isPlacementCooling(pos)) {
+            report("easyplacefix.diagnostic.position_cooldown", pos.toShortString());
+            return InteractionResult.FAIL;
+        }// Per-position cooldown check
         BlockState stateClient = mc.level.getBlockState(pos);//Current client world block state
         BlockState stateSchematic = schematicWorld.getBlockState(pos);
         InteractionResult isTermination = ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient);//termination check
-        if (isTermination != null) return isTermination;
+        if (isTermination != null) {
+            report("easyplacefix.diagnostic.world_termination", pos.toShortString());
+            return isTermination;
+        }
         // Two-phase termination checks
         isTermination = ((IBlock) stateSchematic.getBlock()).isSchemaTermination(pos, stateSchematic, stateClient);//termination check
-        if (isTermination != null) return isTermination;
+        if (isTermination != null) {
+            report("easyplacefix.diagnostic.schema_termination", pos.toShortString());
+            return isTermination;
+        }
 
 
         //MISS happens when aiming at nothing, excluding schematic-only hits
         HitResult traceVanilla = RayTraceUtils.getRayTraceFromEntity(mc.level, mc.player, false, getValidBlockRange(mc));
         if (traceVanilla.getType() == HitResult.Type.ENTITY) {
+            report("easyplacefix.diagnostic.entity_in_crosshair");
             return InteractionResult.PASS;
         }
         if (traceWrapper.getHitType() == RayTraceUtils.RayTraceWrapper.HitType.SCHEMATIC_BLOCK) {
 
-            ItemStack stack = getPlacementStack(stateSchematic, pos, schematicWorld);
+            ItemStack stack = PlacementItemResolver.getPlacementStack(stateSchematic, pos, schematicWorld);
             if (!stack.isEmpty()) {
 
                 BlockState currentState = mc.level.getBlockState(pos);
-                if (isPlacementStateSatisfied(stateSchematic, currentState))//compare states
+                if (PlacementStateMatcher.isSatisfied(stateSchematic, currentState))//compare states
                 {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("EasyPlace skip at {} because world state already matches schematic", pos);
                     }
+                    report("easyplacefix.diagnostic.already_correct", pos.toShortString());
                     return InteractionResult.FAIL;
                 }
                 //Removed old cache and speed checks
@@ -173,14 +179,18 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                 stack,
                                 trace
                         ))
-                ) return InteractionResult.FAIL;
+                ) {
+                    report("easyplacefix.diagnostic.not_replaceable", pos.toShortString());
+                    return InteractionResult.FAIL;
+                }
 
 
                 MultiPlayerGameMode interactionManager = Minecraft.getInstance().gameMode;
 
-                ItemStack itemStack2 = searchItem(mc, stack);
+                ItemStack itemStack2 = PlacementInventory.searchItem(mc, stack);
                 itemStack2 = loosenMode(itemStack2, stateSchematic);
                 if (itemStack2 == null) {//Cannot place when required item is missing
+                    report("easyplacefix.diagnostic.missing_item", stack.getHoverName());
                     return InteractionResult.FAIL;
                 }
 
@@ -192,7 +202,10 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                 stateClient
                         );
 
-                if (blockHitResultIntegerPair == null) return InteractionResult.FAIL;
+                if (blockHitResultIntegerPair == null) {
+                    report("easyplacefix.diagnostic.no_hit_result", stateSchematic.getBlock().getName());
+                    return InteractionResult.FAIL;
+                }
                 RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getA();//Placement hit result data
                 if (stateSchematic.getBlock() instanceof PistonBaseBlock) {//TODO Investigate interactBlock internals and improve this branch
                     pistonBlockState = stateSchematic;
@@ -243,7 +256,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                             );
                                         }
                                         ((IBlock) block).firstAction(stateSchematic, trace);
-                                        if (usePlacementStateOverride(stateSchematic)) {
+                                        if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
                                         }
                                         interactionManager.useItemOn(
@@ -252,7 +265,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                                 offsetBlockHitResult
                                         );
                                         mc.player.swing(usedHand);
-                                        runExtraInteractions(
+                                        ExtraInteractionRunner.run(
                                                 mc,
                                                 interactionManager,
                                                 usedHand,
@@ -305,7 +318,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                             );
                                         }
                                         ((IBlock) block).firstAction(stateSchematic, trace);
-                                        if (usePlacementStateOverride(stateSchematic)) {
+                                        if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
                                         }
                                         interactionManager.useItemOn(
@@ -314,7 +327,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                                 offsetBlockHitResult
                                         );
                                         mc.player.swing(usedHand);
-                                        runExtraInteractions(
+                                        ExtraInteractionRunner.run(
                                                 mc,
                                                 interactionManager,
                                                 usedHand,
@@ -336,87 +349,37 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                 }
 
 
+                report("easyplacefix.diagnostic.placing", stack.getHoverName(), pos.toShortString());
+            } else {
+                report("easyplacefix.diagnostic.no_block_item", stateSchematic.getBlock().getName());
             }
 
 
             return InteractionResult.SUCCESS;
 
         }
-        if (placementRestrictionInEffect(pos)) return InteractionResult.FAIL;
+        if (placementRestrictionInEffect(pos)) {
+            report("easyplacefix.diagnostic.restricted_area", pos.toShortString());
+            return InteractionResult.FAIL;
+        }
+        report("easyplacefix.diagnostic.no_schematic_hit");
         return InteractionResult.PASS;
     }
 
     public static ItemStack searchItem(Minecraft mc, ItemStack stack) {
-        if (mc.player != null && mc.gameMode != null && mc.level != null) {
-            if (!stack.isEmpty()) {
-                Inventory inv = mc.player.getInventory();
-                stack = stack.copy();
-                if (EntityUtils.isCreativeMode(mc.player)) {
-                    return stack;
-                } else {
-                    int slot;
-                    if (IGNORE_NBT.getBooleanValue()) {
-                        slot = getSlotWithStackWithOutNbt(stack, inv);
-                    } else {
-                        slot = getSlotWithStack(stack, inv);
-                    }
-
-                    if (slot != -1) {
-                        return inv.getItem(slot);
-                    } else if (slot == -1 && Configs.Generic.PICK_BLOCK_SHULKERS.getBooleanValue()) {
-                        slot = findSlotWithBoxWithItem(mc.player.inventoryMenu, stack, false);
-                        if (slot != -1) {
-                            pickItem(mc, mc.player.inventoryMenu.slots.get(slot).getItem());
-                            return null;//shulker box path
-                        }
-                    }
-                }
-            }
-
-        }
-        return null;
-
+        return PlacementInventory.searchItem(mc, stack);
     }
 
     public static int getSlotWithStackWithOutNbt(ItemStack stack, Inventory inv) {
-        for (int i = 0; i < inv.getContainerSize(); ++i) {
-            if (!inv.getItem(i).isEmpty() && ItemStack.isSameItem(stack, inv.getItem(i))) {
-                return i;
-            }
-        }
-
-        return -1;
+        return PlacementInventory.getSlotWithStackWithoutNbt(stack, inv);
     }
 
     public static int getSlotWithStack(ItemStack stack, Inventory inv) {
-        for (int i = 0; i < inv.getContainerSize(); ++i) {
-            if (!inv.getItem(i).isEmpty() && ItemStack.isSameItemSameComponents(stack, inv.getItem(i))) {
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
-    private static ItemStack getPlacementStack(BlockState stateSchematic, BlockPos pos, Level schematicWorld) {
-        if (stateSchematic.getBlock() instanceof DecoratedPotBlock) {
-            BlockEntity blockEntity = schematicWorld.getBlockEntity(pos);
-            if (blockEntity instanceof DecoratedPotBlockEntity decoratedPotBlockEntity) {
-                return DecoratedPotBlockEntity.createDecoratedPotInstance(decoratedPotBlockEntity.getDecorations());
-            }
-        }
-
-        return new ItemStack(((IBlock) stateSchematic.getBlock()).getItemForBlockState(stateSchematic));
+        return PlacementInventory.getSlotWithStack(stack, inv);
     }
 
     public static void pickItem(Minecraft mc, ItemStack stack) {
-
-        if (EntityUtils.isCreativeMode(mc.player)) {
-            setPickedItemToHand(stack, mc);
-            mc.gameMode.handleCreativeModeItemAdd(mc.player.getItemInHand(InteractionHand.MAIN_HAND), 36 + mc.player.getInventory().getSelectedSlot());
-        } else {
-            setPickedItemToHand(stack, mc);
-        }
+        PlacementInventory.pickItem(mc, stack);
     }
 
     private static boolean placementRestrictionInEffect(BlockPos pos) {
@@ -427,95 +390,4 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
         return isPositionWithinRangeOfSchematicRegions(pos, 2);
     }
 
-    private static boolean isPlacementStateSatisfied(BlockState schematic, BlockState world) {
-        if (schematic.getBlock() != world.getBlock()) {
-            return false;
-        }
-
-        if (schematic.getBlock() instanceof StairBlock) {
-            // For stairs we ignore SHAPE because it is neighbor-dependent and can lag behind on servers.
-            boolean sameFacing = schematic.getValue(BlockStateProperties.HORIZONTAL_FACING) == world.getValue(BlockStateProperties.HORIZONTAL_FACING);
-            boolean sameHalf = schematic.getValue(BlockStateProperties.HALF) == world.getValue(BlockStateProperties.HALF);
-            return sameFacing && sameHalf;
-        }
-
-        if (schematic.getBlock() instanceof TrapDoorBlock) {
-            boolean sameFacing = schematic.getValue(BlockStateProperties.HORIZONTAL_FACING) == world.getValue(BlockStateProperties.HORIZONTAL_FACING);
-            boolean sameHalf = schematic.getValue(BlockStateProperties.HALF) == world.getValue(BlockStateProperties.HALF);
-            if (!sameFacing || !sameHalf) {
-                return false;
-            }
-
-            // OPEN can be controlled by redstone on servers; don't force retries in powered state.
-            boolean schematicPowered = schematic.hasProperty(BlockStateProperties.POWERED) && schematic.getValue(BlockStateProperties.POWERED);
-            boolean worldPowered = world.hasProperty(BlockStateProperties.POWERED) && world.getValue(BlockStateProperties.POWERED);
-            if (schematicPowered || worldPowered) {
-                return true;
-            }
-
-            return schematic.getValue(BlockStateProperties.OPEN) == world.getValue(BlockStateProperties.OPEN);
-        }
-
-        if (schematic.getBlock() instanceof ShelfBlock || schematic.getBlock() instanceof LecternBlock) {
-            return schematic.getValue(BlockStateProperties.HORIZONTAL_FACING) == world.getValue(BlockStateProperties.HORIZONTAL_FACING);
-        }
-
-        return schematic.equals(world);
-    }
-
-    private static boolean usePlacementStateOverride(BlockState blockState) {
-        return blockState.getBlock() instanceof StairBlock
-                || blockState.getBlock() instanceof TrapDoorBlock
-                || blockState.getBlock() instanceof ShelfBlock
-                || blockState.getBlock() instanceof LecternBlock;
-    }
-
-    private static void runExtraInteractions(
-            Minecraft mc,
-            MultiPlayerGameMode interactionManager,
-            InteractionHand usedHand,
-            RelativeBlockHitResult hitResult,
-            int totalClicks,
-            Block block,
-            BlockPos targetPos
-    ) {
-        int extraClicks = Math.max(0, totalClicks - 1);
-        if (extraClicks == 0) {
-            return;
-        }
-
-        if (block instanceof TrapDoorBlock) {
-            // Delay trapdoor toggles to avoid neighbor placements during high-speed desync windows.
-            for (int i = 1; i <= extraClicks; i++) {
-                int delay = i;
-                TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(delay).build(() -> {
-                    if (mc.player == null || mc.level == null) {
-                        return;
-                    }
-                    BlockState current = mc.level.getBlockState(targetPos);
-                    if (!(current.getBlock() instanceof TrapDoorBlock)) {
-                        return;
-                    }
-                    interactionManager.useItemOn(
-                            mc.player,
-                            usedHand,
-                            hitResult
-                    );
-                    mc.player.swing(usedHand);
-                }));
-            }
-            return;
-        }
-
-        int i = 1;
-        while (i < totalClicks) {
-            interactionManager.useItemOn(
-                    mc.player,
-                    usedHand,
-                    hitResult
-            );
-            mc.player.swing(usedHand);
-            i++;
-        }
-    }
 }
