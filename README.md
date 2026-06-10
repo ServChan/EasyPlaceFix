@@ -85,7 +85,7 @@ EasyPlaceFix добавляет к обычному Easy Place:
 - Fabric API `0.145.4+26.1.1`
 - Litematica `0.27.1`
 - MaLiLib `0.28.2`
-- Текущая версия мода в проекте: `0.5.9`
+- Текущая версия мода в проекте: `0.6.0`
 
 ### Сборка
 
@@ -188,7 +188,7 @@ Important:
 - Fabric API `0.145.4+26.1.1`
 - Litematica `0.27.1`
 - MaLiLib `0.28.2`
-- Current project mod version: `0.5.9`
+- Current project mod version: `0.6.0`
 
 ### Build
 

@@ -2,19 +2,33 @@
 .gradle/
 build/
 out/
+classes/
 run/
+.gradletasknamecache
 
 # Local artifacts and scratch files
-libs/
-mappings/
-assets/
+/libs/
+/mappings/
+/assets/
+runs/
+logs/
+crash-reports/
+*.log
+hs_err_pid*
+replay_pid*
 
 # IDE
 .idea/
 *.iml
 .vscode/
 .claude/
+.settings/
+.classpath
+.project
+.factorypath
+bin/
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini

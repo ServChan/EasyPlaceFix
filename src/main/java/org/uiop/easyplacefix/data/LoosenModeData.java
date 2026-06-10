@@ -13,6 +13,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
+
 public class LoosenModeData {
 //    static HashSet<Item> itemHashSet = new HashSet<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -44,8 +46,7 @@ public class LoosenModeData {
                         .collect(Collectors.toCollection(HashSet::new));
                 return itemStackHashSet;
             } catch (IOException | JsonSyntaxException e) {
-                System.err.println("Failed to load config file:");
-                e.printStackTrace();
+                LOGGER.warn("Failed to load loosen mode config file {}", CONFIG_FILE, e);
             }
         } else {
             saveToFile(new HashSet<>());
@@ -67,8 +68,7 @@ public class LoosenModeData {
         try (Writer writer = new FileWriter(CONFIG_FILE)) {
             GSON.toJson(itemIds, writer);
         } catch (IOException e) {
-            System.err.println("Failed to save config file:");
-            e.printStackTrace();
+            LOGGER.warn("Failed to save loosen mode config file {}", CONFIG_FILE, e);
         }
     }
 

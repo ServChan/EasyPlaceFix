@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.Block;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.uiop.easyplacefix.Mixin.config.ConfigGuiTabAccessor;
+import org.uiop.easyplacefix.command.EasyPlaceFixCommands;
 import org.uiop.easyplacefix.config.Hotkeys;
 import org.uiop.easyplacefix.config.easyPlaceFixHotkeys;
 
@@ -29,6 +30,7 @@ public class EasyPlaceFix implements ClientModInitializer {
 
         Hotkeys.init();
         easyPlaceFixHotkeys.addCallbacks();
+        EasyPlaceFixCommands.register();
 //        ClientCommandRegistrationCallback.
 //                EVENT.
 //                register((dispatcher, registryAccess) ->

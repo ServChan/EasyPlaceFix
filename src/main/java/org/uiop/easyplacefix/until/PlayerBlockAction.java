@@ -171,7 +171,7 @@ public class PlayerBlockAction {
         }
 
         public static boolean isGlobalPlacementCooling() {
-            int delayTicks = easyPlacefixConfig.PLACEMENT_DELAY.getIntegerValue();
+            int delayTicks = easyPlacefixConfig.getEffectivePlacementDelayTicks();
             if (delayTicks <= 0) {
                 return false;
             }
