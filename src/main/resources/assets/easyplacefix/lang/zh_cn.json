@@ -1,0 +1,20 @@
+{
+  "AllowInteraction": "Allow Interaction",
+  "AllowInteractionHotkey": "Allow Interaction Hotkey",
+  "EasyPlaceFix.config.generic.comment.enableFix": "Enable EasyPlace Fix",
+  "EasyPlaceFix.config.generic.comment.AllowInteraction": "Allow Easy Place to interact with containers",
+  "EasyPlaceFix.config.generic.comment.loosenMode": "Allow flexible matching for trapdoors, walls, coral fans, and fence gates",
+  "EasyPlaceFix.config.generic.comment.nbtIgnore": "Ignore item NBT while searching inventory for Easy Place",
+  "EasyPlaceFix.config.generic.comment.observerDetect": "Validate the block in front of an observer before placement",
+  "easyPlaceFix.config.hotkeys.comment.AllowInteraction": "Toggle hotkey for allowing interaction during Easy Place",
+  "easyPlaceFix.config.hotkeys.comment.loosenmode": "Hotkey for Loosen Mode",
+  "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Hotkey for ignoring NBT in item matching",
+  "enableFix": "EasyPlaceFix Master Switch",
+  "loosenMode": "Loosen Mode",
+  "loosenModeHotkey": "Loosen Mode Hotkey",
+  "nbtIgnore": "Ignore Item NBT",
+  "nbtIgnoreHotkey": "Ignore Item NBT Hotkey",
+  "observerDetect": "Observer Placement Check",
+  "litematica.gui.button.config_gui.easy_fix": "Easy Fix",
+  "EasyPlaceFix.config.generic.comment.clientRotationRevert": "Send an extra packet to restore the original client rotation"
+}
