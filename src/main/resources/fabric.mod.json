@@ -29,6 +29,6 @@
     "fabric-api": "*",
     "litematica": "*",
     "malilib": "*",
-    "minecraft": "~26.1.1"
+    "minecraft": "~${minecraft_version}"
   }
 }

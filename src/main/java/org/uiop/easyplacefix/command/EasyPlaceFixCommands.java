@@ -112,7 +112,7 @@ public final class EasyPlaceFixCommands {
     }
 
     private static String getServerName(Minecraft mc) {
-        if (mc.isSingleplayer()) {
+        if (mc.hasSingleplayerServer()) {
             return "Singleplayer";
         }
 
