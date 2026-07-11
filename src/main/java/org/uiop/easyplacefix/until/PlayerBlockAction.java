@@ -41,6 +41,7 @@ public class PlayerBlockAction {
         public static BlockState pistonBlockState = null;
         // Global placement rate limiter (anti-cheat protection)
         private static volatile long lastGlobalPlacementTime = 0;
+        private static volatile long lastPruneTime = 0;
         private static final long PLACEMENT_OVERRIDE_TTL_MS = 1200L;
         private static final int PLACEMENT_OVERRIDE_MAX_SIZE = 512;
         private static final int PLACEMENT_OVERRIDE_USES = 4;
@@ -191,8 +192,9 @@ public class PlayerBlockAction {
             long now = System.currentTimeMillis();
             long threshold = Ping2Server.getRtt() + 100;
 
-            // Prune stale entries to prevent memory leak (entries older than 10 seconds)
-            if (lastPlacementTimeMap.size() > 256) {
+            // Prune stale entries periodically to prevent memory leak and CPU bottleneck
+            if (now - lastPruneTime > 5000L) {
+                lastPruneTime = now;
                 lastPlacementTimeMap.entrySet().removeIf(e -> now - e.getValue() > 10_000L);
             }
 

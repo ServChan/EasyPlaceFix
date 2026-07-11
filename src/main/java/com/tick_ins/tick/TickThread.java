@@ -36,8 +36,11 @@ public final class TickThread {
         runAfterTick(() -> {
             if (second != null) {
                 runNow(() -> {
-                    second.task().run();
-                    clearLookLock();
+                    try {
+                        second.task().run();
+                    } finally {
+                        clearLookLock();
+                    }
                 });
             } else {
                 runNow(TickThread::clearLookLock);
@@ -55,8 +58,11 @@ public final class TickThread {
         runNow(task.task());
         runAfterTick(() -> {
             runNow(() -> {
-                task.cache().run();
-                clearLookLock();
+                try {
+                    task.cache().run();
+                } finally {
+                    clearLookLock();
+                }
             });
         }, 1);
     }
@@ -116,7 +122,6 @@ public final class TickThread {
     public static void onClientDisconnected() {
         TASK_EPOCH.incrementAndGet();
         clearLookLock();
-        clientStopping = false;
     }
 
     public static void onClientShutdown() {

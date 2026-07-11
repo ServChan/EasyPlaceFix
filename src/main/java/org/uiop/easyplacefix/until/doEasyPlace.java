@@ -106,8 +106,7 @@ public class doEasyPlace {
                     stack1 = findBlockInInventory(playerInventory, predicate);
                 }
                 if (stack1 == null) {
-                    HashSet<ItemStack> itemStackHashSet = LoosenModeData.loadFromFile();
-                    return loosenMode2(itemStackHashSet);
+                    return loosenMode2(null);
 
                 }
                 return stack1;
