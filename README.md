@@ -81,11 +81,11 @@ EasyPlaceFix добавляет к обычному Easy Place:
 
 - Minecraft `26.2`
 - Java `25`
-- Fabric Loader `0.19.0+`
-- Fabric API `0.145.4+26.2`
-- Litematica `0.27.1`
-- MaLiLib `0.28.2`
-- Текущая версия мода в проекте: `0.6.0`
+- Fabric Loader `0.19.3+`
+- Fabric API `0.153.0+26.2`
+- Litematica `0.28.3+`
+- MaLiLib `0.29.2+`
+- Текущая версия мода в проекте: `0.6.1`
 
 ### Сборка
 
@@ -184,11 +184,11 @@ Important:
 
 - Minecraft `26.2`
 - Java `25`
-- Fabric Loader `0.19.0+`
-- Fabric API `0.145.4+26.2`
-- Litematica `0.27.1`
-- MaLiLib `0.28.2`
-- Current project mod version: `0.6.0`
+- Fabric Loader `0.19.3+`
+- Fabric API `0.153.0+26.2`
+- Litematica `0.28.3+`
+- MaLiLib `0.29.2+`
+- Current project mod version: `0.6.1`
 
 ### Build
 

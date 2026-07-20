@@ -7,6 +7,7 @@ import fi.dy.masa.litematica.schematic.placement.SchematicPlacementManager;
 import fi.dy.masa.litematica.util.EntityUtils;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
+import fi.dy.masa.malilib.util.position.IntBoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
@@ -56,7 +57,8 @@ public class doEasyPlace {
                 = schematicPlacementManager.getAllPlacementsTouchingChunk(pos);
         //Check whether any placement part contains this position
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
-            if (placementPart.getBox().containsPos(pos)) {
+            IntBoundingBox box = placementPart.getBox();
+            if (box.contains(pos)) {
                 return true;
             }
         }
