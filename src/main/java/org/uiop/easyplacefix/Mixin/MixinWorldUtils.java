@@ -16,6 +16,7 @@ import org.uiop.easyplacefix.config.easyPlacefixConfig;
 
 import static fi.dy.masa.litematica.util.WorldUtils.getValidBlockRange;
 import static org.uiop.easyplacefix.until.doEasyPlace.doEasyPlace2;
+import static org.uiop.easyplacefix.until.doEasyPlace.shouldAllowVanillaInteraction;
 
 @Mixin(WorldUtils.class)
 public abstract class MixinWorldUtils {
@@ -45,16 +46,20 @@ public abstract class MixinWorldUtils {
             return;
         }
 
+        // Allow vanilla block interaction regardless of the active placement protocol.
+        // In AUTO mode Servux selects V3, so this must run before the SLAB_ONLY guard.
+        if (shouldAllowVanillaInteraction(mc, traceWrapper)) {
+            cir.setReturnValue(InteractionResult.PASS);
+            return;
+        }
+
         if (PlacementHandler.getEffectiveProtocolVersion() != EasyPlaceProtocol.SLAB_ONLY) {
             return;
         }
 
-        InteractionResult result = doEasyPlace2(mc, traceWrapper);
-        // Consume both SUCCESS and FAIL so vanilla EasyPlace won't run as a fallback
-        // and cause duplicate/contradicting interactions on servers.
-        if (result != InteractionResult.PASS) {
-            cir.setReturnValue(result);
-        }
+        // EasyPlaceFix replaces the SLAB_ONLY path completely. Propagate PASS as well,
+        // otherwise Litematica continues and can turn it into FAIL, blocking vanilla use.
+        cir.setReturnValue(doEasyPlace2(mc, traceWrapper));
     }
 //    @Inject(method = "doEasyPlaceAction", at = @At("HEAD"), cancellable = true)
 //    private static void aa(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir) {
@@ -107,6 +112,5 @@ public abstract class MixinWorldUtils {
 //    }
 //}
 }
-
 
 

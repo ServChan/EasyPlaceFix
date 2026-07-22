@@ -49,6 +49,24 @@ import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
 
 public class doEasyPlace {
 
+    public static boolean shouldAllowVanillaInteraction(Minecraft mc, RayTraceUtils.RayTraceWrapper traceWrapper) {
+        if (!Allow_Interaction.getBooleanValue() || mc.level == null) {
+            return false;
+        }
+
+        BlockHitResult trace = traceWrapper.getBlockHitResult();
+        Level schematicWorld = SchematicWorldHandler.getSchematicWorld();
+        if (trace == null || schematicWorld == null) {
+            return false;
+        }
+
+        BlockPos pos = trace.getBlockPos();
+        BlockState stateClient = mc.level.getBlockState(pos);
+        BlockState stateSchematic = schematicWorld.getBlockState(pos);
+        return ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient)
+                == InteractionResult.PASS;
+    }
+
     // Whether the position belongs to any schematic area
     public static boolean isSchematicBlock(BlockPos pos) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
