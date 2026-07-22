@@ -7,7 +7,6 @@ import fi.dy.masa.litematica.schematic.placement.SchematicPlacementManager;
 import fi.dy.masa.litematica.util.EntityUtils;
 import fi.dy.masa.litematica.util.RayTraceUtils;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
-import fi.dy.masa.malilib.util.position.IntBoundingBox;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
@@ -34,6 +33,7 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
 import java.util.HashSet;
 import java.util.List;
+import java.lang.reflect.Method;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
@@ -48,6 +48,28 @@ import static org.uiop.easyplacefix.until.PlacementInventory.pickItem;
 import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
 
 public class doEasyPlace {
+    private static final Method PLACEMENT_PART_GET_BOX = findMethod(
+            SchematicPlacementManager.PlacementPart.class, "getBox");
+    private static final Method BOX_CONTAINS = findMethod(
+            PLACEMENT_PART_GET_BOX.getReturnType(), "contains", BlockPos.class);
+
+    private static Method findMethod(Class<?> owner, String name, Class<?>... parameterTypes) {
+        try {
+            return owner.getMethod(name, parameterTypes);
+        } catch (NoSuchMethodException exception) {
+            throw new IllegalStateException("Unsupported Litematica/MaLiLib API: " + owner.getName() + "#" + name,
+                    exception);
+        }
+    }
+
+    private static boolean placementContains(SchematicPlacementManager.PlacementPart placementPart, BlockPos pos) {
+        try {
+            Object box = PLACEMENT_PART_GET_BOX.invoke(placementPart);
+            return box != null && (boolean) BOX_CONTAINS.invoke(box, pos);
+        } catch (ReflectiveOperationException exception) {
+            throw new IllegalStateException("Could not inspect a Litematica placement bounding box", exception);
+        }
+    }
 
     public static boolean shouldAllowVanillaInteraction(Minecraft mc, RayTraceUtils.RayTraceWrapper traceWrapper) {
         if (!Allow_Interaction.getBooleanValue() || mc.level == null) {
@@ -75,8 +97,7 @@ public class doEasyPlace {
                 = schematicPlacementManager.getAllPlacementsTouchingChunk(pos);
         //Check whether any placement part contains this position
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
-            IntBoundingBox box = placementPart.getBox();
-            if (box.contains(pos)) {
+            if (placementContains(placementPart, pos)) {
                 return true;
             }
         }

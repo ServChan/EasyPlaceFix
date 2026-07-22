@@ -1,5 +1,5 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.15.4'
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
 }
 
@@ -10,6 +10,10 @@ def modVersion = project.mod_version
 def targetMinecraftVersion = project.minecraft_version
 def targetLoaderVersion = project.loader_version
 def archiveBaseName = project.archives_base_name
+def minecraftVersionKey = project.minecraft_version.toString().replace('.', '_')
+def fabricApiVersion = project.property("fabric_api_version_${minecraftVersionKey}")
+def litematicaVersion = project.property("litematica_version_${minecraftVersionKey}")
+def malilibVersion = project.property("malilib_version_${minecraftVersionKey}")
 
 base {
     archivesName = archiveBaseName
@@ -39,9 +43,9 @@ dependencies {
     // To change the versions see the gradle.properties file
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    implementation "maven.modrinth:litematica:${project.litematica_version_id}"
-    implementation "maven.modrinth:malilib:${project.malilib_version_id}"
-    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+    implementation "maven.modrinth:litematica:${litematicaVersion}"
+    implementation "maven.modrinth:malilib:${malilibVersion}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}"
 }
 
 processResources {

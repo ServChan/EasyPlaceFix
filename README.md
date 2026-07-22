@@ -75,17 +75,17 @@ EasyPlaceFix добавляет к обычному Easy Place:
 Важно:
 - мод клиентский;
 - отдельная установка TickPrediction не требуется;
-- в мультиплеере используйте протокол Easy Place: `SLAB_ONLY`.
+- на сервере с Servux используйте `AUTO` (Litematica выберет V3);
+- без серверной поддержки используйте `SLAB_ONLY` для логики установки EasyPlaceFix.
 
 ### Совместимость
 
-- Minecraft `26.2`
+- Minecraft `26.1.2`-`26.2`
 - Java `25`
 - Fabric Loader `0.19.3+`
-- Fabric API `0.153.0+26.2`
-- Litematica `0.28.3+`
-- MaLiLib `0.29.2+`
-- Текущая версия мода в проекте: `0.6.1`
+- Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
+- Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
+- Текущая версия мода в проекте: `0.6.2`
 
 ### Сборка
 
@@ -100,7 +100,10 @@ EasyPlaceFix добавляет к обычному Easy Place:
 Для Windows:
 ```bat
 gradlew.bat clean build
+gradlew.bat clean build -Pminecraft_version=26.2
 ```
+
+Первая команда собирает базовую совместимую версию для Minecraft 26.1.2, вторая проверяет те же исходники на Minecraft 26.2.
 
 Результат:
 - `build/libs/*.jar`
@@ -178,17 +181,17 @@ Modrinth page:
 Important:
 - this is a client-side mod;
 - a separate TickPrediction install is no longer required;
-- for multiplayer, use Easy Place protocol: `SLAB_ONLY`.
+- on servers with Servux, use `AUTO` (Litematica will select V3);
+- without server-side protocol support, use `SLAB_ONLY` for EasyPlaceFix placement logic.
 
 ### Compatibility
 
-- Minecraft `26.2`
+- Minecraft `26.1.2`-`26.2`
 - Java `25`
 - Fabric Loader `0.19.3+`
-- Fabric API `0.153.0+26.2`
-- Litematica `0.28.3+`
-- MaLiLib `0.29.2+`
-- Current project mod version: `0.6.1`
+- Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
+- Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
+- Current project mod version: `0.6.2`
 
 ### Build
 
@@ -203,7 +206,10 @@ Build command:
 Windows:
 ```bat
 gradlew.bat clean build
+gradlew.bat clean build -Pminecraft_version=26.2
 ```
+
+The first command builds the baseline Minecraft 26.1.2-compatible artifact; the second verifies the same sources against Minecraft 26.2.
 
 Output:
 - `build/libs/*.jar`

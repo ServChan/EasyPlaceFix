@@ -32,3 +32,15 @@ bin/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Local AI/agent workspace instructions
+AGENTS.md
+**/AGENTS.md
+CLAUDE.md
+**/CLAUDE.md
+.codex/
+**/.codex/
+.agents/
+**/.agents/
+.agent-notes/
+**/.agent-notes/
