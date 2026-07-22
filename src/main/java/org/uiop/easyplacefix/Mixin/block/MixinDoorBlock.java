@@ -11,7 +11,6 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
@@ -32,10 +31,6 @@ public abstract class MixinDoorBlock implements IBlock {
     @Shadow
     @Final
     private BlockSetType type;
-
-    @Shadow
-    @Final
-    public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
     @Override
     public Tuple<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
