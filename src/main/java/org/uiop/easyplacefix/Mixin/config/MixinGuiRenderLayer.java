@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.config;
+package org.uiop.easyplacefix.mixin.config;
 
 
 import fi.dy.masa.litematica.gui.GuiRenderLayer;

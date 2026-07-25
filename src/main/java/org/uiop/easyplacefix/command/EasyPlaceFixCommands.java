@@ -10,7 +10,7 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.network.chat.Component;
 import org.uiop.easyplacefix.config.PlacementPreset;
-import org.uiop.easyplacefix.until.PlacementDiagnostics;
+import org.uiop.easyplacefix.util.PlacementDiagnostics;
 
 import java.util.List;
 

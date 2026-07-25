@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;

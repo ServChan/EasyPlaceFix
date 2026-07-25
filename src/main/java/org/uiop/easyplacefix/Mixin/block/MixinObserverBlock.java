@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import fi.dy.masa.litematica.world.WorldSchematic;
@@ -15,7 +15,7 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
 
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.OBSERVER_DETECT;
-import static org.uiop.easyplacefix.until.doEasyPlace.isSchematicBlock;
+import static org.uiop.easyplacefix.util.EasyPlaceHandler.isSchematicBlock;
 
 @Mixin(ObserverBlock.class)
 public class MixinObserverBlock implements IBlock {

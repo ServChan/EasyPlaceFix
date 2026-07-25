@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.packet;
+package org.uiop.easyplacefix.mixin.packet;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;

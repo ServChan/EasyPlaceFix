@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import fi.dy.masa.litematica.config.Configs;
 import fi.dy.masa.litematica.util.EntityUtils;

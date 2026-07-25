@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.prediction.BlockStatePredictionHandler;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.3
+
+- Fixed Easy Place crashes with Litematica 0.28.x and MaLiLib 0.29.x caused by the bounding-box API transition.
+- Added runtime compatibility with both `containsPos(Vec3i)` and `contains(Vec3i)` bounding-box methods.
+- Broadened dependency metadata to accept compatible Litematica 0.27.x/0.28.x and MaLiLib 0.28.x/0.29.x releases.
+
 ## 0.6.2
 
 - Fixed `AllowInteraction` with Servux/V3 and the `SLAB_ONLY` fallback path.

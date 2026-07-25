@@ -1,6 +1,6 @@
 {
   "minVersion": "0.8",
-  "package": "org.uiop.easyplacefix.Mixin",
+  "package": "org.uiop.easyplacefix.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "MixinConfigs",

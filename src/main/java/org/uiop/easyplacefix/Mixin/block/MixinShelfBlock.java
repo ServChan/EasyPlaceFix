@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.util.Tuple;
@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
-import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
+import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
 
 @Mixin(ShelfBlock.class)
 public class MixinShelfBlock implements IBlock {

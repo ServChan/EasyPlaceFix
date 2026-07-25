@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block.signBlock;
+package org.uiop.easyplacefix.mixin.block.signBlock;
 
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
@@ -16,7 +16,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.IClientWorld;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
 
 @Mixin(SignBlock.class)
 public class MixinAbstractSignBlock implements IBlock {

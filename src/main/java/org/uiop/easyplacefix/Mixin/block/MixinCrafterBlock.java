@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
@@ -26,7 +26,7 @@ import org.uiop.easyplacefix.EasyPlaceFix;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.IClientWorld;
 import org.uiop.easyplacefix.LookAt;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
 
 import static org.uiop.easyplacefix.EasyPlaceFix.crafterOperation;
 import static org.uiop.easyplacefix.EasyPlaceFix.crafterSlot;

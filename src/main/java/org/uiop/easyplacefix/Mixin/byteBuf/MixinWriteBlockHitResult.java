@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.byteBuf;
+package org.uiop.easyplacefix.mixin.byteBuf;
 
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;

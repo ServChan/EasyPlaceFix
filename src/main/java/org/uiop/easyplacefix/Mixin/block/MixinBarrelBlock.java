@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;

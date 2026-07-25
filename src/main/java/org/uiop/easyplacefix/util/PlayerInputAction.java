@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ServerboundPlayerInputPacket;

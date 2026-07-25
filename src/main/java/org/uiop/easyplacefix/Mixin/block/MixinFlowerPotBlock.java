@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import fi.dy.masa.litematica.materials.MaterialCache;
 import fi.dy.masa.litematica.util.EntityUtils;

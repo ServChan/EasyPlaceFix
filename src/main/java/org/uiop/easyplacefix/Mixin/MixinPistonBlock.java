@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
@@ -6,8 +6,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
-import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.modifyBoolean;
-import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.pistonBlockState;
+import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.modifyBoolean;
+import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.pistonBlockState;
 
 @Mixin(PistonBaseBlock.class)
 public class MixinPistonBlock {//Sync piston client placement state to avoid client/server desync during placement.

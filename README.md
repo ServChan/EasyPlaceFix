@@ -83,9 +83,10 @@ EasyPlaceFix добавляет к обычному Easy Place:
 - Minecraft `26.1.2`-`26.2`
 - Java `25`
 - Fabric Loader `0.19.3+`
-- Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
-- Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
-- Текущая версия мода в проекте: `0.6.2`
+- Проверено на Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
+- Проверено на Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
+- Для соответствующих версий Minecraft адаптер допускает Litematica `>=0.27.10 <0.29` и MaLiLib `>=0.28.9 <0.30`
+- Текущая версия мода в проекте: `0.6.3`
 
 ### Сборка
 
@@ -189,9 +190,10 @@ Important:
 - Minecraft `26.1.2`-`26.2`
 - Java `25`
 - Fabric Loader `0.19.3+`
-- Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
-- Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
-- Current project mod version: `0.6.2`
+- Verified on Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
+- Verified on Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
+- For matching Minecraft builds, the adapter accepts Litematica `>=0.27.10 <0.29` and MaLiLib `>=0.28.9 <0.30`
+- Current project mod version: `0.6.3`
 
 ### Build
 

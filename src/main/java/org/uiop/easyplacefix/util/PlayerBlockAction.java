@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import com.tick_ins.packet.Ping2Server;
 import org.uiop.easyplacefix.config.easyPlacefixConfig;

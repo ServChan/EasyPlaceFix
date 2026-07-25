@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;

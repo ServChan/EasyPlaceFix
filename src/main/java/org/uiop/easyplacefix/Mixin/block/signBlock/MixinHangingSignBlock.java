@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block.signBlock;
+package org.uiop.easyplacefix.mixin.block.signBlock;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 @Mixin(CeilingHangingSignBlock.class)
 public abstract class MixinHangingSignBlock implements IBlock {

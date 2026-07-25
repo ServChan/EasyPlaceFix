@@ -2,7 +2,7 @@ package org.uiop.easyplacefix;
 
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-import static org.uiop.easyplacefix.until.PlayerRotationAction.limitYawRotation;
+import static org.uiop.easyplacefix.util.PlayerRotationAction.limitYawRotation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

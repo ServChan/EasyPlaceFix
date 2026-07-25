@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.AccessorMixin;
+package org.uiop.easyplacefix.mixin.AccessorMixin;
 
 
 import io.netty.channel.Channel;

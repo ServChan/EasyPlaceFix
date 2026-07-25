@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.block.ButtonBlock;
@@ -9,7 +9,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 @Mixin(ButtonBlock.class)
 public class MixinButtonBlock implements IBlock {

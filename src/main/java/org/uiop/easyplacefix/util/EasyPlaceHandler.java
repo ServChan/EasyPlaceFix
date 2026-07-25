@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import com.tick_ins.tick.RunnableWithLast;
 import com.tick_ins.tick.TickThread;
@@ -34,6 +34,8 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 import java.util.HashSet;
 import java.util.List;
 import java.lang.reflect.Method;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Predicate;
 
@@ -43,29 +45,57 @@ import static org.uiop.easyplacefix.EasyPlaceFix.findBlockInInventory;
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.*;
 import static org.uiop.easyplacefix.data.LoosenModeData.items;
-import static org.uiop.easyplacefix.until.PlacementDiagnostics.report;
-import static org.uiop.easyplacefix.until.PlacementInventory.pickItem;
-import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
+import static org.uiop.easyplacefix.util.PlacementDiagnostics.report;
+import static org.uiop.easyplacefix.util.PlacementInventory.pickItem;
+import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.*;
 
-public class doEasyPlace {
-    private static final Method PLACEMENT_PART_GET_BOX = findMethod(
-            SchematicPlacementManager.PlacementPart.class, "getBox");
-    private static final Method BOX_CONTAINS = findMethod(
-            PLACEMENT_PART_GET_BOX.getReturnType(), "contains", BlockPos.class);
+public class EasyPlaceHandler {
+    private static final String[] BOX_CONTAINS_METHOD_NAMES = {"contains", "containsPos"};
+    private static final Method PLACEMENT_PART_GET_BOX = findNoArgMethod(
+            SchematicPlacementManager.PlacementPart.class, "getBox", "getBoundingBox");
+    private static final ConcurrentMap<Class<?>, Method> BOX_CONTAINS_METHODS = new ConcurrentHashMap<>();
 
-    private static Method findMethod(Class<?> owner, String name, Class<?>... parameterTypes) {
-        try {
-            return owner.getMethod(name, parameterTypes);
-        } catch (NoSuchMethodException exception) {
-            throw new IllegalStateException("Unsupported Litematica/MaLiLib API: " + owner.getName() + "#" + name,
-                    exception);
+    private static Method findNoArgMethod(Class<?> owner, String... methodNames) {
+        for (String methodName : methodNames) {
+            try {
+                return owner.getMethod(methodName);
+            } catch (NoSuchMethodException ignored) {
+                // Try the name used by another supported Litematica version.
+            }
         }
+        throw unsupportedApi(owner, methodNames);
+    }
+
+    private static Method findBoxContainsMethod(Class<?> boxClass) {
+        for (String methodName : BOX_CONTAINS_METHOD_NAMES) {
+            for (Method method : boxClass.getMethods()) {
+                Class<?>[] parameterTypes = method.getParameterTypes();
+                if (method.getName().equals(methodName)
+                        && parameterTypes.length == 1
+                        && parameterTypes[0].isAssignableFrom(BlockPos.class)
+                        && (method.getReturnType() == boolean.class || method.getReturnType() == Boolean.class)) {
+                    return method;
+                }
+            }
+        }
+        throw unsupportedApi(boxClass, BOX_CONTAINS_METHOD_NAMES);
+    }
+
+    private static IllegalStateException unsupportedApi(Class<?> owner, String... methodNames) {
+        return new IllegalStateException(
+                "Unsupported Litematica/MaLiLib API: " + owner.getName() + "#"
+                        + String.join("/", methodNames));
     }
 
     private static boolean placementContains(SchematicPlacementManager.PlacementPart placementPart, BlockPos pos) {
         try {
             Object box = PLACEMENT_PART_GET_BOX.invoke(placementPart);
-            return box != null && (boolean) BOX_CONTAINS.invoke(box, pos);
+            if (box == null) {
+                return false;
+            }
+            Method containsMethod = BOX_CONTAINS_METHODS.computeIfAbsent(
+                    box.getClass(), EasyPlaceHandler::findBoxContainsMethod);
+            return Boolean.TRUE.equals(containsMethod.invoke(box, pos));
         } catch (ReflectiveOperationException exception) {
             throw new IllegalStateException("Could not inspect a Litematica placement bounding box", exception);
         }

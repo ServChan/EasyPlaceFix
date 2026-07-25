@@ -1,11 +1,11 @@
-package org.uiop.easyplacefix.Mixin.packet;
+package org.uiop.easyplacefix.mixin.packet;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundOpenSignEditorPacket;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
 
 @Mixin(ClientboundOpenSignEditorPacket.class)
 public class MixinSignEditorOpenS2CPacket {

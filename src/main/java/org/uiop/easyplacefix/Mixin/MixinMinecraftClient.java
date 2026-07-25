@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.tick_ins.tick.TickThread;
 import net.minecraft.client.Minecraft;
 import org.uiop.easyplacefix.EasyPlaceFix;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
 
 @Mixin(Minecraft.class)
 public class MixinMinecraftClient {

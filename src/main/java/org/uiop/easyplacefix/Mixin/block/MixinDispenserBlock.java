@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import net.minecraft.core.Direction;
 import net.minecraft.util.Tuple;

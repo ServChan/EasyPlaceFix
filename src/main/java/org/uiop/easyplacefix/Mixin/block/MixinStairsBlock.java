@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
+import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
 
 @Mixin(StairBlock.class)
 public class MixinStairsBlock implements IBlock {

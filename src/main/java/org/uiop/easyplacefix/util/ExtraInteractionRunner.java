@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.until;
+package org.uiop.easyplacefix.util;
 
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;

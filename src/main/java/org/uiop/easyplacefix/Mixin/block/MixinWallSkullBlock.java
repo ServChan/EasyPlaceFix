@@ -1,11 +1,11 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 import static net.minecraft.world.level.block.WallTorchBlock.canSurvive;
 

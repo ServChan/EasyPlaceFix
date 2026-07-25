@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.ChiseledBookShelfBlock;
@@ -8,7 +8,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 @Mixin(ChiseledBookShelfBlock.class)
 public class MixinChiseledBookshelfBlock implements IBlock {

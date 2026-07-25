@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import fi.dy.masa.litematica.config.Hotkeys;
 import org.apache.commons.lang3.ArrayUtils;

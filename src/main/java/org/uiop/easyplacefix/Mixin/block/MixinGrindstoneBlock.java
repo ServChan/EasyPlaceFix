@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block;
+package org.uiop.easyplacefix.mixin.block;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -17,7 +17,7 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 @Mixin(GrindstoneBlock.class)
 public abstract class MixinGrindstoneBlock implements IBlock {

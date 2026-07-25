@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin;
+package org.uiop.easyplacefix.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import fi.dy.masa.litematica.config.Configs;
@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.uiop.easyplacefix.config.easyPlacefixConfig;
 
 import static fi.dy.masa.litematica.util.WorldUtils.getValidBlockRange;
-import static org.uiop.easyplacefix.until.doEasyPlace.doEasyPlace2;
-import static org.uiop.easyplacefix.until.doEasyPlace.shouldAllowVanillaInteraction;
+import static org.uiop.easyplacefix.util.EasyPlaceHandler.doEasyPlace2;
+import static org.uiop.easyplacefix.util.EasyPlaceHandler.shouldAllowVanillaInteraction;
 
 @Mixin(WorldUtils.class)
 public abstract class MixinWorldUtils {

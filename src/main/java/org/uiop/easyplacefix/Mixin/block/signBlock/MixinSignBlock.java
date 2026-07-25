@@ -1,4 +1,4 @@
-package org.uiop.easyplacefix.Mixin.block.signBlock;
+package org.uiop.easyplacefix.mixin.block.signBlock;
 
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
@@ -19,8 +19,8 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
-import org.uiop.easyplacefix.until.PlayerBlockAction;
-import org.uiop.easyplacefix.until.PlayerInputAction;
+import org.uiop.easyplacefix.util.PlayerBlockAction;
+import org.uiop.easyplacefix.util.PlayerInputAction;
 
 @Mixin(StandingSignBlock.class)
 public abstract class MixinSignBlock implements IBlock {
