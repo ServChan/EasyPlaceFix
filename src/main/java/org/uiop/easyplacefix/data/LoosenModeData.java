@@ -9,6 +9,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -18,7 +23,8 @@ import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 public class LoosenModeData {
 //    static HashSet<Item> itemHashSet = new HashSet<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "loosenMode.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("loosenMode.json");
+    private static final File CONFIG_FILE = CONFIG_PATH.toFile();
     private static final Type ITEM_SET_TYPE = new TypeToken<HashSet<Integer>>() {}.getType();
     public static HashSet<Item> items = new HashSet<>();
     static {
@@ -65,10 +71,18 @@ public class LoosenModeData {
                 })
                 .collect(Collectors.toCollection(HashSet::new));
 
-        try (Writer writer = new FileWriter(CONFIG_FILE)) {
-            GSON.toJson(itemIds, writer);
+        Path temp = CONFIG_PATH.resolveSibling("loosenMode.json.tmp");
+        try {
+            Files.createDirectories(CONFIG_PATH.getParent());
+            Files.writeString(temp, GSON.toJson(itemIds), StandardCharsets.UTF_8);
+            try {
+                Files.move(temp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(temp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
             LOGGER.warn("Failed to save loosen mode config file {}", CONFIG_FILE, e);
+            try { Files.deleteIfExists(temp); } catch (IOException ignored) {}
         }
     }
 
