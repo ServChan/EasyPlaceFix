@@ -20,7 +20,7 @@ import java.util.function.Predicate;
 public class EasyPlaceFix implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("easyplacefix");
 
-    public static final GuiConfigs.ConfigGuiTab EASY_FIX = ConfigGuiTabAccessor.init("EASY_FIX", 6, "litematica.gui.button.config_gui.easy_fix");
+    public static final GuiConfigs.ConfigGuiTab EASY_FIX = ConfigGuiTabAccessor.init("EASY_FIX", 99, "litematica.gui.button.config_gui.easy_fix");
     public static List<Boolean> crafterSlot = new ArrayList<>(Arrays.asList(false, false, false, false, false, false, false, false, false));
     public static boolean crafterOperation = false;
     public static volatile int screenId=1;
