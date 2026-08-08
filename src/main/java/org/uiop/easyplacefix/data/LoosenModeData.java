@@ -82,7 +82,11 @@ public class LoosenModeData {
             }
         } catch (IOException e) {
             LOGGER.warn("Failed to save loosen mode config file {}", CONFIG_FILE, e);
-            try { Files.deleteIfExists(temp); } catch (IOException ignored) {}
+            try {
+                Files.deleteIfExists(temp);
+            } catch (IOException cleanupError) {
+                LOGGER.debug("Failed to remove temporary loosen mode config {}", temp, cleanupError);
+            }
         }
     }
 

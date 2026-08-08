@@ -1,222 +1,61 @@
 # EasyPlaceFix
 
-Client-side Fabric mod for Litematica that makes Easy Place much more reliable in multiplayer by improving placement logic, orientation handling, and interaction timing.
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.1.2--26.2-62B47A)](https://www.minecraft.net/)
+[![Fabric](https://img.shields.io/badge/Fabric-client--side-DBD0B4)](https://fabricmc.net/)
+[![Java](https://img.shields.io/badge/Java-25-E76F00)](https://adoptium.net/)
+[![Version](https://img.shields.io/badge/version-0.6.4-4C8BF5)](https://modrinth.com/mod/easyplacefix-fork)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 ## Русский
 
-### Что это
+Клиентский Fabric-мод повышает надёжность Litematica Easy Place на multiplayer-серверах: корректирует ориентацию, дополнительные взаимодействия, задержки и повторные попытки для сложных блоков.
 
-EasyPlaceFix это клиентский Fabric-мод для [Litematica](https://modrinth.com/mod/litematica), который улучшает Easy Place в мультиплеере и делает установку блоков заметно стабильнее на серверах.
+### Возможности
 
-Он нужен в тех случаях, когда стандартный Easy Place:
-- ставит блоки с неправильной ориентацией;
-- ошибается на интерактивных или сложных блоках;
-- делает лишние клики;
-- нестабильно работает при пинге или серверных задержках.
+- Специальная обработка лестниц, люков, знаков, полок, кафедр, крафтеров, наблюдателей, поршней, рельсов, голов, баннеров и настенных блоков.
+- Вкладка `Easy Fix` в настройках Litematica.
+- `loosenMode`, `nbtIgnore`, `AllowInteraction`, `observerDetect` и `clientRotationRevert`.
+- Совместимость с изменившимся API bounding box в MaLiLib 0.28.9/0.29.3.
+- Ограниченная очередь отложенных действий; очередь и фиксация взгляда очищаются при выходе, scheduler закрывается при остановке клиента.
 
-### Что дает мод
+### Данные и ограничения
 
-EasyPlaceFix добавляет к обычному Easy Place:
-- более корректную ориентацию блоков при установке;
-- более надежную работу на серверах с задержкой;
-- улучшенную обработку блоков, которым нужны дополнительные взаимодействия;
-- меньше лишних повторных действий и меньше рассинхрона;
-- отдельные настройки и хоткеи для тонкой подстройки поведения;
-- встроенную логику, из-за которой отдельный TickPrediction больше не нужен.
-
-### Особенности
-
-Мод включает специальную обработку для многих направляемых и интерактивных блоков, включая:
-- stairs;
-- trapdoors;
-- signs и hanging signs;
-- shelves и lecterns;
-- crafters;
-- observers;
-- pistons;
-- rails;
-- skulls, banners и wall-mounted блоки;
-- другие блоки, которым нужны особые hit result, допклики или аккуратная работа с состояниями.
-
-Также мод:
-- добавляет вкладку `Easy Fix` в GUI настроек Litematica;
-- учитывает состояние блока перед повторной установкой;
-- использует задержки там, где это нужно для стабильной постановки;
-- лучше обрабатывает сложные случаи мультиплеера.
-
-### Настройки
-
-Мод добавляет собственные настройки в Litematica:
-- `enableFix`: включает собственную логику EasyPlaceFix;
-- `loosenMode`: разрешает более свободный подбор подходящего блока, если точный предмет не найден;
-- `nbtIgnore`: ищет предмет без строгой проверки NBT;
-- `AllowInteraction`: разрешает обычное взаимодействие с рядом контейнеров и интерактивных блоков;
-- `observerDetect`: не дает ставить observer в потенциально некорректной ситуации, если целевой блок по схеме еще не совпадает;
-- `clientRotationRevert`: возвращает клиентский поворот после служебного разворота игрока.
-
-Также есть отдельные хоткеи для:
-- `loosenMode`;
-- `nbtIgnore`;
-- `AllowInteraction`.
-
-Для `loosenMode` используется файл:
-- `config/loosenMode.json`
-
-### Установка
-
-Для работы нужны:
-- [Fabric Loader](https://fabricmc.net/use/installer/)
-- [Litematica](https://modrinth.com/mod/litematica)
-- [MaLiLib](https://modrinth.com/mod/malilib)
-
-Страница мода на Modrinth:
-- https://modrinth.com/mod/easyplacefix-fork
-
-Важно:
-- мод клиентский;
-- отдельная установка TickPrediction не требуется;
-- на сервере с Servux используйте `AUTO` (Litematica выберет V3);
-- без серверной поддержки используйте `SLAB_ONLY` для логики установки EasyPlaceFix.
+- `config/loosenMode.json` хранит список предметов режима ослабленного совпадения; запись выполняется через временный файл.
+- Мод не заменяет серверный протокол. С Servux используйте `AUTO`; без серверной поддержки обычно требуется `SLAB_ONLY`.
+- Результат зависит от задержки сервера и защиты взаимодействий. Установка на сервер не требуется.
 
 ### Совместимость
 
-- Minecraft `26.1.2`-`26.2`
-- Java `25`
-- Fabric Loader `0.19.3+`
-- Проверено на Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
-- Проверено на Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
-- Для соответствующих версий Minecraft адаптер допускает Litematica `>=0.27.10 <0.29` и MaLiLib `>=0.28.9 <0.30`
-- Текущая версия мода в проекте: `0.6.3`
+- MC 26.1.2: Litematica 0.27.10, MaLiLib 0.28.9.
+- MC 26.2: Litematica 0.28.4, MaLiLib 0.29.3.
+- Fabric Loader 0.19.3+, Java 25. Отдельный TickPrediction не нужен.
 
 ### Сборка
 
-Требования:
-- JDK 25
-
-Команда сборки:
-```bash
-./gradlew clean build
+```powershell
+.\gradlew.bat clean build --warning-mode all
+.\gradlew.bat clean build '-Pminecraft_version=26.2' --warning-mode all
+.\gradlew.bat clean build --warning-mode all
 ```
-
-Для Windows:
-```bat
-gradlew.bat clean build
-gradlew.bat clean build -Pminecraft_version=26.2
-```
-
-Первая команда собирает базовую совместимую версию для Minecraft 26.1.2, вторая проверяет те же исходники на Minecraft 26.2.
-
-Результат:
-- `build/libs/*.jar`
 
 ## English
 
-### What It Is
-
-EasyPlaceFix is a client-side Fabric mod for [Litematica](https://modrinth.com/mod/litematica) that improves Easy Place in multiplayer and makes block placement much more reliable on servers.
-
-It is useful when default Easy Place:
-- places blocks with incorrect orientation;
-- struggles with interactive or complex blocks;
-- performs extra unwanted clicks;
-- becomes unreliable under latency or server delay.
-
-### What It Adds
-
-EasyPlaceFix extends normal Easy Place with:
-- more accurate block orientation during placement;
-- better reliability on multiplayer servers;
-- improved handling for blocks that need follow-up interactions;
-- fewer duplicate actions and less desync;
-- extra settings and hotkeys for fine-tuning behavior;
-- built-in logic that makes a separate TickPrediction install unnecessary.
+This client-side Fabric mod makes Litematica Easy Place more reliable on multiplayer servers by improving orientation, follow-up interactions, timing, and retries for complex blocks.
 
 ### Features
 
-The mod includes dedicated handling for many directional and interactive blocks, including:
-- stairs;
-- trapdoors;
-- signs and hanging signs;
-- shelves and lecterns;
-- crafters;
-- observers;
-- pistons;
-- rails;
-- skulls, banners, wall-mounted blocks;
-- multiface blocks and other blocks that need custom hit results, extra clicks, or careful state handling.
+- Dedicated handling for stairs, trapdoors, signs, shelves, lecterns, crafters, observers, pistons, rails, heads, banners, and wall-mounted blocks.
+- An `Easy Fix` Litematica settings tab.
+- `loosenMode`, `nbtIgnore`, `AllowInteraction`, `observerDetect`, and `clientRotationRevert`.
+- A compatibility bridge for the MaLiLib bounding-box API change.
+- A bounded delayed-action queue that is invalidated on disconnect and shut down with the client.
 
-The mod also:
-- adds its own `Easy Fix` tab to the Litematica config GUI;
-- checks block state before retrying placement;
-- uses delayed interactions where needed for better stability;
-- handles difficult multiplayer edge cases more safely.
+### Data and limitations
 
-### Settings
+`config/loosenMode.json` stores loosened item matching through temporary-file replacement. The mod does not replace server protocol support: use `AUTO` with Servux and generally `SLAB_ONLY` without it. Server latency and interaction protection can still affect placement.
 
-The mod adds its own settings to Litematica:
-- `enableFix`: enables the EasyPlaceFix replacement logic;
-- `loosenMode`: allows looser item matching if the exact item is not found;
-- `nbtIgnore`: searches items without strict NBT matching;
-- `AllowInteraction`: allows normal interaction with selected containers and interactive blocks;
-- `observerDetect`: prevents observer placement in cases where the required target block in the schematic is not yet matched;
-- `clientRotationRevert`: restores the client view rotation after the temporary placement rotation.
+Minecraft 26.1.2 uses Litematica 0.27.10/MaLiLib 0.28.9; 26.2 uses 0.28.4/0.29.3. Run the three commands above and install the normal JAR from `build/libs/`.
 
-It also adds separate hotkeys for:
-- `loosenMode`;
-- `nbtIgnore`;
-- `AllowInteraction`.
+## Credits and license
 
-`loosenMode` uses:
-- `config/loosenMode.json`
-
-### Installation
-
-Required:
-- [Fabric Loader](https://fabricmc.net/use/installer/)
-- [Litematica](https://modrinth.com/mod/litematica)
-- [MaLiLib](https://modrinth.com/mod/malilib)
-
-Modrinth page:
-- https://modrinth.com/mod/easyplacefix-fork
-
-Important:
-- this is a client-side mod;
-- a separate TickPrediction install is no longer required;
-- on servers with Servux, use `AUTO` (Litematica will select V3);
-- without server-side protocol support, use `SLAB_ONLY` for EasyPlaceFix placement logic.
-
-### Compatibility
-
-- Minecraft `26.1.2`-`26.2`
-- Java `25`
-- Fabric Loader `0.19.3+`
-- Verified on Minecraft `26.1.2`: Fabric API `0.153.0+26.1.2`, Litematica `0.27.10`, MaLiLib `0.28.9`
-- Verified on Minecraft `26.2`: Fabric API `0.153.0+26.2`, Litematica `0.28.4`, MaLiLib `0.29.3`
-- For matching Minecraft builds, the adapter accepts Litematica `>=0.27.10 <0.29` and MaLiLib `>=0.28.9 <0.30`
-- Current project mod version: `0.6.3`
-
-### Build
-
-Requirements:
-- JDK 25
-
-Build command:
-```bash
-./gradlew clean build
-```
-
-Windows:
-```bat
-gradlew.bat clean build
-gradlew.bat clean build -Pminecraft_version=26.2
-```
-
-The first command builds the baseline Minecraft 26.1.2-compatible artifact; the second verifies the same sources against Minecraft 26.2.
-
-Output:
-- `build/libs/*.jar`
-
-## Credits
-
-Original mod source:
-- https://github.com/223225zzzkkk/easyplaceFix
+Original project: [223225zzzkkk/easyplaceFix](https://github.com/223225zzzkkk/easyplaceFix). Licensed under MIT; see [LICENSE](LICENSE).
