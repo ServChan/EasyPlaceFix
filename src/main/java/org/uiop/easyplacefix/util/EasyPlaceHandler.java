@@ -20,10 +20,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CoralFanBlock;
 import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.piston.PistonBaseBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.uiop.easyplacefix.IBlock;
@@ -242,6 +244,19 @@ public class EasyPlaceHandler {
                     report("easyplacefix.diagnostic.already_correct", pos.toShortString());
                     return InteractionResult.FAIL;
                 }
+
+                if (stateSchematic.getBlock() instanceof NoteBlock && currentState.getBlock() instanceof NoteBlock) {
+                    int targetNote = stateSchematic.getValue(BlockStateProperties.NOTE);
+                    int currentNote = currentState.getValue(BlockStateProperties.NOTE);
+                    if (currentNote != targetNote) {
+                        if (!NoteBlockHelper.isTuning(pos)) {
+                            NoteBlockHelper.tune(mc, pos, targetNote);
+                        }
+                        report("easyplacefix.diagnostic.tuning_noteblock", pos.toShortString());
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+
                 //Removed old cache and speed checks
                 if (!stateClient.canBeReplaced(
                         new BlockPlaceContext(

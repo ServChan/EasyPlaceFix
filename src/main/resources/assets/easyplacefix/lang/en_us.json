@@ -31,6 +31,7 @@
   "easyplacefix.diagnostic.schema_termination": "Schematic state blocks placement at %s",
   "easyplacefix.diagnostic.entity_in_crosshair": "Entity under crosshair; vanilla interaction kept",
   "easyplacefix.diagnostic.already_correct": "Block already matches schematic at %s",
+  "easyplacefix.diagnostic.tuning_noteblock": "Tuning note block at %s",
   "easyplacefix.diagnostic.not_replaceable": "Target block is not replaceable at %s",
   "easyplacefix.diagnostic.missing_item": "Missing item: %s",
   "easyplacefix.diagnostic.no_hit_result": "No placement hit result for %s",

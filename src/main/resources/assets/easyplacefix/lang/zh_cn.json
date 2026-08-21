@@ -16,5 +16,6 @@
   "nbtIgnoreHotkey": "Ignore Item NBT Hotkey",
   "observerDetect": "Observer Placement Check",
   "litematica.gui.button.config_gui.easy_fix": "Easy Fix",
-  "EasyPlaceFix.config.generic.comment.clientRotationRevert": "Send an extra packet to restore the original client rotation"
+  "EasyPlaceFix.config.generic.comment.clientRotationRevert": "Send an extra packet to restore the original client rotation",
+  "easyplacefix.diagnostic.tuning_noteblock": "音符盒调音中 %s"
 }

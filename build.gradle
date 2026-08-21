@@ -46,6 +46,12 @@ dependencies {
     implementation "maven.modrinth:litematica:${litematicaVersion}"
     implementation "maven.modrinth:malilib:${malilibVersion}"
     implementation "net.fabricmc.fabric-api:fabric-api:${fabricApiVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 processResources {

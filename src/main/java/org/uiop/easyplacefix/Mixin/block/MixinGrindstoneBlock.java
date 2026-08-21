@@ -17,10 +17,20 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.ICanUse;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
+import net.minecraft.world.InteractionResult;
 import org.uiop.easyplacefix.util.PlayerInputAction;
+
+import static org.uiop.easyplacefix.config.easyPlacefixConfig.Allow_Interaction;
 
 @Mixin(GrindstoneBlock.class)
 public abstract class MixinGrindstoneBlock implements IBlock {
+    @Override
+    public InteractionResult isWorldTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate) {
+        if (Allow_Interaction.getBooleanValue()) return InteractionResult.PASS;
+
+        return null;
+    }
+
     @Override
     public boolean HasSleepTime(BlockState blockState) {
         return blockState.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.WALL;

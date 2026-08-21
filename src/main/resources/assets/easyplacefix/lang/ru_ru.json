@@ -31,6 +31,7 @@
   "easyplacefix.diagnostic.schema_termination": "Состояние схемы блокирует установку в %s",
   "easyplacefix.diagnostic.entity_in_crosshair": "Под прицелом сущность; оставлено обычное взаимодействие",
   "easyplacefix.diagnostic.already_correct": "Блок уже совпадает со схемой в %s",
+  "easyplacefix.diagnostic.tuning_noteblock": "Настройка нотного блока в %s",
   "easyplacefix.diagnostic.not_replaceable": "Целевой блок нельзя заменить в %s",
   "easyplacefix.diagnostic.missing_item": "Нет предмета: %s",
   "easyplacefix.diagnostic.no_hit_result": "Нет точки установки для %s",

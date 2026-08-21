@@ -1,6 +1,7 @@
 package org.uiop.easyplacefix.util;
 
 import net.minecraft.world.level.block.LecternBlock;
+import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.ShelfBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
@@ -14,6 +15,10 @@ public final class PlacementStateMatcher {
     public static boolean isSatisfied(BlockState schematic, BlockState world) {
         if (schematic.getBlock() != world.getBlock()) {
             return false;
+        }
+
+        if (schematic.getBlock() instanceof NoteBlock) {
+            return schematic.getValue(BlockStateProperties.NOTE).equals(world.getValue(BlockStateProperties.NOTE));
         }
 
         if (schematic.getBlock() instanceof StairBlock) {

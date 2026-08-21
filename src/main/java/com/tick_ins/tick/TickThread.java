@@ -138,12 +138,14 @@ public final class TickThread {
         TASK_EPOCH.incrementAndGet();
         clearLookLock();
         clientStopping = false;
+        org.uiop.easyplacefix.util.NoteBlockHelper.clear();
     }
 
     public static void onClientShutdown() {
         TASK_EPOCH.incrementAndGet();
         clearLookLock();
         clientStopping = true;
+        org.uiop.easyplacefix.util.NoteBlockHelper.clear();
         EXECUTOR.shutdownNow();
     }
 }

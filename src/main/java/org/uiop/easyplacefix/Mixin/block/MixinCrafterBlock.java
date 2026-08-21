@@ -28,11 +28,22 @@ import org.uiop.easyplacefix.IClientWorld;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.util.PlayerBlockAction;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+
 import static org.uiop.easyplacefix.EasyPlaceFix.crafterOperation;
 import static org.uiop.easyplacefix.EasyPlaceFix.crafterSlot;
+import static org.uiop.easyplacefix.config.easyPlacefixConfig.Allow_Interaction;
 
 @Mixin(value = CrafterBlock.class)
 public class MixinCrafterBlock implements IBlock {
+    @Override
+    public InteractionResult isWorldTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate) {
+        if (Allow_Interaction.getBooleanValue()) return InteractionResult.PASS;
+
+        return null;
+    }
+
     @Override
     public boolean HasSleepTime(BlockState blockState) {
         FrontAndTop orientation = blockState.getValue(BlockStateProperties.ORIENTATION);

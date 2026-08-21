@@ -1,7 +1,9 @@
 package org.uiop.easyplacefix.mixin.block;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import net.minecraft.core.BlockPos;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -13,10 +15,18 @@ import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.LookAt;
 import org.uiop.easyplacefix.util.PlayerInputAction;
 
+import static org.uiop.easyplacefix.config.easyPlacefixConfig.Allow_Interaction;
 import static org.uiop.easyplacefix.util.PlayerBlockAction.useItemOnAction.consumePlacementStateOverrideFor;
 
 @Mixin(LecternBlock.class)
 public class MixinLecternBlock implements IBlock {
+    @Override
+    public InteractionResult isWorldTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate) {
+        if (Allow_Interaction.getBooleanValue()) return InteractionResult.PASS;
+
+        return null;
+    }
+
     @ModifyReturnValue(method = "getStateForPlacement", at = @At("RETURN"))
     private BlockState easyplacefix$overridePlacementState(BlockState original, BlockPlaceContext context) {
         BlockState override = consumePlacementStateOverrideFor(LecternBlock.class, context.getClickedPos());
