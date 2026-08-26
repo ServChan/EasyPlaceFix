@@ -141,17 +141,10 @@ public class EasyPlaceHandler {
         for (int i = 0; i < Minecraft.getInstance().player.getInventory().getContainerSize(); i++) {
             ItemStack stack = Minecraft.getInstance().player.getInventory().getItem(i);
             stack = stack.copy();
-//                HashSet<Item> items =new HashSet<>();
-//                for (ItemStack itemStack :itemStackHashSet){
-//                    items.add(itemStack.getItem());
-//                }
             if (!stack.isEmpty()) {
                 if (items.contains(stack.getItem())) {
-//                    InventoryUtils.setPickedItemToHand(i, stack.copy(), MinecraftClient.getInstance());
                     return stack; // Found a matching item stack and return it
                 }
-
-
             }
         }
 

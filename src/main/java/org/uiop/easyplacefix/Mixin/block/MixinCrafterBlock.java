@@ -116,34 +116,10 @@ public class MixinCrafterBlock implements IBlock {
 
                 }
                 clientPlayNetworkHandler.send(new ServerboundContainerClosePacket(EasyPlaceFix.screenId));
-
-//            }));
-
-
         }
         TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
                 .setCount(3).build(() -> PlayerBlockAction.openScreenAction.count = Math.max(PlayerBlockAction.openScreenAction.count - 1, 0))
         );
-
-//        var BlockActionPacket = new PlayerInteractBlockC2SPacket(
-//                Hand.MAIN_HAND,
-//                blockHitResult,
-//                ((IClientWorld) MinecraftClient.getInstance().world).Sequence()
-//        );
-//
-//        ((IisSimpleHitPos) BlockActionPacket).setSimpleHitPos();
-//        clientPlayNetworkHandler.sendPacket(BlockActionPacket);
     }
 
 }
-//  if (stateSchematic.contains(Properties.ORIENTATION)) {
-//CrafterBlockEntity blockEntity = (CrafterBlockEntity) SchematicWorldHandler.getSchematicWorld().getBlockEntity(trace.getBlockPos());
-//                for (int i = 0; i < 9; i++) {//TODO
-//boolean isDisabled = blockEntity.isSlotDisabled(i);
-//                    crafterSlot.set(i, isDisabled);
-//                    if (!crafterOperation && isDisabled) {
-//crafterOperation = true;
-//        }
-//        }
-//
-//        }
