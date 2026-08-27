@@ -3,7 +3,7 @@
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-26.1.2%20%7C%2026.2-brightgreen?style=flat-square&logo=minecraft)](README.md)
 [![Platform](https://img.shields.io/badge/Platform-Fabric-blue?style=flat-square&logo=fabric)](README.md)
 [![Java Target](https://img.shields.io/badge/Java-25-orange?style=flat-square&logo=openjdk)](README.md)
-[![Mod Version](https://img.shields.io/badge/Version-0.6.4-purple?style=flat-square)](README.md)
+[![Mod Version](https://img.shields.io/badge/Version-0.6.5-purple?style=flat-square)](README.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
 Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer through orientation correction, retries, and delay bridges.
@@ -53,7 +53,7 @@ Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer 
 .\gradlew.bat clean build --warning-mode all
 ```
 
-Итоговый файл: `build/libs/easyplacefix-0.6.4.jar`.
+Итоговый файл: `build/libs/easyplacefix-0.6.5.jar`.
 
 ---
 
@@ -102,7 +102,7 @@ Configuration file `config/loosenMode.json` stores relaxed matching rules with a
 .\gradlew.bat clean build --warning-mode all
 ```
 
-Output: `build/libs/easyplacefix-0.6.4.jar`.
+Output: `build/libs/easyplacefix-0.6.5.jar`.
 
 ## Credits
 
