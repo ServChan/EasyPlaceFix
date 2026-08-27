@@ -3,9 +3,11 @@ package org.uiop.easyplacefix.config;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 
 public enum PlacementPreset implements IConfigOptionListEntry {
-    BALANCED("balanced", "Balanced", 1),
-    SAFE("safe", "Safe", 3),
-    FAST("fast", "Fast", 0),
+    // delayTicks = client ticks to wait between two placements (20 ticks = 1 s).
+    // These are the server-facing pacing limits; too fast trips "timer" anti-cheat.
+    BALANCED("balanced", "Balanced", 2),
+    SAFE("safe", "Safe", 4),
+    FAST("fast", "Fast", 1),
     CUSTOM("custom", "Custom", -1);
 
     private final String value;
@@ -19,7 +21,11 @@ public enum PlacementPreset implements IConfigOptionListEntry {
     }
 
     public int getDelayTicks(int customDelayTicks) {
-        return this == CUSTOM ? customDelayTicks : this.delayTicks;
+        if (this == CUSTOM) {
+            // Custom is the explicit opt-out: allow 0 (no limit) for servers without a build anti-cheat.
+            return Math.max(0, customDelayTicks);
+        }
+        return this.delayTicks;
     }
 
     @Override

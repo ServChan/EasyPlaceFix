@@ -30,10 +30,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.IClientPlayerInteractionManager;
-import org.uiop.easyplacefix.data.LoosenModeData;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-import java.util.HashSet;
 import java.util.List;
 import java.lang.reflect.Method;
 import java.util.concurrent.ConcurrentHashMap;
@@ -136,7 +134,7 @@ public class EasyPlaceHandler {
         return false;
     }
 
-    public static ItemStack loosenMode2(HashSet<ItemStack> itemStackHashSet) {
+    public static ItemStack loosenMode2() {
 
         for (int i = 0; i < Minecraft.getInstance().player.getInventory().getContainerSize(); i++) {
             ItemStack stack = Minecraft.getInstance().player.getInventory().getItem(i);
@@ -172,9 +170,9 @@ public class EasyPlaceHandler {
                     stack1 = findBlockInInventory(playerInventory, predicate);
                 }
                 if (stack1 == null) {
-                    HashSet<ItemStack> itemStackHashSet = LoosenModeData.loadFromFile();
-                    return loosenMode2(itemStackHashSet);
-
+                    // Match against the in-memory Loosen list (kept current by
+                    // LoosenModeData load/save); no disk I/O on the placement path.
+                    return loosenMode2();
                 }
                 return stack1;
 
@@ -286,10 +284,6 @@ public class EasyPlaceHandler {
                     return InteractionResult.FAIL;
                 }
                 RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getA();//Placement hit result data
-                if (stateSchematic.getBlock() instanceof PistonBaseBlock) {//TODO Investigate interactBlock internals and improve this branch
-                    pistonBlockState = stateSchematic;
-                    modifyBoolean = true;
-                }
                 ItemStack finalStack = itemStack2;
 //                concurrentMap.put(pos,0L);
 
@@ -337,6 +331,13 @@ public class EasyPlaceHandler {
                                         ((IBlock) block).firstAction(stateSchematic, trace);
                                         if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
+                                        }
+                                        // Arm the piston placement-state override immediately before the
+                                        // interaction it applies to, so an unrelated getStateForPlacement
+                                        // call in between cannot consume it.
+                                        if (stateSchematic.getBlock() instanceof PistonBaseBlock) {
+                                            pistonBlockState = stateSchematic;
+                                            modifyBoolean = true;
                                         }
                                         interactionManager.useItemOn(
                                                 mc.player,
@@ -399,6 +400,13 @@ public class EasyPlaceHandler {
                                         ((IBlock) block).firstAction(stateSchematic, trace);
                                         if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
+                                        }
+                                        // Arm the piston placement-state override immediately before the
+                                        // interaction it applies to, so an unrelated getStateForPlacement
+                                        // call in between cannot consume it.
+                                        if (stateSchematic.getBlock() instanceof PistonBaseBlock) {
+                                            pistonBlockState = stateSchematic;
+                                            modifyBoolean = true;
                                         }
                                         interactionManager.useItemOn(
                                                 mc.player,

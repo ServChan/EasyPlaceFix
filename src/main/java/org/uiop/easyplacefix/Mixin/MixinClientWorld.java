@@ -15,6 +15,12 @@ public class MixinClientWorld implements IClientWorld {
 
     @Override
     public int Sequence() {
-        return this.blockStatePredictionHandler.startPredicting().currentSequence();
+        // startPredicting() sets isPredicting=true and must be balanced with close(),
+        // otherwise the client's block-prediction state leaks and desyncs. Use
+        // try-with-resources so the handler is closed even though we send the packet
+        // ourselves.
+        try (BlockStatePredictionHandler handler = this.blockStatePredictionHandler.startPredicting()) {
+            return handler.currentSequence();
+        }
     }
 }

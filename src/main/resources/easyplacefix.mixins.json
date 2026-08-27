@@ -109,7 +109,6 @@
     "packet.MixinPlayerMoveC2SPacket$Full",
     "packet.MixinPlayerMoveC2SPacket$LookAndOnGround",
     "packet.MixinOpenScreenS2CPacket",
-    "packet.MixinPlayerInteractBlockC2SPacket",
     "packet.MixinScreenHandlerPropertyUpdateS2CPacket",
     "packet.MixinSignEditorOpenS2CPacket"
   ],

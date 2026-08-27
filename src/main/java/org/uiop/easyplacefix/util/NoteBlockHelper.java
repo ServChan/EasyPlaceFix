@@ -3,7 +3,6 @@ package org.uiop.easyplacefix.util;
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -15,14 +14,30 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 
+/**
+ * Tunes note blocks to their schematic note by sending right-click interactions.
+ * <p>
+ * All positions being tuned share a single pump that emits at most one
+ * interaction every {@link #TUNE_INTERVAL_TICKS} ticks, round-robin. Without this
+ * a wall of note blocks would each spawn an independent per-tick clicker and the
+ * combined packet rate would trip server "timer" anti-cheat.
+ */
 public final class NoteBlockHelper {
     public static final int MAX_NOTE = 24;
     public static final int NOTE_COUNT = 25;
     private static final int MAX_ATTEMPTS = 30;
+    private static final int TUNE_INTERVAL_TICKS = 2;
+
     private static final Set<BlockPos> TUNING_POSITIONS = ConcurrentHashMap.newKeySet();
+    private static final ConcurrentLinkedDeque<BlockPos> QUEUE = new ConcurrentLinkedDeque<>();
+    private static final ConcurrentHashMap<BlockPos, Integer> TARGET_NOTE = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<BlockPos, Integer> ATTEMPTS_LEFT = new ConcurrentHashMap<>();
+    private static final AtomicBoolean PUMP_SCHEDULED = new AtomicBoolean(false);
 
     private NoteBlockHelper() {
     }
@@ -47,43 +62,58 @@ public final class NoteBlockHelper {
             }
         }
 
-        if (!TUNING_POSITIONS.add(pos)) {
-            return;
+        BlockPos key = pos.immutable();
+        TARGET_NOTE.put(key, targetNote);
+        if (TUNING_POSITIONS.add(key)) {
+            ATTEMPTS_LEFT.put(key, MAX_ATTEMPTS);
+            QUEUE.addLast(key);
         }
-
-        scheduleNextTuneStep(mc, pos, targetNote, MAX_ATTEMPTS);
+        ensurePump(mc);
     }
 
-    private static void scheduleNextTuneStep(Minecraft mc, BlockPos pos, int targetNote, int remainingAttempts) {
-        TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(1).build(() -> {
-            try {
-                if (remainingAttempts <= 0) {
-                    TUNING_POSITIONS.remove(pos);
-                    return;
-                }
+    private static void ensurePump(Minecraft mc) {
+        if (QUEUE.isEmpty()) {
+            return;
+        }
+        if (PUMP_SCHEDULED.compareAndSet(false, true)) {
+            TickThread.addCountDownTask(new RunnableWithCountDown.Builder()
+                    .setCount(TUNE_INTERVAL_TICKS)
+                    .build(() -> pump(mc)));
+        }
+    }
 
-                if (mc.player == null || mc.level == null) {
-                    TUNING_POSITIONS.remove(pos);
-                    return;
+    private static void pump(Minecraft mc) {
+        PUMP_SCHEDULED.set(false);
+        try {
+            if (mc.player == null || mc.level == null || mc.gameMode == null) {
+                clear();
+                return;
+            }
+
+            BlockPos pos;
+            while ((pos = QUEUE.pollFirst()) != null) {
+                if (!TUNING_POSITIONS.contains(pos)) {
+                    continue;
                 }
 
                 BlockState state = mc.level.getBlockState(pos);
-                if (!(state.getBlock() instanceof NoteBlock)) {
-                    TUNING_POSITIONS.remove(pos);
-                    return;
+                Integer target = TARGET_NOTE.get(pos);
+                if (target == null || !(state.getBlock() instanceof NoteBlock)) {
+                    finish(pos);
+                    continue;
                 }
 
-                int currentNote = state.getValue(BlockStateProperties.NOTE);
-                if (currentNote == targetNote) {
-                    TUNING_POSITIONS.remove(pos);
-                    return;
+                if (state.getValue(BlockStateProperties.NOTE) == target) {
+                    finish(pos);
+                    continue;
                 }
 
-                MultiPlayerGameMode gameMode = mc.gameMode;
-                if (gameMode == null) {
-                    TUNING_POSITIONS.remove(pos);
-                    return;
+                int attempts = ATTEMPTS_LEFT.getOrDefault(pos, 0);
+                if (attempts <= 0) {
+                    finish(pos);
+                    continue;
                 }
+                ATTEMPTS_LEFT.put(pos, attempts - 1);
 
                 RelativeBlockHitResult hitResult = new RelativeBlockHitResult(
                         new Vec3(0.5, 0.5, 0.5),
@@ -91,19 +121,34 @@ public final class NoteBlockHelper {
                         pos,
                         false
                 );
-
-                gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, hitResult);
+                mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, hitResult);
                 mc.player.swing(InteractionHand.MAIN_HAND);
 
-                scheduleNextTuneStep(mc, pos, targetNote, remainingAttempts - 1);
-            } catch (Exception error) {
-                LOGGER.error("Error during NoteBlock tuning at {}", pos, error);
-                TUNING_POSITIONS.remove(pos);
+                QUEUE.addLast(pos); // still needs more clicks; back of the line
+                break;              // exactly one interaction per pump
             }
-        }));
+        } catch (Exception error) {
+            LOGGER.error("Error during NoteBlock tuning", error);
+            clear();
+            return;
+        }
+
+        if (!QUEUE.isEmpty()) {
+            ensurePump(mc);
+        }
+    }
+
+    private static void finish(BlockPos pos) {
+        TUNING_POSITIONS.remove(pos);
+        TARGET_NOTE.remove(pos);
+        ATTEMPTS_LEFT.remove(pos);
     }
 
     public static void clear() {
         TUNING_POSITIONS.clear();
+        QUEUE.clear();
+        TARGET_NOTE.clear();
+        ATTEMPTS_LEFT.clear();
+        PUMP_SCHEDULED.set(false);
     }
 }

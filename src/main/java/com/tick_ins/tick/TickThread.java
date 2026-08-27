@@ -22,8 +22,13 @@ public final class TickThread {
     private static final AtomicLong TASK_EPOCH = new AtomicLong();
     private static final AtomicInteger PENDING_TASKS = new AtomicInteger();
     private static final int MAX_PENDING_TASKS = 512;
+    // Safety cap: even if the scheduled "clear" task is dropped (bounded queue full)
+    // or something throws before it runs, the look lock must not stay stuck - a stuck
+    // lock freezes the player's server-side rotation and desyncs them.
+    private static final long LOOK_LOCK_MAX_MS = 1500L;
     private static volatile boolean clientStopping = false;
     public static volatile boolean notChangPlayerLook = false;
+    private static volatile long lookLockExpiryMs = 0L;
     public static volatile float yawLock = 0.0F;
     public static volatile float pitchLock = 0.0F;
 
@@ -127,11 +132,22 @@ public final class TickThread {
 
         yawLock = yawAndPitch.getA();
         pitchLock = yawAndPitch.getB();
+        lookLockExpiryMs = System.currentTimeMillis() + LOOK_LOCK_MAX_MS;
         notChangPlayerLook = true;
+    }
+
+    /**
+     * Whether outgoing rotation packets should currently be pinned to the locked
+     * yaw/pitch. Time-boxed so a dropped or failed clear task cannot freeze the
+     * player's view forever.
+     */
+    public static boolean isLookLocked() {
+        return notChangPlayerLook && System.currentTimeMillis() < lookLockExpiryMs;
     }
 
     public static void clearLookLock() {
         notChangPlayerLook = false;
+        lookLockExpiryMs = 0L;
     }
 
     public static void onClientDisconnected() {

@@ -8,6 +8,7 @@ import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.block.Block;
@@ -39,8 +40,14 @@ public class PlayerBlockAction {
         // Thread-safe placement cooldown cache
         public static Map<BlockPos, Long> lastPlacementTimeMap = new ConcurrentHashMap<>();
         public static BlockState pistonBlockState = null;
-        // Global placement rate limiter (anti-cheat protection)
-        private static volatile long lastGlobalPlacementTime = 0;
+        // Global placement rate limiter (anti-cheat protection).
+        // Paced in real client ticks rather than wall-clock time so the cadence
+        // follows the vanilla game loop - which is exactly what server-side
+        // "timer" anti-cheat measures. The millisecond value is only a backstop
+        // for frame/scheduler jitter inside a single tick.
+        private static volatile int lastGlobalPlacementTick = Integer.MIN_VALUE;
+        private static volatile long lastGlobalPlacementTimeMs = 0L;
+        private static volatile int jitterExtraTicks = 0;
         private static final long PLACEMENT_OVERRIDE_TTL_MS = 1200L;
         private static final int PLACEMENT_OVERRIDE_MAX_SIZE = 512;
         private static final int PLACEMENT_OVERRIDE_USES = 4;
@@ -175,16 +182,36 @@ public class PlayerBlockAction {
             if (delayTicks <= 0) {
                 return false;
             }
-            long now = System.currentTimeMillis();
-            long delayMs = delayTicks * 50L;
-            if (now - lastGlobalPlacementTime < delayMs) {
-                return true;
+            int effectiveDelay = delayTicks + Math.max(0, jitterExtraTicks);
+
+            // Primary gate: real client ticks elapsed since the last placement.
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null && lastGlobalPlacementTick != Integer.MIN_VALUE) {
+                int elapsedTicks = mc.player.tickCount - lastGlobalPlacementTick;
+                if (elapsedTicks >= 0 && elapsedTicks < effectiveDelay) {
+                    return true;
+                }
             }
-            return false;
+
+            // Wall-clock backstop for frame/scheduler jitter within a single tick.
+            return System.currentTimeMillis() - lastGlobalPlacementTimeMs < effectiveDelay * 50L;
         }
 
         public static void markGlobalPlacement() {
-            lastGlobalPlacementTime = System.currentTimeMillis();
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                lastGlobalPlacementTick = mc.player.tickCount;
+            }
+            lastGlobalPlacementTimeMs = System.currentTimeMillis();
+            jitterExtraTicks = easyPlacefixConfig.PLACEMENT_JITTER.getBooleanValue()
+                    ? ThreadLocalRandom.current().nextInt(0, 2)
+                    : 0;
+        }
+
+        public static void resetGlobalPlacement() {
+            lastGlobalPlacementTick = Integer.MIN_VALUE;
+            lastGlobalPlacementTimeMs = 0L;
+            jitterExtraTicks = 0;
         }
 
         public static boolean isPlacementCooling(BlockPos pos) {
