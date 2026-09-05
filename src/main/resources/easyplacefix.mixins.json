@@ -50,6 +50,7 @@
     "block.MixinLeverBlock",
     "block.MixinLoomBlock",
     "block.MixinMultifaceBlock",
+    "block.MixinNoteBlock",
     "block.MixinObserverBlock",
     "block.MixinPillarBlock",
     "block.MixinPiston",
