@@ -25,10 +25,15 @@ public final class easyPlaceFixHotkeys {
         easyPlacefixConfig.ENABLE_FIX.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.ENABLE_FIX, "easyplacefix.config.name.enableFix"));
         easyPlacefixConfig.LOOSEN_MODE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
         easyPlacefixConfig.IGNORE_NBT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
+        easyPlacefixConfig.PLACEMENT_JITTER.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.PLACEMENT_JITTER, "easyplacefix.config.name.placementJitter"));
         easyPlacefixConfig.Allow_Interaction.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
         easyPlacefixConfig.OBSERVER_DETECT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.OBSERVER_DETECT, "easyplacefix.config.name.observerDetect"));
         easyPlacefixConfig.CLIENT_ROTATION_REVERT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.CLIENT_ROTATION_REVERT, "easyplacefix.config.name.clientRotationRevert"));
         easyPlacefixConfig.DIAGNOSTIC_STATUS.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.DIAGNOSTIC_STATUS, "easyplacefix.config.name.diagnosticStatus"));
+        easyPlacefixConfig.EXCAVATION_GUARD.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD, "easyplacefix.config.name.excavationGuard"));
+        easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE, "easyplacefix.config.name.excavationGuardProtectOutside"));
+        easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT, "easyplacefix.config.name.excavationGuardProtectCorrect"));
+        easyPlacefixConfig.EXCAVATION_GUARD_HINT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_HINT, "easyplacefix.config.name.excavationGuardHint"));
         LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
         IGNORE_NBT_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
         Allow_Interaction_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));

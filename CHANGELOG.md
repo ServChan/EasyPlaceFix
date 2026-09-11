@@ -7,6 +7,8 @@
   - cancels breaking a block inside the schematic that already matches it exactly (`excavationGuardProtectCorrect`); a spot where the schematic expects air is never protected;
   - shows a short action bar hint explaining why a break attempt was blocked (`excavationGuardHint`).
   - Reuses the existing `EasyPlaceHandler.isSchematicBlock` placement-geometry check (already tolerant of the MaLiLib bounding-box API transition), so it shares the same schematic-area definition as the rest of Easy Place.
+- Fixed the 4 new Excavation guard hotkeyed toggles not actually being bindable: they were registered as `ConfigBooleanHotkeyed` but never added to `Hotkeys.init()` / `easyPlaceFixHotkeys.addCallbacks()`, so a keybind assigned to them in the Litematica GUI would do nothing.
+- Fixed the same pre-existing gap for `placementJitter` ("Randomize placement timing"), which had the identical problem from an earlier version.
 
 ## 0.6.5
 
