@@ -11,6 +11,10 @@
   "easyplacefix.config.name.observerDetect": "Observer safety check",
   "easyplacefix.config.name.clientRotationRevert": "Revert client rotation",
   "easyplacefix.config.name.diagnosticStatus": "Diagnostic status messages",
+  "easyplacefix.config.name.excavationGuard": "Protección de excavación",
+  "easyplacefix.config.name.excavationGuardProtectOutside": "Protección: fuera del esquema",
+  "easyplacefix.config.name.excavationGuardProtectCorrect": "Protección: bloques bien colocados",
+  "easyplacefix.config.name.excavationGuardHint": "Protección: aviso en la barra de estado",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Master switch for EasyPlaceFix.\nON: EasyPlaceFix takes over Litematica's Easy Place path and places blocks with the correct facing, half, shape, note, etc.\nOFF: Litematica's normal Easy Place is used and this whole tab does nothing.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "How fast blocks are placed while holding right-click.\nThe server watches how often you send build actions - too fast trips 'timer' anti-cheat and kicks you.\n\n- Balanced: 2 ticks between blocks (~10/s). Safe default for most servers.\n- Safe: 4 ticks (~5/s). Use on laggy or strict servers, or with high ping.\n- Fast: 1 tick (~20/s). Vanilla-legal maximum; only where there is no build anti-cheat.\n- Custom: use the 'Custom placement delay' value below.",
@@ -22,6 +26,10 @@
   "EasyPlaceFix.config.generic.comment.observerDetect": "Skip placing an observer while the schematic around it is not built yet.\nPrevents observers from firing early and desyncing redstone. Slightly slower around observers.",
   "EasyPlaceFix.config.generic.comment.clientRotationRevert": "EasyPlaceFix briefly rotates you server-side to place directional blocks.\nON: your visible camera snaps back afterwards (one extra look packet per placement).\nOFF: the tiny rotation is left as-is (fewer packets, recommended).",
   "EasyPlaceFix.config.generic.comment.diagnosticStatus": "Show a short line above the hotbar explaining what Easy Place just did, or why it refused\n(missing item, cooldown, state mismatch, ...).\nGreat for debugging a schematic; noisy during normal building.",
+  "EasyPlaceFix.config.generic.comment.excavationGuard": "Opcional, DESACTIVADO por defecto. Mientras el modo Easy Place de Litematica esté activo, impide romper\nbloques fuera del esquema cargado y bloques ya colocados exactamente como pide el esquema,\nasí la excavación solo elimina material sobrante o incorrecto. No hace nada si Easy Place está apagado.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Parte de la protección de excavación. Impide romper cualquier bloque que no esté dentro del área de un esquema cargado.\nDesactívalo para proteger solo los bloques bien colocados y romper todo lo demás sin restricción.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Parte de la protección de excavación. Impide romper un bloque dentro del esquema si ya coincide exactamente con él.\nUn lugar donde el esquema espera aire nunca queda protegido por esto.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Parte de la protección de excavación. Muestra un breve mensaje en la barra de estado explicando\npor qué se bloqueó un intento de romper (fuera del esquema / ya está correcto).",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Toggle Loosen mode.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Toggle NBT/component ignoring.",
@@ -60,5 +68,7 @@
   "easyplacefix.report.diagnostics": "Diagnostics enabled",
   "easyplacefix.report.copied": "Compatibility report copied to clipboard.",
   "easyplacefix.report.last.none": "No placement diagnostic recorded yet.",
-  "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)"
+  "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)",
+  "easyplacefix.excavationguard.hint.outside": "Protección de excavación: este bloque está fuera del esquema",
+  "easyplacefix.excavationguard.hint.correct": "Protección de excavación: este bloque ya está colocado correctamente"
 }

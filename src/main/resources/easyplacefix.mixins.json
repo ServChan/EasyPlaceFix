@@ -116,6 +116,7 @@
     "MixinClientPlayerInteractionManager",
     "MixinClientWorld",
     "MixinMinecraftClient",
+    "MixinExcavationGuard",
     "config.ConfigGuiTabAccessor",
     "config.MixinConfigGuiTab",
     "config.MixinGuiConfigs",

@@ -11,6 +11,10 @@
   "easyplacefix.config.name.observerDetect": "Observer safety check",
   "easyplacefix.config.name.clientRotationRevert": "Revert client rotation",
   "easyplacefix.config.name.diagnosticStatus": "Diagnostic status messages",
+  "easyplacefix.config.name.excavationGuard": "Excavation guard",
+  "easyplacefix.config.name.excavationGuardProtectOutside": "Guard: protect outside schematic",
+  "easyplacefix.config.name.excavationGuardProtectCorrect": "Guard: protect correctly placed blocks",
+  "easyplacefix.config.name.excavationGuardHint": "Guard: show action bar hint",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Master switch for EasyPlaceFix.\nON: EasyPlaceFix takes over Litematica's Easy Place path and places blocks with the correct facing, half, shape, note, etc.\nOFF: Litematica's normal Easy Place is used and this whole tab does nothing.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "How fast blocks are placed while holding right-click.\nThe server watches how often you send build actions - too fast trips 'timer' anti-cheat and kicks you.\n\n- Balanced: 2 ticks between blocks (~10/s). Safe default for most servers.\n- Safe: 4 ticks (~5/s). Use on laggy or strict servers, or with high ping.\n- Fast: 1 tick (~20/s). Vanilla-legal maximum; only where there is no build anti-cheat.\n- Custom: use the 'Custom placement delay' value below.",
@@ -22,6 +26,10 @@
   "EasyPlaceFix.config.generic.comment.observerDetect": "Skip placing an observer while the schematic around it is not built yet.\nPrevents observers from firing early and desyncing redstone. Slightly slower around observers.",
   "EasyPlaceFix.config.generic.comment.clientRotationRevert": "EasyPlaceFix briefly rotates you server-side to place directional blocks.\nON: your visible camera snaps back afterwards (one extra look packet per placement).\nOFF: the tiny rotation is left as-is (fewer packets, recommended).",
   "EasyPlaceFix.config.generic.comment.diagnosticStatus": "Show a short line above the hotbar explaining what Easy Place just did, or why it refused\n(missing item, cooldown, state mismatch, ...).\nGreat for debugging a schematic; noisy during normal building.",
+  "EasyPlaceFix.config.generic.comment.excavationGuard": "Optional, OFF by default. While Litematica's Easy Place mode is on, cancels breaking blocks\noutside every loaded schematic and blocks already placed exactly as the schematic expects,\nso raw digging only clears leftover or wrong material. Does nothing while Easy Place is off.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Part of Excavation guard. Cancels breaking any block that is not inside a loaded schematic's area.\nTurn OFF to only protect correctly placed blocks and allow breaking everywhere else.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Part of Excavation guard. Cancels breaking a block inside the schematic if it already matches\nthe schematic exactly. A spot where the schematic expects air is never protected by this.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Part of Excavation guard. Shows a short action bar message explaining why a break attempt\nwas blocked (outside schematic / already correct).",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Toggle Loosen mode.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Toggle NBT/component ignoring.",
@@ -60,5 +68,7 @@
   "easyplacefix.report.diagnostics": "Diagnostics enabled",
   "easyplacefix.report.copied": "Compatibility report copied to clipboard.",
   "easyplacefix.report.last.none": "No placement diagnostic recorded yet.",
-  "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)"
+  "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)",
+  "easyplacefix.excavationguard.hint.outside": "Excavation guard: this block is outside the schematic",
+  "easyplacefix.excavationguard.hint.correct": "Excavation guard: this block is already correctly placed"
 }

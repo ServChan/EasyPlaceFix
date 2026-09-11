@@ -10,6 +10,10 @@
   "easyplacefix.config.name.observerDetect": "侦测器安全检查",
   "easyplacefix.config.name.clientRotationRevert": "还原客户端视角",
   "easyplacefix.config.name.diagnosticStatus": "诊断状态消息",
+  "easyplacefix.config.name.excavationGuard": "挖掘防护",
+  "easyplacefix.config.name.excavationGuardProtectOutside": "防护：保护原理图之外",
+  "easyplacefix.config.name.excavationGuardProtectCorrect": "防护：保护已正确放置的方块",
+  "easyplacefix.config.name.excavationGuardHint": "防护：显示动作栏提示",
   "EasyPlaceFix.config.generic.comment.enableFix": "EasyPlaceFix 的总开关。\n开启：EasyPlaceFix 接管 Litematica 的 Easy Place，并以正确的朝向、半砖、形状、音符等放置方块。\n关闭：使用 Litematica 原本的 Easy Place，本页设置全部无效。",
   "EasyPlaceFix.config.generic.comment.placementPreset": "按住右键时方块的放置速度。\n服务器会监控你发送建造操作的频率——过快会触发 “timer” 反作弊并将你踢出。\n\n- Balanced：每个方块间隔 2 刻（约 10/秒）。适合大多数服务器的安全默认值。\n- Safe：4 刻（约 5/秒）。用于卡顿或严格的服务器，或高延迟时。\n- Fast：1 刻（约 20/秒）。原版允许的最大速度；仅在没有建造反作弊的服务器使用。\n- Custom：使用下方的“自定义放置延迟”数值。",
   "EasyPlaceFix.config.generic.comment.placementDelay": "两次放置之间等待的刻数。仅在预设为 “Custom” 时生效。\n20 刻 = 1 秒。数值越大越慢但越安全。\n0 会完全取消限制，并会被 “timer” 反作弊踢出。\n对 Balanced / Safe / Fast 无效。",
@@ -20,6 +24,10 @@
   "EasyPlaceFix.config.generic.comment.observerDetect": "在侦测器周围的原理图尚未建好时，暂不放置侦测器。\n避免侦测器过早触发导致红石不同步。侦测器附近会略慢。",
   "EasyPlaceFix.config.generic.comment.clientRotationRevert": "EasyPlaceFix 会在服务器端短暂转动你的视角以放置有朝向的方块。\n开启：之后可见视角会转回（每次放置多一个视角包）。\n关闭：保留这一点点转动（更少的数据包，推荐）。",
   "EasyPlaceFix.config.generic.comment.diagnosticStatus": "在快捷栏上方显示一行简短信息：Easy Place 刚做了什么，或为何拒绝\n（缺少物品、冷却、状态不匹配等）。\n调试原理图时很有用；日常建造时较吵。",
+  "EasyPlaceFix.config.generic.comment.excavationGuard": "可选功能，默认关闭。当 Litematica 的 Easy Place 模式开启时，阻止破坏已加载原理图之外的方块，\n以及已经与原理图完全一致的方块，使挖掘只清除多余或放错的材料。\nEasy Place 关闭时此功能不生效。",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "挖掘防护的一部分。阻止破坏不在已加载原理图区域内的任何方块。\n关闭此项后只保护正确放置的方块，其余位置可自由破坏。",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "挖掘防护的一部分。如果原理图内的方块已经与原理图完全一致，阻止破坏它。\n原理图中应为空气的位置永远不会被此项保护。",
+  "EasyPlaceFix.config.generic.comment.excavationGuardHint": "挖掘防护的一部分。在动作栏显示简短提示，说明为何破坏被阻止\n（在原理图之外／已经放置正确）。",
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "切换宽松模式。",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "切换是否忽略 NBT/组件。",
   "easyPlaceFix.config.hotkeys.comment.AllowInteraction": "切换是否允许交互。",
@@ -57,5 +65,7 @@
   "easyplacefix.report.diagnostics": "诊断已启用",
   "easyplacefix.report.copied": "兼容性报告已复制到剪贴板。",
   "easyplacefix.report.last.none": "尚未记录任何放置诊断。",
-  "easyplacefix.report.last.entry": "最近一次放置诊断：%s（%s 秒前）"
+  "easyplacefix.report.last.entry": "最近一次放置诊断：%s（%s 秒前）",
+  "easyplacefix.excavationguard.hint.outside": "挖掘防护：此方块在原理图之外",
+  "easyplacefix.excavationguard.hint.correct": "挖掘防护：此方块已经放置正确"
 }

@@ -11,6 +11,10 @@
   "easyplacefix.config.name.observerDetect": "Защита установки observer",
   "easyplacefix.config.name.clientRotationRevert": "Возвращать поворот клиента",
   "easyplacefix.config.name.diagnosticStatus": "Диагностические сообщения",
+  "easyplacefix.config.name.excavationGuard": "Защита при раскопках",
+  "easyplacefix.config.name.excavationGuardProtectOutside": "Защита: вне схемы",
+  "easyplacefix.config.name.excavationGuardProtectCorrect": "Защита: правильно установленные блоки",
+  "easyplacefix.config.name.excavationGuardHint": "Защита: подсказка в строке состояния",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Главный выключатель EasyPlaceFix.\nВКЛ: EasyPlaceFix берёт на себя Easy Place из Litematica и ставит блоки с правильным поворотом, половиной, формой, нотой и т.д.\nВЫКЛ: работает обычный Easy Place из Litematica, вся эта вкладка ничего не делает.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "Как быстро ставятся блоки при зажатой ПКМ.\nСервер следит, как часто вы шлёте действия постройки - слишком быстро срабатывает анти-чит 'timer' и вас кикает.\n\n- Balanced: 2 тика между блоками (~10/с). Безопасно по умолчанию для большинства серверов.\n- Safe: 4 тика (~5/с). Для лагающих или строгих серверов и при высоком пинге.\n- Fast: 1 тик (~20/с). Максимум, легальный в ванилле; только там, где нет анти-чита на постройку.\n- Custom: использовать значение 'Своя задержка установки' ниже.",
@@ -22,6 +26,10 @@
   "EasyPlaceFix.config.generic.comment.observerDetect": "Не ставить observer, пока схема вокруг него ещё не построена.\nНе даёт observer сработать раньше времени и рассинхронить редстоун. Немного медленнее рядом с observer.",
   "EasyPlaceFix.config.generic.comment.clientRotationRevert": "EasyPlaceFix на миг поворачивает вас на стороне сервера, чтобы поставить направленный блок.\nВКЛ: видимая камера возвращается назад (один лишний пакет поворота на установку).\nВЫКЛ: небольшой поворот остаётся как есть (меньше пакетов, рекомендуется).",
   "EasyPlaceFix.config.generic.comment.diagnosticStatus": "Показывает короткую строку над хотбаром: что Easy Place только что сделал или почему отказался\n(нет предмета, кулдаун, несовпадение состояния, ...).\nУдобно для отладки схемы; шумно при обычной стройке.",
+  "EasyPlaceFix.config.generic.comment.excavationGuard": "Опционально, по умолчанию ВЫКЛ. Пока включён режим Easy Place у Litematica, запрещает ломать блоки\nза пределами загруженной схемы и блоки, уже установленные точно так, как требует схема, —\nраскопка затрагивает только лишний или неверно установленный материал. Ничего не делает, если Easy Place выключен.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Часть защиты при раскопках. Запрещает ломать любой блок, который находится вне области загруженной схемы.\nВыключите, чтобы защищать только правильно установленные блоки, а остальное ломать без ограничений.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Часть защиты при раскопках. Запрещает ломать блок внутри схемы, если он уже точно совпадает со схемой.\nМесто, где по схеме должен быть воздух, этим никогда не защищается.",
+  "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Часть защиты при раскопках. Показывает короткое сообщение в строке состояния о причине блокировки\n(вне схемы / уже установлено правильно).",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Переключает свободный подбор блоков.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Переключает игнорирование NBT/компонентов.",
@@ -60,5 +68,7 @@
   "easyplacefix.report.diagnostics": "Диагностика включена",
   "easyplacefix.report.copied": "Compatibility report скопирован в буфер обмена.",
   "easyplacefix.report.last.none": "Диагностики установки пока не было.",
-  "easyplacefix.report.last.entry": "Последняя диагностика установки: %s (%s сек. назад)"
+  "easyplacefix.report.last.entry": "Последняя диагностика установки: %s (%s сек. назад)",
+  "easyplacefix.excavationguard.hint.outside": "Защита при раскопках: этот блок вне схемы",
+  "easyplacefix.excavationguard.hint.correct": "Защита при раскопках: этот блок уже установлен правильно"
 }

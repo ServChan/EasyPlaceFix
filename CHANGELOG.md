@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.6
+
+- New optional **Excavation guard** (OFF by default, config tab + optional hotkey). While Litematica's Easy Place mode is on:
+  - cancels breaking any block outside every loaded schematic placement (`excavationGuardProtectOutside`);
+  - cancels breaking a block inside the schematic that already matches it exactly (`excavationGuardProtectCorrect`); a spot where the schematic expects air is never protected;
+  - shows a short action bar hint explaining why a break attempt was blocked (`excavationGuardHint`).
+  - Reuses the existing `EasyPlaceHandler.isSchematicBlock` placement-geometry check (already tolerant of the MaLiLib bounding-box API transition), so it shares the same schematic-area definition as the rest of Easy Place.
+
 ## 0.6.5
 
 - Fixed players being kicked by server "timer" anti-cheat (e.g. `build: timer-A`) while building fast with Easy Place.

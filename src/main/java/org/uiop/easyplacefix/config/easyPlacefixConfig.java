@@ -36,6 +36,16 @@ public final class easyPlacefixConfig {
     public static final ConfigBooleanHotkeyed DIAGNOSTIC_STATUS =
             new ConfigBooleanHotkeyed("diagnosticStatus", false, "", "EasyPlaceFix.config.generic.comment.diagnosticStatus");
 
+    // ---- Excavation guard ----
+    public static final ConfigBooleanHotkeyed EXCAVATION_GUARD =
+            new ConfigBooleanHotkeyed("excavationGuard", false, "", "EasyPlaceFix.config.generic.comment.excavationGuard");
+    public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_PROTECT_OUTSIDE =
+            new ConfigBooleanHotkeyed("excavationGuardProtectOutside", true, "", "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside");
+    public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_PROTECT_CORRECT =
+            new ConfigBooleanHotkeyed("excavationGuardProtectCorrect", true, "", "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect");
+    public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_HINT =
+            new ConfigBooleanHotkeyed("excavationGuardHint", true, "", "EasyPlaceFix.config.generic.comment.excavationGuardHint");
+
     static {
         ENABLE_FIX.translatedName("easyplacefix.config.name.enableFix");
         PLACEMENT_PRESET.translatedName("easyplacefix.config.name.placementPreset");
@@ -47,6 +57,10 @@ public final class easyPlacefixConfig {
         OBSERVER_DETECT.translatedName("easyplacefix.config.name.observerDetect");
         CLIENT_ROTATION_REVERT.translatedName("easyplacefix.config.name.clientRotationRevert");
         DIAGNOSTIC_STATUS.translatedName("easyplacefix.config.name.diagnosticStatus");
+        EXCAVATION_GUARD.translatedName("easyplacefix.config.name.excavationGuard");
+        EXCAVATION_GUARD_PROTECT_OUTSIDE.translatedName("easyplacefix.config.name.excavationGuardProtectOutside");
+        EXCAVATION_GUARD_PROTECT_CORRECT.translatedName("easyplacefix.config.name.excavationGuardProtectCorrect");
+        EXCAVATION_GUARD_HINT.translatedName("easyplacefix.config.name.excavationGuardHint");
     }
 
     /**
@@ -71,6 +85,10 @@ public final class easyPlacefixConfig {
                 OBSERVER_DETECT,
                 CLIENT_ROTATION_REVERT,
                 DIAGNOSTIC_STATUS,
+                EXCAVATION_GUARD,
+                EXCAVATION_GUARD_PROTECT_OUTSIDE,
+                EXCAVATION_GUARD_PROTECT_CORRECT,
+                EXCAVATION_GUARD_HINT,
         };
     }
 }
