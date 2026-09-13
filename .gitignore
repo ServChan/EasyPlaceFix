@@ -5,9 +5,9 @@ out/
 run/
 
 # Local artifacts and scratch files
-libs/
-mappings/
-assets/
+/libs/
+/mappings/
+/assets/
 
 # IDE
 .idea/

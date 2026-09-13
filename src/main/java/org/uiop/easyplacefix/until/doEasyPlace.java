@@ -45,6 +45,25 @@ import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
 
 public class doEasyPlace {//TODO Easy Place rewrite plan
 
+    public static boolean shouldAllowVanillaInteraction(MinecraftClient mc,
+                                                         RayTraceUtils.RayTraceWrapper traceWrapper) {
+        if (!Allow_Interaction.getBooleanValue() || mc.world == null || traceWrapper == null) {
+            return false;
+        }
+
+        BlockHitResult trace = traceWrapper.getBlockHitResult();
+        World schematicWorld = SchematicWorldHandler.getSchematicWorld();
+        if (trace == null || schematicWorld == null) {
+            return false;
+        }
+
+        BlockPos pos = trace.getBlockPos();
+        BlockState stateClient = mc.world.getBlockState(pos);
+        BlockState stateSchematic = schematicWorld.getBlockState(pos);
+        return ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient)
+                == ActionResult.PASS;
+    }
+
     // Whether the position belongs to any schematic area
     public static boolean isSchematicBlock(BlockPos pos) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
@@ -60,7 +79,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
         return false;
     }
 
-    public static ItemStack loosenMode2(HashSet<ItemStack> itemStackHashSet) {
+    public static ItemStack loosenMode2() {
 
         for (int i = 0; i < MinecraftClient.getInstance().player.getInventory().size(); i++) {
             ItemStack stack = MinecraftClient.getInstance().player.getInventory().getStack(i);
@@ -103,8 +122,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                     stack1 = findBlockInInventory(playerInventory, predicate);
                 }
                 if (stack1 == null) {
-                    HashSet<ItemStack> itemStackHashSet = LoosenModeData.loadFromFile();
-                    return loosenMode2(itemStackHashSet);
+                    return loosenMode2();
 
                 }
                 return stack1;
@@ -161,7 +179,24 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                 stack,
                                 trace
                         ))
-                ) return ActionResult.FAIL;
+                ) {
+                    if (TerrainAutoReplace.isEligible(stateClient, stateSchematic)) {
+                        TerrainAutoReplace.tryClearThenRetry(mc, traceWrapper, pos, trace.getSide());
+                        return ActionResult.SUCCESS;
+                    }
+                    return ActionResult.FAIL;
+                }
+                if (stateSchematic.getBlock() instanceof NoteBlock
+                        && currentState.getBlock() instanceof NoteBlock) {
+                    int targetNote = stateSchematic.get(Properties.NOTE);
+                    int currentNote = currentState.get(Properties.NOTE);
+                    if (currentNote != targetNote) {
+                        if (!NoteBlockHelper.isTuning(pos)) {
+                            NoteBlockHelper.tune(mc, pos, targetNote);
+                        }
+                        return ActionResult.SUCCESS;
+                    }
+                }
 
 
                 ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
@@ -451,38 +486,15 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
             return;
         }
 
-        if (block instanceof TrapdoorBlock) {
-            // Delay trapdoor toggles to avoid neighbor placements during high-speed desync windows.
-            for (int i = 1; i <= extraClicks; i++) {
-                int delay = i;
-                TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(delay).build(() -> {
-                    if (mc.player == null || mc.world == null) {
-                        return;
-                    }
-                    BlockState current = mc.world.getBlockState(targetPos);
-                    if (!(current.getBlock() instanceof TrapdoorBlock)) {
-                        return;
-                    }
-                    interactionManager.interactBlock(
-                            mc.player,
-                            usedHand,
-                            hitResult
-                    );
-                    mc.player.swingHand(usedHand);
-                }));
-            }
-            return;
-        }
-
-        int i = 1;
-        while (i < totalClicks) {
-            interactionManager.interactBlock(
-                    mc.player,
-                    usedHand,
-                    hitResult
-            );
-            mc.player.swingHand(usedHand);
-            i++;
+        // Two ticks per extra click prevents rows of repeaters/trapdoors from
+        // producing same-tick packet bursts on Paper anti-cheat servers.
+        for (int i = 1; i <= extraClicks; i++) {
+            TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(i * 2).build(() -> {
+                if (mc.player == null || mc.world == null) return;
+                if (mc.world.getBlockState(targetPos).getBlock() != block) return;
+                interactionManager.interactBlock(mc.player, usedHand, hitResult);
+                mc.player.swingHand(usedHand);
+            }));
         }
     }
 }

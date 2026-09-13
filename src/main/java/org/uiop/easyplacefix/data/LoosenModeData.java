@@ -10,6 +10,11 @@ import net.minecraft.item.ItemStack;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -17,7 +22,8 @@ import java.util.stream.Collectors;
 public class LoosenModeData {
 //    static HashSet<Item> itemHashSet = new HashSet<>();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final File CONFIG_FILE = new File(FabricLoader.getInstance().getConfigDir().toFile(), "loosenMode.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("loosenMode.json");
+    private static final File CONFIG_FILE = CONFIG_PATH.toFile();
     private static final Type ITEM_SET_TYPE = new TypeToken<HashSet<Integer>>() {}.getType();
     public static HashSet<Item> items = new HashSet<>();
     static {
@@ -26,33 +32,39 @@ public class LoosenModeData {
 
     public static HashSet<ItemStack> loadFromFile() {
         if (CONFIG_FILE.exists()) {
-            try (Reader reader = new FileReader(CONFIG_FILE)) {
-                HashSet<Integer> itemIds = GSON.fromJson(reader, ITEM_SET_TYPE);
-                items.clear();
-                if (itemIds == null) {
-                    return new HashSet<>();
-                }
-                HashSet<ItemStack> itemStackHashSet = itemIds.stream()
-                        .map(id -> {
-                            Item item = Item.byRawId(id);
-                            if (item == null) {
-                                return null;
-                            }
-                            items.add(item);
-                            return item.getDefaultStack();
-                        })
-                        .filter(itemStack -> itemStack != null && !itemStack.isEmpty())
-                        .collect(Collectors.toCollection(HashSet::new));
-                return itemStackHashSet;
+            try {
+                return loadFrom(CONFIG_PATH);
             } catch (IOException | JsonSyntaxException e) {
-                System.err.println("Failed to load config file:");
-                e.printStackTrace();
+                Path backup = CONFIG_PATH.resolveSibling("loosenMode.json.bak");
+                if (Files.exists(backup)) {
+                    try {
+                        return loadFrom(backup);
+                    } catch (IOException | JsonSyntaxException ignored) {
+                    }
+                }
             }
         } else {
             saveToFile(new HashSet<>());
             // Create file on first load
         }
         return new HashSet<>();
+    }
+
+    private static HashSet<ItemStack> loadFrom(Path path) throws IOException, JsonSyntaxException {
+        try (Reader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
+            HashSet<Integer> itemIds = GSON.fromJson(reader, ITEM_SET_TYPE);
+            items.clear();
+            if (itemIds == null) return new HashSet<>();
+            return itemIds.stream()
+                    .map(id -> {
+                        Item item = Item.byRawId(id);
+                        if (item == null) return null;
+                        items.add(item);
+                        return item.getDefaultStack();
+                    })
+                    .filter(stack -> stack != null && !stack.isEmpty())
+                    .collect(Collectors.toCollection(HashSet::new));
+        }
     }
 
     public static void saveToFile(Collection<ItemStack> itemHashSet) {
@@ -65,11 +77,24 @@ public class LoosenModeData {
                 })
                 .collect(Collectors.toCollection(HashSet::new));
 
-        try (Writer writer = new FileWriter(CONFIG_FILE)) {
-            GSON.toJson(itemIds, writer);
+        Path temp = CONFIG_PATH.resolveSibling("loosenMode.json.tmp");
+        Path backup = CONFIG_PATH.resolveSibling("loosenMode.json.bak");
+        try {
+            Files.createDirectories(CONFIG_PATH.getParent());
+            Files.writeString(temp, GSON.toJson(itemIds), StandardCharsets.UTF_8);
+            if (Files.exists(CONFIG_PATH)) {
+                Files.copy(CONFIG_PATH, backup, StandardCopyOption.REPLACE_EXISTING);
+            }
+            try {
+                Files.move(temp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            } catch (AtomicMoveNotSupportedException ignored) {
+                Files.move(temp, CONFIG_PATH, StandardCopyOption.REPLACE_EXISTING);
+            }
         } catch (IOException e) {
-            System.err.println("Failed to save config file:");
-            e.printStackTrace();
+            try {
+                Files.deleteIfExists(temp);
+            } catch (IOException ignored) {
+            }
         }
     }
 

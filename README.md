@@ -17,6 +17,10 @@ EasyPlaceFix это клиентский Fabric-мод для [Litematica](https
 ### Что дает мод
 
 EasyPlaceFix добавляет к обычному Easy Place:
+- автоматическую настройку нотных блоков по схеме без пакетного спама;
+- исправленное взаимодействие с контейнерами на Paper/Servux, даже с предметом в руке;
+- пресеты скорости Balanced, Safe, Fast и Custom с опциональным jitter;
+- защиту при раскопках, автосмену инструмента и автозамену грунта;
 - более корректную ориентацию блоков при установке;
 - более надежную работу на серверах с задержкой;
 - улучшенную обработку блоков, которым нужны дополнительные взаимодействия;
@@ -53,6 +57,10 @@ EasyPlaceFix добавляет к обычному Easy Place:
 - `AllowInteraction`: разрешает обычное взаимодействие с рядом контейнеров и интерактивных блоков;
 - `observerDetect`: не дает ставить observer в потенциально некорректной ситуации, если целевой блок по схеме еще не совпадает;
 - `clientRotationRevert`: возвращает клиентский поворот после служебного разворота игрока.
+- `placementPreset` и `placementJitter`: управляют безопасной частотой установки;
+- `excavationGuard`: защищает область схемы и правильно установленные блоки;
+- `autoToolSwitch`: выбирает подходящий инструмент перед ломанием;
+- `terrainAutoReplace`: заменяет неверную землю, траву, грубую землю и тропинки.
 
 Также есть отдельные хоткеи для:
 - `loosenMode`;
@@ -80,14 +88,14 @@ EasyPlaceFix добавляет к обычному Easy Place:
 ### Совместимость
 
 - Minecraft `1.21.11`
-- Java `17`
+- Java `21+`
 - Fabric Loader `0.18.4`
-- Текущая версия мода в проекте: `0.5.8`
+- Текущая версия мода в проекте: `0.6.6-1.21.11`
 
 ### Сборка
 
 Требования:
-- JDK 17
+- JDK 21+
 
 Команда сборки:
 ```bash
@@ -117,6 +125,10 @@ It is useful when default Easy Place:
 ### What It Adds
 
 EasyPlaceFix extends normal Easy Place with:
+- automatic note-block tuning with a shared, rate-limited click queue;
+- fixed container interaction on Paper/Servux, including with an item in hand;
+- Balanced, Safe, Fast, and Custom pacing presets with optional jitter;
+- Excavation guard, automatic tool switching, and terrain auto-replacement;
 - more accurate block orientation during placement;
 - better reliability on multiplayer servers;
 - improved handling for blocks that need follow-up interactions;
@@ -153,6 +165,10 @@ The mod adds its own settings to Litematica:
 - `AllowInteraction`: allows normal interaction with selected containers and interactive blocks;
 - `observerDetect`: prevents observer placement in cases where the required target block in the schematic is not yet matched;
 - `clientRotationRevert`: restores the client view rotation after the temporary placement rotation.
+- `placementPreset` and `placementJitter`: control server-safe placement pacing;
+- `excavationGuard`: protects schematic bounds and correctly placed blocks;
+- `autoToolSwitch`: selects a suitable tool before mining;
+- `terrainAutoReplace`: replaces mismatched dirt, grass, coarse dirt, and paths.
 
 It also adds separate hotkeys for:
 - `loosenMode`;
@@ -180,14 +196,14 @@ Important:
 ### Compatibility
 
 - Minecraft `1.21.11`
-- Java `17`
+- Java `21+`
 - Fabric Loader `0.18.4`
-- Current project mod version: `0.5.8`
+- Current project mod version: `0.6.6-1.21.11`
 
 ### Build
 
 Requirements:
-- JDK 17
+- JDK 21+
 
 Build command:
 ```bash

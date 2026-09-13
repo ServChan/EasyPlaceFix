@@ -8,6 +8,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 
 public final class TickThread {
     private static final ScheduledExecutorService EXECUTOR =
@@ -17,8 +20,12 @@ public final class TickThread {
                 return t;
             });
     private static final AtomicLong TASK_EPOCH = new AtomicLong();
+    private static final AtomicInteger PENDING_TASKS = new AtomicInteger();
+    private static final int MAX_PENDING_TASKS = 512;
+    private static final long LOOK_LOCK_MAX_MS = 1500L;
     private static volatile boolean clientStopping = false;
     public static volatile boolean notChangPlayerLook = false;
+    private static volatile long lookLockExpiryMs = 0L;
     public static volatile float yawLock = 0.0F;
     public static volatile float pitchLock = 0.0F;
 
@@ -82,7 +89,8 @@ public final class TickThread {
                     runnable.run();
                 }
             });
-        } catch (RejectedExecutionException ignored) {
+        } catch (RejectedExecutionException error) {
+            LOGGER.debug("Minecraft rejected a delayed EasyPlaceFix task during shutdown", error);
         }
     }
 
@@ -92,11 +100,23 @@ public final class TickThread {
         }
         long delayMs = Math.max(0, ticks) * 50L;
         long epoch = TASK_EPOCH.get();
-        EXECUTOR.schedule(() -> {
-            if (!clientStopping && epoch == TASK_EPOCH.get()) {
-                runNow(runnable);
-            }
-        }, delayMs, TimeUnit.MILLISECONDS);
+        if (PENDING_TASKS.incrementAndGet() > MAX_PENDING_TASKS) {
+            PENDING_TASKS.decrementAndGet();
+            LOGGER.warn("Discarding EasyPlaceFix delayed task because the bounded queue is full ({})", MAX_PENDING_TASKS);
+            return;
+        }
+        try {
+            EXECUTOR.schedule(() -> {
+                try {
+                    if (!clientStopping && epoch == TASK_EPOCH.get()) runNow(runnable);
+                } finally {
+                    PENDING_TASKS.decrementAndGet();
+                }
+            }, delayMs, TimeUnit.MILLISECONDS);
+        } catch (RejectedExecutionException error) {
+            PENDING_TASKS.decrementAndGet();
+            LOGGER.debug("EasyPlaceFix scheduler rejected a task during shutdown", error);
+        }
     }
 
     private static void applyLookLock(Pair<Float, Float> yawAndPitch) {
@@ -106,22 +126,33 @@ public final class TickThread {
 
         yawLock = yawAndPitch.getA();
         pitchLock = yawAndPitch.getB();
+        lookLockExpiryMs = System.currentTimeMillis() + LOOK_LOCK_MAX_MS;
         notChangPlayerLook = true;
+    }
+
+    public static boolean isLookLocked() {
+        return notChangPlayerLook && System.currentTimeMillis() < lookLockExpiryMs;
     }
 
     public static void clearLookLock() {
         notChangPlayerLook = false;
+        lookLockExpiryMs = 0L;
     }
 
     public static void onClientDisconnected() {
         TASK_EPOCH.incrementAndGet();
         clearLookLock();
         clientStopping = false;
+        org.uiop.easyplacefix.until.NoteBlockHelper.clear();
+        org.uiop.easyplacefix.until.TerrainAutoReplace.clear();
     }
 
     public static void onClientShutdown() {
         TASK_EPOCH.incrementAndGet();
         clearLookLock();
         clientStopping = true;
+        org.uiop.easyplacefix.until.NoteBlockHelper.clear();
+        org.uiop.easyplacefix.until.TerrainAutoReplace.clear();
+        EXECUTOR.shutdownNow();
     }
 }
