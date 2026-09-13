@@ -46,6 +46,14 @@ public final class easyPlacefixConfig {
     public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_HINT =
             new ConfigBooleanHotkeyed("excavationGuardHint", true, "", "EasyPlaceFix.config.generic.comment.excavationGuardHint");
 
+    // ---- Tool switching ----
+    public static final ConfigBooleanHotkeyed AUTO_TOOL_SWITCH =
+            new ConfigBooleanHotkeyed("autoToolSwitch", false, "", "EasyPlaceFix.config.generic.comment.autoToolSwitch");
+
+    // ---- Terrain auto-replace ----
+    public static final ConfigBooleanHotkeyed TERRAIN_AUTO_REPLACE =
+            new ConfigBooleanHotkeyed("terrainAutoReplace", false, "", "EasyPlaceFix.config.generic.comment.terrainAutoReplace");
+
     static {
         ENABLE_FIX.translatedName("easyplacefix.config.name.enableFix");
         PLACEMENT_PRESET.translatedName("easyplacefix.config.name.placementPreset");
@@ -61,6 +69,8 @@ public final class easyPlacefixConfig {
         EXCAVATION_GUARD_PROTECT_OUTSIDE.translatedName("easyplacefix.config.name.excavationGuardProtectOutside");
         EXCAVATION_GUARD_PROTECT_CORRECT.translatedName("easyplacefix.config.name.excavationGuardProtectCorrect");
         EXCAVATION_GUARD_HINT.translatedName("easyplacefix.config.name.excavationGuardHint");
+        AUTO_TOOL_SWITCH.translatedName("easyplacefix.config.name.autoToolSwitch");
+        TERRAIN_AUTO_REPLACE.translatedName("easyplacefix.config.name.terrainAutoReplace");
     }
 
     /**
@@ -89,6 +99,8 @@ public final class easyPlacefixConfig {
                 EXCAVATION_GUARD_PROTECT_OUTSIDE,
                 EXCAVATION_GUARD_PROTECT_CORRECT,
                 EXCAVATION_GUARD_HINT,
+                AUTO_TOOL_SWITCH,
+                TERRAIN_AUTO_REPLACE,
         };
     }
 }

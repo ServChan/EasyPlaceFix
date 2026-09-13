@@ -15,6 +15,8 @@
   "easyplacefix.config.name.excavationGuardProtectOutside": "Protección: fuera del esquema",
   "easyplacefix.config.name.excavationGuardProtectCorrect": "Protección: bloques bien colocados",
   "easyplacefix.config.name.excavationGuardHint": "Protección: aviso en la barra de estado",
+  "easyplacefix.config.name.autoToolSwitch": "Cambio automático de herramienta (al romper)",
+  "easyplacefix.config.name.terrainAutoReplace": "Reemplazo automático de terreno (tierra/césped/camino)",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Master switch for EasyPlaceFix.\nON: EasyPlaceFix takes over Litematica's Easy Place path and places blocks with the correct facing, half, shape, note, etc.\nOFF: Litematica's normal Easy Place is used and this whole tab does nothing.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "How fast blocks are placed while holding right-click.\nThe server watches how often you send build actions - too fast trips 'timer' anti-cheat and kicks you.\n\n- Balanced: 2 ticks between blocks (~10/s). Safe default for most servers.\n- Safe: 4 ticks (~5/s). Use on laggy or strict servers, or with high ping.\n- Fast: 1 tick (~20/s). Vanilla-legal maximum; only where there is no build anti-cheat.\n- Custom: use the 'Custom placement delay' value below.",
@@ -30,6 +32,8 @@
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Parte de la protección de excavación. Impide romper cualquier bloque que no esté dentro del área de un esquema cargado.\nDesactívalo para proteger solo los bloques bien colocados y romper todo lo demás sin restricción.",
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Parte de la protección de excavación. Impide romper un bloque dentro del esquema si ya coincide exactamente con él.\nUn lugar donde el esquema espera aire nunca queda protegido por esto.",
   "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Parte de la protección de excavación. Muestra un breve mensaje en la barra de estado explicando\npor qué se bloqueó un intento de romper (fuera del esquema / ya está correcto).",
+  "EasyPlaceFix.config.generic.comment.autoToolSwitch": "Opcional, DESACTIVADO por defecto. Mientras el modo Easy Place de Litematica esté activo, cambia el\nobjeto en la mano por la mejor herramienta del inventario justo antes de empezar a romper un bloque,\nigual que Easy Place ya cambia el objeto en la mano por el bloque correcto al colocar. No hace nada\nen modo creativo ni si Easy Place está apagado.",
+  "EasyPlaceFix.config.generic.comment.terrainAutoReplace": "Opcional, DESACTIVADO por defecto. Mientras el modo Easy Place de Litematica esté activo, si el\nesquema quiere ahí una variante distinta de tierra / bloque de césped (cualquier estado de nieve) /\ntierra basta / camino de tierra, rompe primero el bloque incorrecto y reintenta la colocación de\ninmediato, en vez de que Easy Place simplemente falle porque el sitio no está vacío. Estos bloques\nno tienen ningún drop valioso que perder. No hace nada si Easy Place está apagado.",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Toggle Loosen mode.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Toggle NBT/component ignoring.",
@@ -70,5 +74,7 @@
   "easyplacefix.report.last.none": "No placement diagnostic recorded yet.",
   "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)",
   "easyplacefix.excavationguard.hint.outside": "Protección de excavación: este bloque está fuera del esquema",
-  "easyplacefix.excavationguard.hint.correct": "Protección de excavación: este bloque ya está colocado correctamente"
+  "easyplacefix.excavationguard.hint.correct": "Protección de excavación: este bloque ya está colocado correctamente",
+  "easyplacefix.diagnostic.terrain_clearing": "Despejando bloque de terreno incorrecto en %s",
+  "easyplacefix.diagnostic.terrain_clear_timeout": "Se renunció a despejar el bloque de terreno en %s"
 }

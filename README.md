@@ -26,6 +26,8 @@ Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer 
 - совместимость с обеими версиями MaLiLib (`0.28.9` / `0.29.3`) и Litematica (`0.27.10` / `0.28.4`);
 - строго ограниченные очереди действий, автоочистка очередей и сброс угла обзора при выходе из мира;
 - опциональная **защита при раскопках** (`excavationGuard`, по умолчанию ВЫКЛ): пока включён режим Easy Place у Litematica, не даёт ломать блоки за пределами загруженной схемы и блоки, уже установленные точно так, как требует схема.
+- опциональная **автосмена инструмента** (`autoToolSwitch`, по умолчанию ВЫКЛ): пока включён режим Easy Place у Litematica, перед началом ломания блока подставляет в руку лучший подходящий инструмент из инвентаря — так же, как Easy Place уже подставляет нужный блок при установке.
+- опциональная **автозамена земли** (`terrainAutoReplace`, по умолчанию ВЫКЛ): если схема хочет другой вариант земли/травы (в любом снежном состоянии)/грубой земли/тропинки, чем сейчас стоит на месте, сначала ломает неверный блок и сразу повторяет установку — вместо отказа «нельзя заменить».
 
 **Ключевые параметры (вкладка Easy Fix):** `placementPreset` (`Balanced` — 2 тика, `Safe` — 4 тика, `Fast` — 1 тик, `Custom` — вручную) · `placementJitter` (случайные 0–1 тик) · `AllowInteraction` · `clientRotationRevert` (возврат серверного взгляда, авто-таймаут 1.5 с) · `nbtIgnore` · `observerDetect`.
 
@@ -80,6 +82,8 @@ Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer 
 - runtime compatibility with both MaLiLib (`0.28.9` / `0.29.3`) and Litematica (`0.27.10` / `0.28.4`);
 - bounded action queues, automatic queue flush, and view reset on world transitions;
 - optional **Excavation guard** (`excavationGuard`, OFF by default): while Litematica's Easy Place mode is on, stops breaking blocks outside the loaded schematic and blocks already placed exactly as the schematic expects.
+- optional **Auto tool switch** (`autoToolSwitch`, OFF by default): while Litematica's Easy Place mode is on, swaps your held item for the best matching tool in your inventory right before a block starts breaking, the same way Easy Place already swaps your held item for the right block on placement.
+- optional **Terrain auto-replace** (`terrainAutoReplace`, OFF by default): if the schematic wants a different dirt / grass block (any snow state) / coarse dirt / dirt path than what is currently there, mines out the wrong one first and immediately retries the placement instead of failing with "not replaceable".
 
 **Key settings (Easy Fix tab):** `placementPreset` (`Balanced` — 2 ticks, `Safe` — 4 ticks, `Fast` — 1 tick, `Custom` — manual) · `placementJitter` (random 0–1 tick) · `AllowInteraction` · `clientRotationRevert` (restore server rotation, 1.5 s safety timeout) · `nbtIgnore` · `observerDetect`.
 

@@ -155,6 +155,7 @@ public final class TickThread {
         clearLookLock();
         clientStopping = false;
         org.uiop.easyplacefix.util.NoteBlockHelper.clear();
+        org.uiop.easyplacefix.util.TerrainAutoReplace.clear();
     }
 
     public static void onClientShutdown() {
@@ -162,6 +163,7 @@ public final class TickThread {
         clearLookLock();
         clientStopping = true;
         org.uiop.easyplacefix.util.NoteBlockHelper.clear();
+        org.uiop.easyplacefix.util.TerrainAutoReplace.clear();
         EXECUTOR.shutdownNow();
     }
 }

@@ -24,6 +24,8 @@ public class Hotkeys {
                 iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_PROTECT_OUTSIDE.getKeybind());
                 iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_PROTECT_CORRECT.getKeybind());
                 iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_HINT.getKeybind());
+                iKeybindManager.addKeybindToMap(AUTO_TOOL_SWITCH.getKeybind());
+                iKeybindManager.addKeybindToMap(TERRAIN_AUTO_REPLACE.getKeybind());
             }
 
             @Override

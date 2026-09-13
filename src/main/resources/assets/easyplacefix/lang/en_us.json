@@ -15,6 +15,8 @@
   "easyplacefix.config.name.excavationGuardProtectOutside": "Guard: protect outside schematic",
   "easyplacefix.config.name.excavationGuardProtectCorrect": "Guard: protect correctly placed blocks",
   "easyplacefix.config.name.excavationGuardHint": "Guard: show action bar hint",
+  "easyplacefix.config.name.autoToolSwitch": "Auto tool switch (breaking)",
+  "easyplacefix.config.name.terrainAutoReplace": "Terrain auto-replace (dirt/grass/path)",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Master switch for EasyPlaceFix.\nON: EasyPlaceFix takes over Litematica's Easy Place path and places blocks with the correct facing, half, shape, note, etc.\nOFF: Litematica's normal Easy Place is used and this whole tab does nothing.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "How fast blocks are placed while holding right-click.\nThe server watches how often you send build actions - too fast trips 'timer' anti-cheat and kicks you.\n\n- Balanced: 2 ticks between blocks (~10/s). Safe default for most servers.\n- Safe: 4 ticks (~5/s). Use on laggy or strict servers, or with high ping.\n- Fast: 1 tick (~20/s). Vanilla-legal maximum; only where there is no build anti-cheat.\n- Custom: use the 'Custom placement delay' value below.",
@@ -30,6 +32,8 @@
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Part of Excavation guard. Cancels breaking any block that is not inside a loaded schematic's area.\nTurn OFF to only protect correctly placed blocks and allow breaking everywhere else.",
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Part of Excavation guard. Cancels breaking a block inside the schematic if it already matches\nthe schematic exactly. A spot where the schematic expects air is never protected by this.",
   "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Part of Excavation guard. Shows a short action bar message explaining why a break attempt\nwas blocked (outside schematic / already correct).",
+  "EasyPlaceFix.config.generic.comment.autoToolSwitch": "Optional, OFF by default. While Litematica's Easy Place mode is on, swaps your held item for\nthe best matching tool in your inventory right before you start breaking a block, the same way\nEasy Place already swaps your held item for the right block when placing. Does nothing in\ncreative mode or while Easy Place is off.",
+  "EasyPlaceFix.config.generic.comment.terrainAutoReplace": "Optional, OFF by default. While Litematica's Easy Place mode is on, if the schematic wants a\ndifferent one of dirt / grass block (any snow state) / coarse dirt / dirt path than what is\ncurrently there, mines out the wrong one first and immediately retries the placement, instead of\nEasy Place just failing because the spot is not empty. These blocks have no meaningful drops to\nlose. Does nothing while Easy Place is off.",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Toggle Loosen mode.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Toggle NBT/component ignoring.",
@@ -70,5 +74,7 @@
   "easyplacefix.report.last.none": "No placement diagnostic recorded yet.",
   "easyplacefix.report.last.entry": "Last placement diagnostic: %s (%s s ago)",
   "easyplacefix.excavationguard.hint.outside": "Excavation guard: this block is outside the schematic",
-  "easyplacefix.excavationguard.hint.correct": "Excavation guard: this block is already correctly placed"
+  "easyplacefix.excavationguard.hint.correct": "Excavation guard: this block is already correctly placed",
+  "easyplacefix.diagnostic.terrain_clearing": "Clearing wrong terrain block at %s",
+  "easyplacefix.diagnostic.terrain_clear_timeout": "Gave up clearing terrain block at %s"
 }

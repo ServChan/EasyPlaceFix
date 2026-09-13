@@ -14,6 +14,8 @@
   "easyplacefix.config.name.excavationGuardProtectOutside": "防护：保护原理图之外",
   "easyplacefix.config.name.excavationGuardProtectCorrect": "防护：保护已正确放置的方块",
   "easyplacefix.config.name.excavationGuardHint": "防护：显示动作栏提示",
+  "easyplacefix.config.name.autoToolSwitch": "自动切换工具（破坏方块时）",
+  "easyplacefix.config.name.terrainAutoReplace": "地形自动替换（泥土/草方块/小径）",
   "EasyPlaceFix.config.generic.comment.enableFix": "EasyPlaceFix 的总开关。\n开启：EasyPlaceFix 接管 Litematica 的 Easy Place，并以正确的朝向、半砖、形状、音符等放置方块。\n关闭：使用 Litematica 原本的 Easy Place，本页设置全部无效。",
   "EasyPlaceFix.config.generic.comment.placementPreset": "按住右键时方块的放置速度。\n服务器会监控你发送建造操作的频率——过快会触发 “timer” 反作弊并将你踢出。\n\n- Balanced：每个方块间隔 2 刻（约 10/秒）。适合大多数服务器的安全默认值。\n- Safe：4 刻（约 5/秒）。用于卡顿或严格的服务器，或高延迟时。\n- Fast：1 刻（约 20/秒）。原版允许的最大速度；仅在没有建造反作弊的服务器使用。\n- Custom：使用下方的“自定义放置延迟”数值。",
   "EasyPlaceFix.config.generic.comment.placementDelay": "两次放置之间等待的刻数。仅在预设为 “Custom” 时生效。\n20 刻 = 1 秒。数值越大越慢但越安全。\n0 会完全取消限制，并会被 “timer” 反作弊踢出。\n对 Balanced / Safe / Fast 无效。",
@@ -28,6 +30,8 @@
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "挖掘防护的一部分。阻止破坏不在已加载原理图区域内的任何方块。\n关闭此项后只保护正确放置的方块，其余位置可自由破坏。",
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "挖掘防护的一部分。如果原理图内的方块已经与原理图完全一致，阻止破坏它。\n原理图中应为空气的位置永远不会被此项保护。",
   "EasyPlaceFix.config.generic.comment.excavationGuardHint": "挖掘防护的一部分。在动作栏显示简短提示，说明为何破坏被阻止\n（在原理图之外／已经放置正确）。",
+  "EasyPlaceFix.config.generic.comment.autoToolSwitch": "可选功能，默认关闭。当 Litematica 的 Easy Place 模式开启时，在你开始破坏方块之前，\n自动将手中物品切换为背包中最合适的工具，就像 Easy Place 放置方块时已经会自动切换到\n正确的方块一样。创造模式下或 Easy Place 关闭时不生效。",
+  "EasyPlaceFix.config.generic.comment.terrainAutoReplace": "可选功能，默认关闭。当 Litematica 的 Easy Place 模式开启时，如果原理图在该位置想要的是\n另一种泥土／草方块（任意积雪状态）／粗质泥土／泥土小径，而不是当前已有的那种，\n会先挖掉错误的方块，然后立即重新尝试放置，而不是因为该位置非空而直接放置失败。\n这些方块都没有值得可惜的掉落物。Easy Place 关闭时此功能不生效。",
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "切换宽松模式。",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "切换是否忽略 NBT/组件。",
   "easyPlaceFix.config.hotkeys.comment.AllowInteraction": "切换是否允许交互。",
@@ -67,5 +71,7 @@
   "easyplacefix.report.last.none": "尚未记录任何放置诊断。",
   "easyplacefix.report.last.entry": "最近一次放置诊断：%s（%s 秒前）",
   "easyplacefix.excavationguard.hint.outside": "挖掘防护：此方块在原理图之外",
-  "easyplacefix.excavationguard.hint.correct": "挖掘防护：此方块已经放置正确"
+  "easyplacefix.excavationguard.hint.correct": "挖掘防护：此方块已经放置正确",
+  "easyplacefix.diagnostic.terrain_clearing": "正在清除 %s 处错误的地形方块",
+  "easyplacefix.diagnostic.terrain_clear_timeout": "放弃清除 %s 处的地形方块"
 }

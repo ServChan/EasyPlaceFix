@@ -2,6 +2,8 @@
 
 ## 0.6.6
 
+- New optional **Auto tool switch** (`autoToolSwitch`, OFF by default). While Litematica Easy Place is active, the mod selects the fastest suitable tool from the player's inventory before mining begins. Creative mode is left unchanged.
+- New optional **Terrain auto-replace** (`terrainAutoReplace`, OFF by default). Easy Place can now clear and replace mismatched dirt, grass blocks, coarse dirt, and dirt paths when both the existing and schematic blocks belong to that terrain group. The retry is capped at 40 ticks and its state is cleared on disconnect.
 - New optional **Excavation guard** (OFF by default, config tab + optional hotkey). While Litematica's Easy Place mode is on:
   - cancels breaking any block outside every loaded schematic placement (`excavationGuardProtectOutside`);
   - cancels breaking a block inside the schematic that already matches it exactly (`excavationGuardProtectCorrect`); a spot where the schematic expects air is never protected;
@@ -9,6 +11,8 @@
   - Reuses the existing `EasyPlaceHandler.isSchematicBlock` placement-geometry check (already tolerant of the MaLiLib bounding-box API transition), so it shares the same schematic-area definition as the rest of Easy Place.
 - Fixed the 4 new Excavation guard hotkeyed toggles not actually being bindable: they were registered as `ConfigBooleanHotkeyed` but never added to `Hotkeys.init()` / `easyPlaceFixHotkeys.addCallbacks()`, so a keybind assigned to them in the Litematica GUI would do nothing.
 - Fixed the same pre-existing gap for `placementJitter` ("Randomize placement timing"), which had the identical problem from an earlier version.
+- Fixed the new Auto tool switch and Terrain auto-replace toggles not being registered with MaLiLib's keybind manager.
+- Fixed Terrain auto-replace being able to clear an eligible terrain block when the schematic actually required an unrelated block type.
 
 ## 0.6.5
 

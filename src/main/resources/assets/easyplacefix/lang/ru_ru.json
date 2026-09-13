@@ -15,6 +15,8 @@
   "easyplacefix.config.name.excavationGuardProtectOutside": "Защита: вне схемы",
   "easyplacefix.config.name.excavationGuardProtectCorrect": "Защита: правильно установленные блоки",
   "easyplacefix.config.name.excavationGuardHint": "Защита: подсказка в строке состояния",
+  "easyplacefix.config.name.autoToolSwitch": "Автосмена инструмента (при ломании)",
+  "easyplacefix.config.name.terrainAutoReplace": "Автозамена земли/травы/тропинки",
 
   "EasyPlaceFix.config.generic.comment.enableFix": "Главный выключатель EasyPlaceFix.\nВКЛ: EasyPlaceFix берёт на себя Easy Place из Litematica и ставит блоки с правильным поворотом, половиной, формой, нотой и т.д.\nВЫКЛ: работает обычный Easy Place из Litematica, вся эта вкладка ничего не делает.",
   "EasyPlaceFix.config.generic.comment.placementPreset": "Как быстро ставятся блоки при зажатой ПКМ.\nСервер следит, как часто вы шлёте действия постройки - слишком быстро срабатывает анти-чит 'timer' и вас кикает.\n\n- Balanced: 2 тика между блоками (~10/с). Безопасно по умолчанию для большинства серверов.\n- Safe: 4 тика (~5/с). Для лагающих или строгих серверов и при высоком пинге.\n- Fast: 1 тик (~20/с). Максимум, легальный в ванилле; только там, где нет анти-чита на постройку.\n- Custom: использовать значение 'Своя задержка установки' ниже.",
@@ -30,6 +32,8 @@
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectOutside": "Часть защиты при раскопках. Запрещает ломать любой блок, который находится вне области загруженной схемы.\nВыключите, чтобы защищать только правильно установленные блоки, а остальное ломать без ограничений.",
   "EasyPlaceFix.config.generic.comment.excavationGuardProtectCorrect": "Часть защиты при раскопках. Запрещает ломать блок внутри схемы, если он уже точно совпадает со схемой.\nМесто, где по схеме должен быть воздух, этим никогда не защищается.",
   "EasyPlaceFix.config.generic.comment.excavationGuardHint": "Часть защиты при раскопках. Показывает короткое сообщение в строке состояния о причине блокировки\n(вне схемы / уже установлено правильно).",
+  "EasyPlaceFix.config.generic.comment.autoToolSwitch": "Опционально, по умолчанию ВЫКЛ. Пока включён режим Easy Place у Litematica, переключает предмет в руке\nна лучший подходящий инструмент из инвентаря прямо перед началом ломания блока — так же, как Easy Place\nуже подставляет нужный блок при установке. Ничего не делает в творческом режиме или если Easy Place выключен.",
+  "EasyPlaceFix.config.generic.comment.terrainAutoReplace": "Опционально, по умолчанию ВЫКЛ. Пока включён режим Easy Place у Litematica, если схема хочет\nна этом месте другой вариант из земли / блока травы (в любом снежном состоянии) / грубой земли /\nтропинки, чем стоит сейчас, — сначала ломает неверный блок, а затем сразу повторяет установку,\nвместо того чтобы Easy Place просто отказывал из-за занятого места. У этих блоков нет ценного\nдропа, который жалко потерять. Ничего не делает, если Easy Place выключен.",
 
   "easyPlaceFix.config.hotkeys.comment.loosenmode": "Переключает свободный подбор блоков.",
   "easyPlaceFix.config.hotkeys.comment.nbtIgnore": "Переключает игнорирование NBT/компонентов.",
@@ -70,5 +74,7 @@
   "easyplacefix.report.last.none": "Диагностики установки пока не было.",
   "easyplacefix.report.last.entry": "Последняя диагностика установки: %s (%s сек. назад)",
   "easyplacefix.excavationguard.hint.outside": "Защита при раскопках: этот блок вне схемы",
-  "easyplacefix.excavationguard.hint.correct": "Защита при раскопках: этот блок уже установлен правильно"
+  "easyplacefix.excavationguard.hint.correct": "Защита при раскопках: этот блок уже установлен правильно",
+  "easyplacefix.diagnostic.terrain_clearing": "Убираю неверный блок земли в %s",
+  "easyplacefix.diagnostic.terrain_clear_timeout": "Не удалось убрать блок земли в %s"
 }

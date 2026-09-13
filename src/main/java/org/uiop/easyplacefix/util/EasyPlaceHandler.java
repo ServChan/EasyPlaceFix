@@ -257,6 +257,10 @@ public class EasyPlaceHandler {
                                 trace
                         ))
                 ) {
+                    if (TerrainAutoReplace.isEligible(stateClient, stateSchematic)) {
+                        TerrainAutoReplace.tryClearThenRetry(mc, traceWrapper, pos, trace.getDirection());
+                        return InteractionResult.SUCCESS;
+                    }
                     report("easyplacefix.diagnostic.not_replaceable", pos.toShortString());
                     return InteractionResult.FAIL;
                 }

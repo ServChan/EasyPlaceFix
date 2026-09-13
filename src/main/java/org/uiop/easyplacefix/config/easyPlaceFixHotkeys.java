@@ -34,6 +34,8 @@ public final class easyPlaceFixHotkeys {
         easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE, "easyplacefix.config.name.excavationGuardProtectOutside"));
         easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT, "easyplacefix.config.name.excavationGuardProtectCorrect"));
         easyPlacefixConfig.EXCAVATION_GUARD_HINT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_HINT, "easyplacefix.config.name.excavationGuardHint"));
+        easyPlacefixConfig.AUTO_TOOL_SWITCH.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.AUTO_TOOL_SWITCH, "easyplacefix.config.name.autoToolSwitch"));
+        easyPlacefixConfig.TERRAIN_AUTO_REPLACE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.TERRAIN_AUTO_REPLACE, "easyplacefix.config.name.terrainAutoReplace"));
         LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
         IGNORE_NBT_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
         Allow_Interaction_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
