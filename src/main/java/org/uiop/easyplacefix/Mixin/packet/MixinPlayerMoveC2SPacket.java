@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.tick_ins.tick.TickThread.notChangPlayerLook;
+import static com.tick_ins.tick.TickThread.isLookLocked;
 import static com.tick_ins.tick.TickThread.pitchLock;
 import static com.tick_ins.tick.TickThread.yawLock;
 
@@ -27,7 +27,7 @@ public interface MixinPlayerMoveC2SPacket {
     class Full {
         @Inject(method = "write", at = @At("HEAD"))
         private void lockLook(PacketByteBuf buf, CallbackInfo ci) {
-            if (notChangPlayerLook) {
+            if (isLookLocked()) {
                 ((MixinPlayerMoveC2SPacket) this).setYaw(yawLock);
                 ((MixinPlayerMoveC2SPacket) this).setPitch(pitchLock);
             }
@@ -38,7 +38,7 @@ public interface MixinPlayerMoveC2SPacket {
     class LookAndOnGround {
         @Inject(method = "write", at = @At("HEAD"))
         private void lockLook(PacketByteBuf buf, CallbackInfo ci) {
-            if (notChangPlayerLook) {
+            if (isLookLocked()) {
                 ((MixinPlayerMoveC2SPacket) this).setYaw(yawLock);
                 ((MixinPlayerMoveC2SPacket) this).setPitch(pitchLock);
             }

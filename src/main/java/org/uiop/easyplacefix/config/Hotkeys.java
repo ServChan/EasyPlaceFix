@@ -16,7 +16,15 @@ public class Hotkeys {
                 iKeybindManager.addKeybindToMap(ENABLE_FIX.getKeybind());
                 iKeybindManager.addKeybindToMap(IGNORE_NBT.getKeybind());
                 iKeybindManager.addKeybindToMap(LOOSEN_MODE.getKeybind());
+                iKeybindManager.addKeybindToMap(PLACEMENT_JITTER.getKeybind());
                 iKeybindManager.addKeybindToMap(Allow_Interaction.getKeybind());
+                iKeybindManager.addKeybindToMap(CLIENT_ROTATION_REVERT.getKeybind());
+                iKeybindManager.addKeybindToMap(EXCAVATION_GUARD.getKeybind());
+                iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_PROTECT_OUTSIDE.getKeybind());
+                iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_PROTECT_CORRECT.getKeybind());
+                iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_HINT.getKeybind());
+                iKeybindManager.addKeybindToMap(AUTO_TOOL_SWITCH.getKeybind());
+                iKeybindManager.addKeybindToMap(TERRAIN_AUTO_REPLACE.getKeybind());
             }
 
             @Override

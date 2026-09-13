@@ -40,7 +40,9 @@ public class PlayerBlockAction {
         public static Map<BlockPos, Long> lastPlacementTimeMap = new ConcurrentHashMap<>();
         public static BlockState pistonBlockState = null;
         // Global placement rate limiter (anti-cheat protection)
+        private static volatile int lastGlobalPlacementTick = Integer.MIN_VALUE;
         private static volatile long lastGlobalPlacementTime = 0;
+        private static volatile int jitterExtraTicks = 0;
         private static final long PLACEMENT_OVERRIDE_TTL_MS = 1200L;
         private static final int PLACEMENT_OVERRIDE_MAX_SIZE = 512;
         private static final int PLACEMENT_OVERRIDE_USES = 4;
@@ -171,12 +173,18 @@ public class PlayerBlockAction {
         }
 
         public static boolean isGlobalPlacementCooling() {
-            int delayTicks = easyPlacefixConfig.PLACEMENT_DELAY.getIntegerValue();
+            int delayTicks = easyPlacefixConfig.getEffectivePlacementDelayTicks();
             if (delayTicks <= 0) {
                 return false;
             }
+            int effectiveDelay = delayTicks + Math.max(0, jitterExtraTicks);
+            net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
+            if (mc.player != null && lastGlobalPlacementTick != Integer.MIN_VALUE) {
+                int elapsedTicks = mc.player.age - lastGlobalPlacementTick;
+                if (elapsedTicks >= 0 && elapsedTicks < effectiveDelay) return true;
+            }
             long now = System.currentTimeMillis();
-            long delayMs = delayTicks * 50L;
+            long delayMs = effectiveDelay * 50L;
             if (now - lastGlobalPlacementTime < delayMs) {
                 return true;
             }
@@ -184,7 +192,18 @@ public class PlayerBlockAction {
         }
 
         public static void markGlobalPlacement() {
+            net.minecraft.client.MinecraftClient mc = net.minecraft.client.MinecraftClient.getInstance();
+            if (mc.player != null) lastGlobalPlacementTick = mc.player.age;
             lastGlobalPlacementTime = System.currentTimeMillis();
+            jitterExtraTicks = easyPlacefixConfig.PLACEMENT_JITTER.getBooleanValue()
+                    ? ThreadLocalRandom.current().nextInt(0, 2)
+                    : 0;
+        }
+
+        public static void resetGlobalPlacement() {
+            lastGlobalPlacementTick = Integer.MIN_VALUE;
+            lastGlobalPlacementTime = 0L;
+            jitterExtraTicks = 0;
         }
 
         public static boolean isPlacementCooling(BlockPos pos) {

@@ -22,6 +22,7 @@ public class MixinMinecraftClient {
         PlayerBlockAction.useItemOnAction.modifyBoolean = false;
         PlayerBlockAction.useItemOnAction.clearPlacementStateOverride();
         PlayerBlockAction.useItemOnAction.lastPlacementTimeMap.clear();
+        PlayerBlockAction.useItemOnAction.resetGlobalPlacement();
         PlayerBlockAction.useItemOnAction.pistonBlockState = null;
         TickThread.onClientDisconnected();
     }

@@ -1,7 +1,6 @@
 package org.uiop.easyplacefix.config;
 
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
-import fi.dy.masa.malilib.hotkeys.KeyCallbackToggleBooleanConfigWithMessage;
 
 public final class easyPlaceFixHotkeys {
     public static final ConfigHotkey LOOSEN_MODE_HOTKEY =
@@ -20,9 +19,22 @@ public final class easyPlaceFixHotkeys {
     }
 
     public static void addCallbacks() {
-        LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.LOOSEN_MODE));
-        IGNORE_NBT_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.IGNORE_NBT));
-        Allow_Interaction_HOTKEY.getKeybind().setCallback(new KeyCallbackToggleBooleanConfigWithMessage(easyPlacefixConfig.Allow_Interaction));
+        easyPlacefixConfig.ENABLE_FIX.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.ENABLE_FIX, "easyplacefix.config.name.enableFix"));
+        easyPlacefixConfig.PLACEMENT_JITTER.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.PLACEMENT_JITTER, "easyplacefix.config.name.placementJitter"));
+        easyPlacefixConfig.LOOSEN_MODE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
+        easyPlacefixConfig.IGNORE_NBT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
+        easyPlacefixConfig.Allow_Interaction.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
+        easyPlacefixConfig.OBSERVER_DETECT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.OBSERVER_DETECT, "easyplacefix.config.name.observerDetect"));
+        easyPlacefixConfig.CLIENT_ROTATION_REVERT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.CLIENT_ROTATION_REVERT, "easyplacefix.config.name.clientRotationRevert"));
+        easyPlacefixConfig.EXCAVATION_GUARD.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD, "easyplacefix.config.name.excavationGuard"));
+        easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE, "easyplacefix.config.name.excavationGuardProtectOutside"));
+        easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT, "easyplacefix.config.name.excavationGuardProtectCorrect"));
+        easyPlacefixConfig.EXCAVATION_GUARD_HINT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_HINT, "easyplacefix.config.name.excavationGuardHint"));
+        easyPlacefixConfig.AUTO_TOOL_SWITCH.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.AUTO_TOOL_SWITCH, "easyplacefix.config.name.autoToolSwitch"));
+        easyPlacefixConfig.TERRAIN_AUTO_REPLACE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.TERRAIN_AUTO_REPLACE, "easyplacefix.config.name.terrainAutoReplace"));
+        LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
+        IGNORE_NBT_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
+        Allow_Interaction_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
 
 
     }
