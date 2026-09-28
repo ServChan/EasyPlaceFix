@@ -11,6 +11,10 @@ import org.uiop.easyplacefix.mixin.config.ConfigGuiTabAccessor;
 import org.uiop.easyplacefix.command.EasyPlaceFixCommands;
 import org.uiop.easyplacefix.config.Hotkeys;
 import org.uiop.easyplacefix.config.easyPlaceFixHotkeys;
+import org.uiop.easyplacefix.data.LoosenModeData;
+import org.uiop.easyplacefix.materials.ContainerMaterialHelper;
+import org.uiop.easyplacefix.util.NoteTuningHud;
+import com.tick_ins.tick.TickThread;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,26 +32,14 @@ public class EasyPlaceFix implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
+        LoosenModeData.reload();
+        TickThread.init();
+        NoteTuningHud.init();
+        ContainerMaterialHelper.init();
         Hotkeys.init();
         easyPlaceFixHotkeys.addCallbacks();
         EasyPlaceFixCommands.register();
-//        ClientCommandRegistrationCallback.
-//                EVENT.
-//                register((dispatcher, registryAccess) ->
-//                                dispatcher.register(ClientCommandManager.literal("loosenMode").executes(context -> {
-////                            if (loosenMode){
-////                                context.getSource().sendFeedback(Text.literal("loosenModeSetting OFF"));
-////                                loosenMode=false;
-////                            }else {
-////                                context.getSource().sendFeedback(Text.literal("loosenModeSetting ON"));
-////                                loosenMode=true;
-////                            }
-//                                    MinecraftClient client = MinecraftClient.getInstance();
-//                                    client.getMessageHandler().onGameMessage(Text.of("Feature removed"),false);
-////                            client.send(()-> client.setScreen(screen));
-//                                    return 1;
-//                                }))
-//                );
+
     }
 
     public static ItemStack findBlockInInventory(Inventory inv, Predicate<Block> predicate) {
@@ -56,12 +48,12 @@ public class EasyPlaceFix implements ClientModInitializer {
             if (!stack.isEmpty()) {
                 Block block = Block.byItem(stack.getItem());
                 if (predicate.test(block)) {
-//                    InventoryUtils.setPickedItemToHand(slot, stack, MinecraftClient.getInstance());
-                    return stack; // Found a matching item stack and return it
+
+                    return stack;
                 }
             }
         }
-        return null; // Return null when nothing matches
+        return null;
     }
 
 }

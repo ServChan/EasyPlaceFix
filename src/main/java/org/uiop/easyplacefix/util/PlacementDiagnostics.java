@@ -38,7 +38,7 @@ public final class PlacementDiagnostics {
         lastMessageKey = translationKey;
         lastMessageTime = now;
 
-        Component message = Component.literal("EasyPlaceFix ")
+        Component message = Component.literal("EasyPlaceFix")
                 .withStyle(ChatFormatting.GOLD)
                 .append(Component.literal(" | ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.translatable(translationKey, args).withStyle(ChatFormatting.AQUA))

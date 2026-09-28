@@ -1,6 +1,8 @@
 package org.uiop.easyplacefix.config;
 
 import fi.dy.masa.malilib.config.options.ConfigHotkey;
+import fi.dy.masa.malilib.hotkeys.KeybindSettings;
+import org.uiop.easyplacefix.materials.ContainerMaterialHelper;
 
 public final class easyPlaceFixHotkeys {
     public static final ConfigHotkey LOOSEN_MODE_HOTKEY =
@@ -9,8 +11,18 @@ public final class easyPlaceFixHotkeys {
             new ConfigHotkey("nbtIgnoreHotkey", "", "easyPlaceFix.config.hotkeys.comment.nbtIgnore");
     public static final ConfigHotkey Allow_Interaction_HOTKEY =
             new ConfigHotkey("AllowInteractionHotkey", "", "easyPlaceFix.config.hotkeys.comment.AllowInteraction");
+    public static final ConfigHotkey MATERIAL_REFILL_HOTKEY =
+            new ConfigHotkey("materialRefillHotkey", "", KeybindSettings.GUI, "easyPlaceFix.config.hotkeys.comment.materialRefill");
     public static final ConfigHotkey DIAGNOSTIC_STATUS_HOTKEY =
             new ConfigHotkey("diagnosticStatusHotkey", "", "easyPlaceFix.config.hotkeys.comment.diagnosticStatus");
+
+    static {
+        LOOSEN_MODE_HOTKEY.translatedName("easyplacefix.config.name.loosenModeHotkey");
+        IGNORE_NBT_HOTKEY.translatedName("easyplacefix.config.name.nbtIgnoreHotkey");
+        Allow_Interaction_HOTKEY.translatedName("easyplacefix.config.name.AllowInteractionHotkey");
+        DIAGNOSTIC_STATUS_HOTKEY.translatedName("easyplacefix.config.name.diagnosticStatusHotkey");
+        MATERIAL_REFILL_HOTKEY.translatedName("easyplacefix.config.name.materialRefillHotkey");
+    }
 
     public static ConfigHotkey[] getExtraHotkeys() {
         return new ConfigHotkey[]{
@@ -18,6 +30,7 @@ public final class easyPlaceFixHotkeys {
                 IGNORE_NBT_HOTKEY,
                 Allow_Interaction_HOTKEY,
                 DIAGNOSTIC_STATUS_HOTKEY,
+                MATERIAL_REFILL_HOTKEY,
         };
     }
 
@@ -36,11 +49,15 @@ public final class easyPlaceFixHotkeys {
         easyPlacefixConfig.EXCAVATION_GUARD_HINT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.EXCAVATION_GUARD_HINT, "easyplacefix.config.name.excavationGuardHint"));
         easyPlacefixConfig.AUTO_TOOL_SWITCH.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.AUTO_TOOL_SWITCH, "easyplacefix.config.name.autoToolSwitch"));
         easyPlacefixConfig.TERRAIN_AUTO_REPLACE.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.TERRAIN_AUTO_REPLACE, "easyplacefix.config.name.terrainAutoReplace"));
+        easyPlacefixConfig.BREAK_WRONG_BLOCKS.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.BREAK_WRONG_BLOCKS, "easyplacefix.config.name.breakWrongBlocks"));
+        easyPlacefixConfig.ENTITY_PLACEMENT.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.ENTITY_PLACEMENT, "easyplacefix.config.name.entityPlacement"));
+        easyPlacefixConfig.NOTE_TUNING_HUD.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.NOTE_TUNING_HUD, "easyplacefix.config.name.noteTuningHud"));
+        easyPlacefixConfig.MATERIAL_HELPER.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.MATERIAL_HELPER, "easyplacefix.config.name.materialHelper"));
+        MATERIAL_REFILL_HOTKEY.getKeybind().setCallback((action, key) -> ContainerMaterialHelper.refillCurrentScreen());
         LOOSEN_MODE_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.LOOSEN_MODE, "easyplacefix.config.name.loosenMode"));
         IGNORE_NBT_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
         Allow_Interaction_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
         DIAGNOSTIC_STATUS_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.DIAGNOSTIC_STATUS, "easyplacefix.config.name.diagnosticStatus"));
-
 
     }
 

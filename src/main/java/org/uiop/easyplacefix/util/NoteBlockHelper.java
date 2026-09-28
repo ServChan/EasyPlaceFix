@@ -1,10 +1,13 @@
 package org.uiop.easyplacefix.util;
 
+import com.tick_ins.packet.Ping2Server;
 import com.tick_ins.tick.RunnableWithCountDown;
 import com.tick_ins.tick.TickThread;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.NoteBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -12,38 +15,66 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.Vec3;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 
-/**
- * Tunes note blocks to their schematic note by sending right-click interactions.
- * <p>
- * All positions being tuned share a single pump that emits at most one
- * interaction every {@link #TUNE_INTERVAL_TICKS} ticks, round-robin. Without this
- * a wall of note blocks would each spawn an independent per-tick clicker and the
- * combined packet rate would trip server "timer" anti-cheat.
- */
 public final class NoteBlockHelper {
     public static final int MAX_NOTE = 24;
     public static final int NOTE_COUNT = 25;
-    private static final int MAX_ATTEMPTS = 30;
+    private static final int MAX_CLICKS = 60;
     private static final int TUNE_INTERVAL_TICKS = 2;
+    private static final long SERVER_ACK_GRACE_MS = 500L;
 
-    private static final Set<BlockPos> TUNING_POSITIONS = ConcurrentHashMap.newKeySet();
     private static final ConcurrentLinkedDeque<BlockPos> QUEUE = new ConcurrentLinkedDeque<>();
-    private static final ConcurrentHashMap<BlockPos, Integer> TARGET_NOTE = new ConcurrentHashMap<>();
-    private static final ConcurrentHashMap<BlockPos, Integer> ATTEMPTS_LEFT = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<BlockPos, TuneJob> JOBS = new ConcurrentHashMap<>();
     private static final AtomicBoolean PUMP_SCHEDULED = new AtomicBoolean(false);
+
+    private static final class TuneJob {
+        private int targetNote;
+        private int baseNote = -1;
+        private int clicksSent;
+        private int confirmed;
+        private int clicksLeft = MAX_CLICKS;
+        private long lastProgressMs = System.currentTimeMillis();
+
+        private TuneJob(int targetNote) {
+            this.targetNote = targetNote;
+        }
+
+        private void rebase(int currentNote) {
+            this.baseNote = currentNote;
+            this.clicksSent = 0;
+            this.confirmed = 0;
+            this.lastProgressMs = System.currentTimeMillis();
+        }
+    }
 
     private NoteBlockHelper() {
     }
 
     public static boolean isTuning(BlockPos pos) {
-        return TUNING_POSITIONS.contains(pos);
+        return JOBS.containsKey(pos);
+    }
+
+    public record Progress(int blocks, int clicksLeft, BlockPos next) {
+    }
+
+    public static Progress progress(Minecraft mc) {
+        if (JOBS.isEmpty() || mc.level == null) {
+            return new Progress(0, 0, null);
+        }
+        int clicks = 0;
+        BlockPos next = QUEUE.peekFirst();
+        for (var entry : JOBS.entrySet()) {
+            BlockState state = mc.level.getBlockState(entry.getKey());
+            if (state.getBlock() instanceof NoteBlock) {
+                clicks += calculateClicks(state.getValue(BlockStateProperties.NOTE), entry.getValue().targetNote);
+            }
+        }
+        return new Progress(JOBS.size(), clicks, next);
     }
 
     public static int calculateClicks(int currentNote, int targetNote) {
@@ -63,10 +94,12 @@ public final class NoteBlockHelper {
         }
 
         BlockPos key = pos.immutable();
-        TARGET_NOTE.put(key, targetNote);
-        if (TUNING_POSITIONS.add(key)) {
-            ATTEMPTS_LEFT.put(key, MAX_ATTEMPTS);
+        TuneJob existing = JOBS.putIfAbsent(key, new TuneJob(targetNote));
+        if (existing == null) {
             QUEUE.addLast(key);
+        } else if (existing.targetNote != targetNote) {
+            existing.targetNote = targetNote;
+            existing.baseNote = -1;
         }
         ensurePump(mc);
     }
@@ -90,42 +123,60 @@ public final class NoteBlockHelper {
                 return;
             }
 
+            int pending = QUEUE.size();
             BlockPos pos;
-            while ((pos = QUEUE.pollFirst()) != null) {
-                if (!TUNING_POSITIONS.contains(pos)) {
+            while (pending-- > 0 && (pos = QUEUE.pollFirst()) != null) {
+                TuneJob job = JOBS.get(pos);
+                if (job == null) {
                     continue;
                 }
 
                 BlockState state = mc.level.getBlockState(pos);
-                Integer target = TARGET_NOTE.get(pos);
-                if (target == null || !(state.getBlock() instanceof NoteBlock)) {
-                    finish(pos);
+                if (!(state.getBlock() instanceof NoteBlock)) {
+                    JOBS.remove(pos);
                     continue;
                 }
 
-                if (state.getValue(BlockStateProperties.NOTE) == target) {
-                    finish(pos);
+                int currentNote = state.getValue(BlockStateProperties.NOTE);
+                if (currentNote == job.targetNote) {
+                    JOBS.remove(pos);
                     continue;
                 }
 
-                int attempts = ATTEMPTS_LEFT.getOrDefault(pos, 0);
-                if (attempts <= 0) {
-                    finish(pos);
-                    continue;
+                if (job.baseNote < 0) {
+                    job.rebase(currentNote);
                 }
-                ATTEMPTS_LEFT.put(pos, attempts - 1);
 
-                RelativeBlockHitResult hitResult = new RelativeBlockHitResult(
-                        new Vec3(0.5, 0.5, 0.5),
-                        Direction.UP,
-                        pos,
-                        false
-                );
-                mc.gameMode.useItemOn(mc.player, InteractionHand.MAIN_HAND, hitResult);
-                mc.player.swing(InteractionHand.MAIN_HAND);
+                int confirmed = calculateClicks(job.baseNote, currentNote);
+                if (confirmed > job.clicksSent) {
+                    job.rebase(currentNote);
+                } else if (confirmed != job.confirmed) {
+                    job.confirmed = confirmed;
+                    job.lastProgressMs = System.currentTimeMillis();
+                }
 
-                QUEUE.addLast(pos); // still needs more clicks; back of the line
-                break;              // exactly one interaction per pump
+                int needed = calculateClicks(job.baseNote, job.targetNote);
+                if (job.clicksSent < needed) {
+                    if (job.clicksLeft <= 0) {
+                        JOBS.remove(pos);
+                        continue;
+                    }
+                    if (!clickNoteBlock(mc, pos)) {
+                        QUEUE.addLast(pos);
+                        continue;
+                    }
+                    job.clicksSent++;
+                    job.clicksLeft--;
+                    job.lastProgressMs = System.currentTimeMillis();
+                    QUEUE.addLast(pos);
+                    break;
+                }
+
+                long ackTimeoutMs = Ping2Server.getRtt() + SERVER_ACK_GRACE_MS;
+                if (System.currentTimeMillis() - job.lastProgressMs > ackTimeoutMs) {
+                    job.rebase(currentNote);
+                }
+                QUEUE.addLast(pos);
             }
         } catch (Exception error) {
             LOGGER.error("Error during NoteBlock tuning", error);
@@ -138,17 +189,31 @@ public final class NoteBlockHelper {
         }
     }
 
-    private static void finish(BlockPos pos) {
-        TUNING_POSITIONS.remove(pos);
-        TARGET_NOTE.remove(pos);
-        ATTEMPTS_LEFT.remove(pos);
+    private static boolean clickNoteBlock(Minecraft mc, BlockPos pos) {
+        LocalPlayer player = mc.player;
+        if (player.isSecondaryUseActive()) {
+            return false;
+        }
+
+        Direction face = Direction.getApproximateNearest(player.getEyePosition().subtract(Vec3.atCenterOf(pos)));
+        if (face == Direction.UP && player.getMainHandItem().is(ItemTags.NOTE_BLOCK_TOP_INSTRUMENTS)) {
+            face = player.getDirection().getOpposite();
+        }
+
+        RelativeBlockHitResult hitResult = new RelativeBlockHitResult(
+                new Vec3(0.5 + 0.5 * face.getStepX(), 0.5 + 0.5 * face.getStepY(), 0.5 + 0.5 * face.getStepZ()),
+                face,
+                pos,
+                false
+        );
+        mc.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, hitResult);
+        player.swing(InteractionHand.MAIN_HAND, player.getItemInHand(InteractionHand.MAIN_HAND).getInteractAnimation(), false);
+        return true;
     }
 
     public static void clear() {
-        TUNING_POSITIONS.clear();
         QUEUE.clear();
-        TARGET_NOTE.clear();
-        ATTEMPTS_LEFT.clear();
+        JOBS.clear();
         PUMP_SCHEDULED.set(false);
     }
 }

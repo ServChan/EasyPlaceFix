@@ -6,11 +6,10 @@ import fi.dy.masa.malilib.config.options.ConfigInteger;
 import fi.dy.masa.malilib.config.options.ConfigOptionList;
 
 public final class easyPlacefixConfig {
-    // ---- Core ----
+
     public static final ConfigBooleanHotkeyed ENABLE_FIX =
             new ConfigBooleanHotkeyed("enableFix", false, "", "EasyPlaceFix.config.generic.comment.enableFix");
 
-    // ---- Pacing / anti-cheat ----
     public static final ConfigOptionList PLACEMENT_PRESET =
             new ConfigOptionList("placementPreset", PlacementPreset.BALANCED, "EasyPlaceFix.config.generic.comment.placementPreset");
     public static final ConfigInteger PLACEMENT_DELAY =
@@ -18,13 +17,11 @@ public final class easyPlacefixConfig {
     public static final ConfigBooleanHotkeyed PLACEMENT_JITTER =
             new ConfigBooleanHotkeyed("placementJitter", false, "", "EasyPlaceFix.config.generic.comment.placementJitter");
 
-    // ---- Item matching ----
     public static final ConfigBooleanHotkeyed LOOSEN_MODE =
             new ConfigBooleanHotkeyed("loosenMode", false, "", "EasyPlaceFix.config.generic.comment.loosenMode");
     public static final ConfigBooleanHotkeyed IGNORE_NBT =
             new ConfigBooleanHotkeyed("nbtIgnore", false, "", "EasyPlaceFix.config.generic.comment.nbtIgnore");
 
-    // ---- Interaction behaviour ----
     public static final ConfigBooleanHotkeyed Allow_Interaction =
             new ConfigBooleanHotkeyed("AllowInteraction", false, "", "EasyPlaceFix.config.generic.comment.AllowInteraction");
     public static final ConfigBooleanHotkeyed OBSERVER_DETECT =
@@ -32,11 +29,9 @@ public final class easyPlacefixConfig {
     public static final ConfigBooleanHotkeyed CLIENT_ROTATION_REVERT =
             new ConfigBooleanHotkeyed("clientRotationRevert", false, "", "EasyPlaceFix.config.generic.comment.clientRotationRevert", "Rotation Revert", "Client Rotation Revert");
 
-    // ---- Debugging ----
     public static final ConfigBooleanHotkeyed DIAGNOSTIC_STATUS =
             new ConfigBooleanHotkeyed("diagnosticStatus", false, "", "EasyPlaceFix.config.generic.comment.diagnosticStatus");
 
-    // ---- Excavation guard ----
     public static final ConfigBooleanHotkeyed EXCAVATION_GUARD =
             new ConfigBooleanHotkeyed("excavationGuard", false, "", "EasyPlaceFix.config.generic.comment.excavationGuard");
     public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_PROTECT_OUTSIDE =
@@ -46,13 +41,23 @@ public final class easyPlacefixConfig {
     public static final ConfigBooleanHotkeyed EXCAVATION_GUARD_HINT =
             new ConfigBooleanHotkeyed("excavationGuardHint", true, "", "EasyPlaceFix.config.generic.comment.excavationGuardHint");
 
-    // ---- Tool switching ----
     public static final ConfigBooleanHotkeyed AUTO_TOOL_SWITCH =
             new ConfigBooleanHotkeyed("autoToolSwitch", false, "", "EasyPlaceFix.config.generic.comment.autoToolSwitch");
 
-    // ---- Terrain auto-replace ----
     public static final ConfigBooleanHotkeyed TERRAIN_AUTO_REPLACE =
             new ConfigBooleanHotkeyed("terrainAutoReplace", false, "", "EasyPlaceFix.config.generic.comment.terrainAutoReplace");
+
+    public static final ConfigBooleanHotkeyed BREAK_WRONG_BLOCKS =
+            new ConfigBooleanHotkeyed("breakWrongBlocks", false, "", "EasyPlaceFix.config.generic.comment.breakWrongBlocks");
+
+    public static final ConfigBooleanHotkeyed ENTITY_PLACEMENT =
+            new ConfigBooleanHotkeyed("entityPlacement", false, "", "EasyPlaceFix.config.generic.comment.entityPlacement");
+
+    public static final ConfigBooleanHotkeyed NOTE_TUNING_HUD =
+            new ConfigBooleanHotkeyed("noteTuningHud", true, "", "EasyPlaceFix.config.generic.comment.noteTuningHud");
+
+    public static final ConfigBooleanHotkeyed MATERIAL_HELPER =
+            new ConfigBooleanHotkeyed("materialHelper", true, "", "EasyPlaceFix.config.generic.comment.materialHelper");
 
     static {
         ENABLE_FIX.translatedName("easyplacefix.config.name.enableFix");
@@ -71,13 +76,12 @@ public final class easyPlacefixConfig {
         EXCAVATION_GUARD_HINT.translatedName("easyplacefix.config.name.excavationGuardHint");
         AUTO_TOOL_SWITCH.translatedName("easyplacefix.config.name.autoToolSwitch");
         TERRAIN_AUTO_REPLACE.translatedName("easyplacefix.config.name.terrainAutoReplace");
+        BREAK_WRONG_BLOCKS.translatedName("easyplacefix.config.name.breakWrongBlocks");
+        ENTITY_PLACEMENT.translatedName("easyplacefix.config.name.entityPlacement");
+        NOTE_TUNING_HUD.translatedName("easyplacefix.config.name.noteTuningHud");
+        MATERIAL_HELPER.translatedName("easyplacefix.config.name.materialHelper");
     }
 
-    /**
-     * Effective number of client ticks to wait between two placements.
-     * Driven by the selected preset; the {@link #PLACEMENT_DELAY} slider only
-     * applies while the preset is {@code Custom}.
-     */
     public static int getEffectivePlacementDelayTicks() {
         PlacementPreset preset = (PlacementPreset) PLACEMENT_PRESET.getOptionListValue();
         return preset.getDelayTicks(PLACEMENT_DELAY.getIntegerValue());
@@ -101,6 +105,10 @@ public final class easyPlacefixConfig {
                 EXCAVATION_GUARD_HINT,
                 AUTO_TOOL_SWITCH,
                 TERRAIN_AUTO_REPLACE,
+                BREAK_WRONG_BLOCKS,
+                ENTITY_PLACEMENT,
+                NOTE_TUNING_HUD,
+                MATERIAL_HELPER,
         };
     }
 }

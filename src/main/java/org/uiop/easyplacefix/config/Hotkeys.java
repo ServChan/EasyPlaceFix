@@ -26,6 +26,10 @@ public class Hotkeys {
                 iKeybindManager.addKeybindToMap(EXCAVATION_GUARD_HINT.getKeybind());
                 iKeybindManager.addKeybindToMap(AUTO_TOOL_SWITCH.getKeybind());
                 iKeybindManager.addKeybindToMap(TERRAIN_AUTO_REPLACE.getKeybind());
+                iKeybindManager.addKeybindToMap(BREAK_WRONG_BLOCKS.getKeybind());
+                iKeybindManager.addKeybindToMap(ENTITY_PLACEMENT.getKeybind());
+                iKeybindManager.addKeybindToMap(NOTE_TUNING_HUD.getKeybind());
+                iKeybindManager.addKeybindToMap(MATERIAL_HELPER.getKeybind());
             }
 
             @Override
