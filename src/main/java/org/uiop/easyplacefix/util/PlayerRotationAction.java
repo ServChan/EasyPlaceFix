@@ -1,5 +1,6 @@
 package org.uiop.easyplacefix.util;
 
+import com.tick_ins.tick.TickThread;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
@@ -13,20 +14,21 @@ public class PlayerRotationAction {
                 new ServerboundMovePlayerPacket.Rot(
                         yaw,
                         pitch,
-                        Minecraft.getInstance().player.onGround(), hor//parameter kept from vanilla packet format
+                        Minecraft.getInstance().player.onGround(), hor
 
                 )
         );
     }
 
     public static void restRotation() {
+        TickThread.clearLookLock();
         Minecraft minecraftClient = Minecraft.getInstance();
         minecraftClient.getConnection().send(
                 new ServerboundMovePlayerPacket.Rot(
                         minecraftClient.player.getYRot(),
                         minecraftClient.player.getXRot(),
                         Minecraft.getInstance().player.onGround(),
-                        minecraftClient.player.horizontalCollision//parameter kept from vanilla packet format
+                        minecraftClient.player.horizontalCollision
 
                 )
         );

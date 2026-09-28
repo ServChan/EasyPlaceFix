@@ -10,14 +10,7 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        minecraft-version:
-          - "26.1.2"
-          - "26.2"
-
-    name: Build for Minecraft ${{ matrix.minecraft-version }}
+    name: Build for Minecraft 26.3
 
     steps:
       - name: Checkout
@@ -34,12 +27,12 @@ jobs:
         uses: gradle/actions/wrapper-validation@v4
 
       - name: Build
-        run: .\gradlew.bat clean build '-Pminecraft_version=${{ matrix.minecraft-version }}' --stacktrace
+        run: .\gradlew.bat clean build --stacktrace
 
       - name: Upload mod jar
         uses: actions/upload-artifact@v4
         with:
-          name: EasyPlaceFix-mc${{ matrix.minecraft-version }}
+          name: EasyPlaceFix-mc26.3
           path: |
             build/libs/*.jar
             !build/libs/*-sources.jar

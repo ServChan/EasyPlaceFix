@@ -27,7 +27,6 @@ javap*.txt
 *.ipr
 *.iws
 .vscode/
-.claude/
 .gemini/
 .settings/
 .classpath
@@ -44,8 +43,6 @@ desktop.ini
 # Agent metadata
 AGENTS.md
 **/AGENTS.md
-CLAUDE.md
-**/CLAUDE.md
 .codex/
 **/.codex/
 .agents/

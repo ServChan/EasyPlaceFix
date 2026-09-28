@@ -8,12 +8,23 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.commands.arguments.item.ItemArgument;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import org.uiop.easyplacefix.data.LoosenModeData;
+import org.uiop.easyplacefix.materials.MaterialExporter;
+import org.uiop.easyplacefix.materials.MaterialSnapshot;
 import org.uiop.easyplacefix.config.PlacementPreset;
 import org.uiop.easyplacefix.util.PlacementDiagnostics;
 
 import java.util.List;
 
+import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.argument;
 import static net.fabricmc.fabric.api.client.command.v2.ClientCommands.literal;
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.*;
 
@@ -27,8 +38,200 @@ public final class EasyPlaceFixCommands {
                         .then(literal("report").executes(context -> sendReport(context.getSource(), false)))
                         .then(literal("copy-report").executes(context -> sendReport(context.getSource(), true)))
                         .then(literal("last").executes(context -> sendLastDiagnostic(context.getSource())))
+                        .then(literal("materials")
+                                .executes(context -> materialsSummary(context.getSource()))
+                                .then(literal("missing").executes(context -> materialsMissing(context.getSource())))
+                                .then(literal("export")
+                                        .executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.XLSX)))
+                                        .then(literal("xlsx").executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.XLSX))))
+                                        .then(literal("csv").executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.CSV))))
+                                        .then(literal("md").executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.MARKDOWN))))
+                                        .then(literal("json").executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.JSON))))
+                                        .then(literal("all").executes(context -> materialsExport(context.getSource(), List.of(MaterialExporter.Format.values()))))))
+                        .then(literal("loosen")
+                                .then(literal("add")
+                                        .executes(context -> addLoosenItem(context.getSource(), heldItem(context.getSource())))
+                                        .then(argument("item", ItemArgument.item(registryAccess))
+                                                .executes(context -> addLoosenItem(context.getSource(),
+                                                        ItemArgument.getItem(context, "item").item().value()))))
+                                .then(literal("remove")
+                                        .executes(context -> removeLoosenItem(context.getSource(), heldItem(context.getSource())))
+                                        .then(argument("item", ItemArgument.item(registryAccess))
+                                                .executes(context -> removeLoosenItem(context.getSource(),
+                                                        ItemArgument.getItem(context, "item").item().value()))))
+                                .then(literal("list").executes(context -> listLoosenItems(context.getSource())))
+                                .then(literal("clear").executes(context -> clearLoosenItems(context.getSource())))
+                                .then(literal("reload").executes(context -> reloadLoosenItems(context.getSource()))))
                 )
         );
+    }
+
+    private static final int SUMMARY_TOP = 10;
+    private static final int MISSING_LIMIT = 40;
+
+    private static MaterialSnapshot requireMaterials(FabricClientCommandSource source) {
+        MaterialSnapshot.Result result = MaterialSnapshot.capture(true);
+        switch (result.status()) {
+            case NO_LIST -> {
+                source.sendError(Component.translatable("easyplacefix.materials.no_list"));
+                return null;
+            }
+            case CREATED -> {
+                source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.created"), ChatFormatting.YELLOW));
+                return null;
+            }
+            default -> {
+                return result.snapshot();
+            }
+        }
+    }
+
+    private static int materialsSummary(FabricClientCommandSource source) {
+        MaterialSnapshot snapshot = requireMaterials(source);
+        if (snapshot == null) {
+            return 0;
+        }
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.summary.header", snapshot.title()), ChatFormatting.GOLD));
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.summary.line",
+                snapshot.rows().size(), snapshot.total(), snapshot.missing(), snapshot.stillNeeded(),
+                snapshot.stacksNeeded(), (long) Math.ceil(snapshot.stacksNeeded() / (double) MaterialSnapshot.SHULKER_SLOTS)),
+                ChatFormatting.GRAY));
+        List<MaterialSnapshot.Row> needed = snapshot.neededRows();
+        if (needed.isEmpty()) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.summary.complete"), ChatFormatting.GREEN));
+        } else {
+            for (MaterialSnapshot.Row row : needed.subList(0, Math.min(SUMMARY_TOP, needed.size()))) {
+                source.sendFeedback(materialLine(row));
+            }
+        }
+        source.sendFeedback(actionLinks());
+        return 1;
+    }
+
+    private static int materialsMissing(FabricClientCommandSource source) {
+        MaterialSnapshot snapshot = requireMaterials(source);
+        if (snapshot == null) {
+            return 0;
+        }
+        List<MaterialSnapshot.Row> needed = snapshot.neededRows();
+        if (needed.isEmpty()) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.summary.complete"), ChatFormatting.GREEN));
+            return 0;
+        }
+        for (MaterialSnapshot.Row row : needed.subList(0, Math.min(MISSING_LIMIT, needed.size()))) {
+            source.sendFeedback(materialLine(row));
+        }
+        if (needed.size() > MISSING_LIMIT) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.missing.more", needed.size() - MISSING_LIMIT), ChatFormatting.GRAY));
+        }
+        source.sendFeedback(actionLinks());
+        return needed.size();
+    }
+
+    private static int materialsExport(FabricClientCommandSource source, List<MaterialExporter.Format> formats) {
+        MaterialSnapshot snapshot = requireMaterials(source);
+        if (snapshot == null) {
+            return 0;
+        }
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.materials.export.started", snapshot.rows().size()), ChatFormatting.GRAY));
+        MaterialExporter.export(snapshot, formats, source::sendFeedback);
+        return 1;
+    }
+
+    private static Component materialLine(MaterialSnapshot.Row row) {
+        int needed = row.stillNeeded();
+        return Component.literal("  ").append(row.stack().getHoverName().copy().withStyle(ChatFormatting.WHITE))
+                .append(Component.translatable("easyplacefix.materials.line", needed, row.stacks(needed),
+                        String.format(java.util.Locale.ROOT, "%.1f", row.shulkerBoxes(needed)), row.available())
+                        .withStyle(ChatFormatting.GRAY));
+    }
+
+    private static Component actionLinks() {
+        return Component.literal("  ")
+                .append(link("easyplacefix.materials.link.xlsx", "/easyplacefix materials export xlsx"))
+                .append(Component.literal(" "))
+                .append(link("easyplacefix.materials.link.csv", "/easyplacefix materials export csv"))
+                .append(Component.literal(" "))
+                .append(link("easyplacefix.materials.link.all", "/easyplacefix materials export all"))
+                .append(Component.literal(" "))
+                .append(link("easyplacefix.materials.link.missing", "/easyplacefix materials missing"));
+    }
+
+    private static Component link(String key, String command) {
+        return Component.literal("[").append(Component.translatable(key)).append("]")
+                .withStyle(style -> style.withColor(ChatFormatting.AQUA)
+                        .withClickEvent(new ClickEvent.RunCommand(command))
+                        .withHoverEvent(new HoverEvent.ShowText(Component.literal(command))));
+    }
+
+    private static Item heldItem(FabricClientCommandSource source) {
+        ItemStack stack = source.getPlayer().getMainHandItem();
+        return stack.isEmpty() ? null : stack.getItem();
+    }
+
+    private static int addLoosenItem(FabricClientCommandSource source, Item item) {
+        if (item == null || item == Items.AIR) {
+            source.sendError(Component.translatable("easyplacefix.loosen.empty_hand"));
+            return 0;
+        }
+        if (!LoosenModeData.add(item)) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.already", itemName(item)), ChatFormatting.GRAY));
+            return 0;
+        }
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.added", itemName(item)), ChatFormatting.GREEN));
+        return 1;
+    }
+
+    private static int removeLoosenItem(FabricClientCommandSource source, Item item) {
+        if (item == null || item == Items.AIR) {
+            source.sendError(Component.translatable("easyplacefix.loosen.empty_hand"));
+            return 0;
+        }
+        if (!LoosenModeData.remove(item)) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.not_listed", itemName(item)), ChatFormatting.GRAY));
+            return 0;
+        }
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.removed", itemName(item)), ChatFormatting.GREEN));
+        return 1;
+    }
+
+    private static int listLoosenItems(FabricClientCommandSource source) {
+        List<Item> listed = LoosenModeData.snapshot();
+        if (listed.isEmpty()) {
+            source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.list_empty"), ChatFormatting.GRAY));
+            return 0;
+        }
+        MutableComponent names = Component.empty();
+        for (int i = 0; i < listed.size(); i++) {
+            if (i > 0) {
+                names.append(Component.literal(", ").withStyle(ChatFormatting.DARK_GRAY));
+            }
+            names.append(itemName(listed.get(i)));
+        }
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.list", listed.size(), names), ChatFormatting.GRAY));
+        return listed.size();
+    }
+
+    private static int clearLoosenItems(FabricClientCommandSource source) {
+        int removed = LoosenModeData.clear();
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.cleared", removed), ChatFormatting.GREEN));
+        return removed;
+    }
+
+    private static int reloadLoosenItems(FabricClientCommandSource source) {
+        LoosenModeData.reload();
+        int size = LoosenModeData.items.size();
+        source.sendFeedback(prefixed(Component.translatable("easyplacefix.loosen.reloaded", size), ChatFormatting.GREEN));
+        return size;
+    }
+
+    private static Component itemName(Item item) {
+        return item.getDefaultInstance().getHoverName().copy().withStyle(ChatFormatting.WHITE);
+    }
+
+    private static Component prefixed(Component body, ChatFormatting color) {
+        return Component.literal("[EasyPlaceFix] ").withStyle(ChatFormatting.GOLD)
+                .append(body.copy().withStyle(color));
     }
 
     private static int sendReport(FabricClientCommandSource source, boolean copyToClipboard) {

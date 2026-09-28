@@ -1,14 +1,39 @@
 package org.uiop.easyplacefix.util;
 
+import net.minecraft.world.level.block.CrossCollisionBlock;
 import net.minecraft.world.level.block.LecternBlock;
 import net.minecraft.world.level.block.NoteBlock;
+import net.minecraft.world.level.block.RedstoneWireBlock;
 import net.minecraft.world.level.block.ShelfBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SnowyBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.SlabType;
+
+import java.util.List;
 
 public final class PlacementStateMatcher {
+    private static final List<Property<?>> ORIENTATION_PROPERTIES = List.of(
+            BlockStateProperties.FACING,
+            BlockStateProperties.FACING_HOPPER,
+            BlockStateProperties.HORIZONTAL_FACING,
+            BlockStateProperties.AXIS,
+            BlockStateProperties.HORIZONTAL_AXIS,
+            BlockStateProperties.HALF,
+            BlockStateProperties.ATTACH_FACE,
+            BlockStateProperties.ROTATION_16,
+            BlockStateProperties.DOOR_HINGE,
+            BlockStateProperties.ORIENTATION,
+            BlockStateProperties.VERTICAL_DIRECTION,
+            BlockStateProperties.BELL_ATTACHMENT,
+            BlockStateProperties.HANGING
+    );
+
     private PlacementStateMatcher() {
     }
 
@@ -47,7 +72,31 @@ public final class PlacementStateMatcher {
             return hasSameHorizontalFacing(schematic, world);
         }
 
+        if (schematic.getBlock() instanceof CrossCollisionBlock
+                || schematic.getBlock() instanceof WallBlock
+                || schematic.getBlock() instanceof RedstoneWireBlock
+                || schematic.getBlock() instanceof SnowyBlock) {
+            return true;
+        }
+
         return schematic.equals(world);
+    }
+
+    public static boolean isStructurallyWrong(BlockState schematic, BlockState world) {
+        if (schematic.getBlock() != world.getBlock()) {
+            return true;
+        }
+        if (schematic.getBlock() instanceof SlabBlock) {
+            SlabType wanted = schematic.getValue(BlockStateProperties.SLAB_TYPE);
+            return wanted != SlabType.DOUBLE && world.getValue(BlockStateProperties.SLAB_TYPE) != wanted;
+        }
+        for (Property<?> property : ORIENTATION_PROPERTIES) {
+            if (schematic.hasProperty(property) && world.hasProperty(property)
+                    && !schematic.getValue(property).equals(world.getValue(property))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean shouldUsePlacementOverride(BlockState blockState) {

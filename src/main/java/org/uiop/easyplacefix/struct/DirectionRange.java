@@ -10,19 +10,17 @@ public enum DirectionRange {
     Up_Range(-46f,-90f, Direction.UP),
     Horizontal_range(44f,-44f,null),
     Down_Range(46f,90f,Direction.DOWN );
-    // Float bounds
+
     private final float firstValue;
     private final float secondValue;
     private final Direction direction;
 
-    // Enum constructor
     DirectionRange(float firstValue, float secondValue, Direction direction) {
         this.firstValue = firstValue;
         this.secondValue=secondValue;
         this.direction = direction;
     }
 
-    // Get first float bound
     public float getFirstValue() {
         return firstValue;
     }

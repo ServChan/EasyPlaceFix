@@ -13,11 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.AUTO_TOOL_SWITCH;
 import static org.uiop.easyplacefix.util.PlacementInventory.pickItem;
 
-/**
- * Optional companion to Easy Place: while Litematica's Easy Place mode is on and this switch is
- * enabled, swaps the held item for the best tool in the inventory right before a block starts
- * breaking, mirroring how Easy Place already swaps the held item for the right block on placement.
- */
 public final class ToolSwitcher {
     private ToolSwitcher() {
     }
@@ -47,7 +42,7 @@ public final class ToolSwitcher {
 
         for (int i = 0; i < inventory.getContainerSize(); ++i) {
             ItemStack stack = inventory.getItem(i);
-            if (stack.isEmpty() || stack == current) {
+            if (stack.isEmpty() || stack == current || isAboutToBreak(stack)) {
                 continue;
             }
             float speed = effectiveSpeed(stack, state);
@@ -62,8 +57,10 @@ public final class ToolSwitcher {
         }
     }
 
-    // Negative when the stack cannot harvest correct drops from a state that requires one,
-    // so it never outranks a stack that can - even an empty hand.
+    private static boolean isAboutToBreak(ItemStack stack) {
+        return stack.isDamageableItem() && stack.getMaxDamage() - stack.getDamageValue() <= 1;
+    }
+
     private static float effectiveSpeed(ItemStack stack, BlockState state) {
         if (state.requiresCorrectToolForDrops() && !stack.isCorrectToolForDrops(state)) {
             return -1.0F;

@@ -1,6 +1,8 @@
 package org.uiop.easyplacefix.util;
 
 import fi.dy.masa.litematica.config.Configs;
+import fi.dy.masa.litematica.data.DataManager;
+import fi.dy.masa.litematica.schematic.placement.SchematicPlacement;
 import fi.dy.masa.litematica.world.SchematicWorldHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -14,13 +16,6 @@ import static org.uiop.easyplacefix.config.easyPlacefixConfig.EXCAVATION_GUARD_H
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_CORRECT;
 import static org.uiop.easyplacefix.config.easyPlacefixConfig.EXCAVATION_GUARD_PROTECT_OUTSIDE;
 
-/**
- * Optional companion to Easy Place: while Litematica's Easy Place mode is on and this guard is
- * enabled, cancels breaking blocks outside every loaded schematic placement and blocks that
- * already match the schematic exactly, so raw excavation only clears leftover or wrong material.
- * Reuses {@link EasyPlaceHandler#isSchematicBlock(BlockPos)} for placement geometry, the same
- * MaLiLib-bounding-box-version-tolerant check the rest of EasyPlaceFix already relies on.
- */
 public final class ExcavationGuard {
     private ExcavationGuard() {
     }
@@ -37,7 +32,7 @@ public final class ExcavationGuard {
         }
 
         if (!EasyPlaceHandler.isSchematicBlock(pos)) {
-            if (EXCAVATION_GUARD_PROTECT_OUTSIDE.getBooleanValue()) {
+            if (EXCAVATION_GUARD_PROTECT_OUTSIDE.getBooleanValue() && hasEnabledPlacement()) {
                 notify(mc, "easyplacefix.excavationguard.hint.outside");
                 return true;
             }
@@ -48,13 +43,22 @@ public final class ExcavationGuard {
             Level schematicWorld = SchematicWorldHandler.getSchematicWorld();
             if (schematicWorld != null) {
                 BlockState expected = schematicWorld.getBlockState(pos);
-                if (!expected.isAir() && expected.equals(level.getBlockState(pos))) {
+                if (!expected.isAir() && PlacementStateMatcher.isSatisfied(expected, level.getBlockState(pos))) {
                     notify(mc, "easyplacefix.excavationguard.hint.correct");
                     return true;
                 }
             }
         }
 
+        return false;
+    }
+
+    private static boolean hasEnabledPlacement() {
+        for (SchematicPlacement placement : DataManager.getSchematicPlacementManager().getAllSchematicsPlacements()) {
+            if (placement.isEnabled()) {
+                return true;
+            }
+        }
         return false;
     }
 

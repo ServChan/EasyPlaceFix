@@ -27,8 +27,8 @@
     "java": ">=25",
     "fabricloader": ">=0.19.3",
     "fabric-api": "*",
-    "litematica": ">=0.27.10 <0.29",
-    "malilib": ">=0.28.9 <0.30",
-    "minecraft": ">=26.1.2 <=26.2"
+    "litematica": ">=0.29.1 <0.30",
+    "malilib": ">=0.30.2 <0.31",
+    "minecraft": "~26.3"
   }
 }

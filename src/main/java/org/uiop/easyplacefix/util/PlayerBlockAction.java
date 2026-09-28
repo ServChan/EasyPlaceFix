@@ -15,36 +15,53 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PlayerBlockAction {
-    // Single-thread state holder
+
+    private static final long SUPPRESSION_TIMEOUT_MS = 3000L;
+
+    public static int suppressionReleaseTicks() {
+        return Math.max(3, Ping2Server.getRtt() / 50 + 3);
+    }
 
     public static class openScreenAction {
         public static volatile int count = 0;
+        private static volatile long armedAtMs = 0L;
+
+        public static void arm() {
+            armedAtMs = System.currentTimeMillis();
+            count++;
+        }
 
         public static boolean run() {
+            if (count > 0 && System.currentTimeMillis() - armedAtMs > SUPPRESSION_TIMEOUT_MS) {
+                count = 0;
+            }
             return count == 0;
         }
     }
 
     public static class openSignEditorAction {
         public static volatile int count = 0;
+        private static volatile long armedAtMs = 0L;
 
-        public static boolean run() {
-            return count == 0;
-
+        public static void arm() {
+            armedAtMs = System.currentTimeMillis();
+            count++;
         }
 
+        public static boolean run() {
+            if (count > 0 && System.currentTimeMillis() - armedAtMs > SUPPRESSION_TIMEOUT_MS) {
+                count = 0;
+            }
+            return count == 0;
+        }
     }
 
     public static class useItemOnAction {
         public static boolean modifyBoolean = false;
-        // Thread-safe placement cooldown cache
+
         public static Map<BlockPos, Long> lastPlacementTimeMap = new ConcurrentHashMap<>();
         public static BlockState pistonBlockState = null;
-        // Global placement rate limiter (anti-cheat protection).
-        // Paced in real client ticks rather than wall-clock time so the cadence
-        // follows the vanilla game loop - which is exactly what server-side
-        // "timer" anti-cheat measures. The millisecond value is only a backstop
-        // for frame/scheduler jitter inside a single tick.
+
         private static volatile int lastGlobalPlacementTick = Integer.MIN_VALUE;
         private static volatile long lastGlobalPlacementTimeMs = 0L;
         private static volatile int jitterExtraTicks = 0;
@@ -52,7 +69,6 @@ public class PlayerBlockAction {
         private static final int PLACEMENT_OVERRIDE_MAX_SIZE = 512;
         private static final int PLACEMENT_OVERRIDE_USES = 4;
         private static final ConcurrentLinkedDeque<PlacementStateOverride> placementStateOverrides = new ConcurrentLinkedDeque<>();
-        //   TODO Needs a better long-term design ^
 
         private static final class PlacementStateOverride {
             private final BlockPos targetPos;
@@ -140,7 +156,6 @@ public class PlayerBlockAction {
                 }
             }
 
-            // Fallback for rare desync path where context moved to the clicked side offset.
             iterator = placementStateOverrides.descendingIterator();
             while (iterator.hasNext()) {
                 PlacementStateOverride entry = iterator.next();
@@ -184,7 +199,6 @@ public class PlayerBlockAction {
             }
             int effectiveDelay = delayTicks + Math.max(0, jitterExtraTicks);
 
-            // Primary gate: real client ticks elapsed since the last placement.
             Minecraft mc = Minecraft.getInstance();
             if (mc.player != null && lastGlobalPlacementTick != Integer.MIN_VALUE) {
                 int elapsedTicks = mc.player.tickCount - lastGlobalPlacementTick;
@@ -193,7 +207,6 @@ public class PlayerBlockAction {
                 }
             }
 
-            // Wall-clock backstop for frame/scheduler jitter within a single tick.
             return System.currentTimeMillis() - lastGlobalPlacementTimeMs < effectiveDelay * 50L;
         }
 
@@ -218,7 +231,6 @@ public class PlayerBlockAction {
             long now = System.currentTimeMillis();
             long threshold = Ping2Server.getRtt() + 100;
 
-            // Prune stale entries to prevent memory leak (entries older than 10 seconds)
             if (lastPlacementTimeMap.size() > 256) {
                 lastPlacementTimeMap.entrySet().removeIf(e -> now - e.getValue() > 10_000L);
             }

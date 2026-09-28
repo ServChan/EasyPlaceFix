@@ -48,4 +48,5 @@ public interface IBlock {
     default InteractionResult isSchemaTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate){return null;}
     default InteractionResult isWorldTermination(BlockPos pos, BlockState blockState,BlockState worldBlockstate){return null;}
     default Item getItemForBlockState(BlockState blockState){return null;}
+    default String getPlacementBlocker(BlockState blockState, BlockPos blockPos, BlockState worldBlockState){return null;}
 }

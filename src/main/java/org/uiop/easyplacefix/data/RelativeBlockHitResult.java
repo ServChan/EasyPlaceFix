@@ -9,5 +9,5 @@ public class RelativeBlockHitResult extends BlockHitResult {
     public RelativeBlockHitResult(Vec3 pos, Direction side, BlockPos blockPos, boolean insideBlock) {
         super(pos, side, blockPos, insideBlock);
     }
-    //Stores relative coordinates directly to avoid unnecessary math and reduce overhead (idea from 7087z).
+
 }

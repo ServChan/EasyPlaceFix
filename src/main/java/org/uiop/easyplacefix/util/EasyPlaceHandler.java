@@ -60,7 +60,7 @@ public class EasyPlaceHandler {
             try {
                 return owner.getMethod(methodName);
             } catch (NoSuchMethodException ignored) {
-                // Try the name used by another supported Litematica version.
+
             }
         }
         throw unsupportedApi(owner, methodNames);
@@ -119,13 +119,12 @@ public class EasyPlaceHandler {
                 == InteractionResult.PASS;
     }
 
-    // Whether the position belongs to any schematic area
     public static boolean isSchematicBlock(BlockPos pos) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
-        //Get loaded schematic placements touching this chunk position
+
         List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk
                 = schematicPlacementManager.getAllPlacementsTouchingChunk(pos);
-        //Check whether any placement part contains this position
+
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
             if (placementContains(placementPart, pos)) {
                 return true;
@@ -141,28 +140,27 @@ public class EasyPlaceHandler {
             stack = stack.copy();
             if (!stack.isEmpty()) {
                 if (items.contains(stack.getItem())) {
-                    return stack; // Found a matching item stack and return it
+                    return stack;
                 }
             }
         }
 
         return null;
 
-
     }
 
     public static ItemStack loosenMode(ItemStack stack, BlockState stateSchema) {
         if (stack == null && LOOSEN_MODE.getBooleanValue()) {
             if (!EntityUtils.isCreativeMode(Minecraft.getInstance().player)) {
-                Block ReplacedBlock = stateSchema.getBlock();//The schematic block expected at this position
+                Block ReplacedBlock = stateSchema.getBlock();
                 Predicate<Block> predicate = null;
-                if (ReplacedBlock instanceof WallBlock)   //wall blocks
+                if (ReplacedBlock instanceof WallBlock)
                     predicate = block -> block instanceof WallBlock;
-                else if (ReplacedBlock instanceof FenceGateBlock)//fence gates
+                else if (ReplacedBlock instanceof FenceGateBlock)
                     predicate = block -> block instanceof FenceGateBlock;
-                else if (ReplacedBlock instanceof TrapDoorBlock)//trapdoors
+                else if (ReplacedBlock instanceof TrapDoorBlock)
                     predicate = block -> block instanceof TrapDoorBlock;
-                else if (ReplacedBlock instanceof CoralFanBlock)//coral fans
+                else if (ReplacedBlock instanceof CoralFanBlock)
                     predicate = block -> block instanceof CoralFanBlock;
                 ItemStack stack1 = null;
                 if (predicate != null) {
@@ -170,52 +168,48 @@ public class EasyPlaceHandler {
                     stack1 = findBlockInInventory(playerInventory, predicate);
                 }
                 if (stack1 == null) {
-                    // Match against the in-memory Loosen list (kept current by
-                    // LoosenModeData load/save); no disk I/O on the placement path.
+
                     return loosenMode2();
                 }
                 return stack1;
 
             }
 
-
         }
         return stack;
     }
 
     public static InteractionResult doEasyPlace2(Minecraft mc, RayTraceUtils.RayTraceWrapper traceWrapper) {
-        BlockHitResult trace = traceWrapper.getBlockHitResult();//Ray-traced hit from schematic
+        BlockHitResult trace = traceWrapper.getBlockHitResult();
         Level schematicWorld = SchematicWorldHandler.getSchematicWorld();
         if (schematicWorld == null) {
             report("easyplacefix.diagnostic.no_schematic_world");
             return InteractionResult.PASS;
         }
-        BlockPos pos = trace.getBlockPos();//Target position from schematic hit
+        BlockPos pos = trace.getBlockPos();
 
         if (isGlobalPlacementCooling()) {
             report("easyplacefix.diagnostic.global_cooldown", getEffectivePlacementDelayTicks());
             return InteractionResult.FAIL;
-        }// Global rate limit (anti-cheat)
+        }
         if (isPlacementCooling(pos)) {
             report("easyplacefix.diagnostic.position_cooldown", pos.toShortString());
             return InteractionResult.FAIL;
-        }// Per-position cooldown check
-        BlockState stateClient = mc.level.getBlockState(pos);//Current client world block state
+        }
+        BlockState stateClient = mc.level.getBlockState(pos);
         BlockState stateSchematic = schematicWorld.getBlockState(pos);
-        InteractionResult isTermination = ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient);//termination check
+        InteractionResult isTermination = ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient);
         if (isTermination != null) {
             report("easyplacefix.diagnostic.world_termination", pos.toShortString());
             return isTermination;
         }
-        // Two-phase termination checks
-        isTermination = ((IBlock) stateSchematic.getBlock()).isSchemaTermination(pos, stateSchematic, stateClient);//termination check
+
+        isTermination = ((IBlock) stateSchematic.getBlock()).isSchemaTermination(pos, stateSchematic, stateClient);
         if (isTermination != null) {
             report("easyplacefix.diagnostic.schema_termination", pos.toShortString());
             return isTermination;
         }
 
-
-        //MISS happens when aiming at nothing, excluding schematic-only hits
         HitResult traceVanilla = RayTraceUtils.getRayTraceFromEntity(mc.level, mc.player, false, getValidBlockRange(mc));
         if (traceVanilla.getType() == HitResult.Type.ENTITY) {
             report("easyplacefix.diagnostic.entity_in_crosshair");
@@ -227,7 +221,7 @@ public class EasyPlaceHandler {
             if (!stack.isEmpty()) {
 
                 BlockState currentState = mc.level.getBlockState(pos);
-                if (PlacementStateMatcher.isSatisfied(stateSchematic, currentState))//compare states
+                if (PlacementStateMatcher.isSatisfied(stateSchematic, currentState))
                 {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("EasyPlace skip at {} because world state already matches schematic", pos);
@@ -248,7 +242,6 @@ public class EasyPlaceHandler {
                     }
                 }
 
-                //Removed old cache and speed checks
                 if (!stateClient.canBeReplaced(
                         new BlockPlaceContext(
                                 Minecraft.getInstance().player,
@@ -257,7 +250,7 @@ public class EasyPlaceHandler {
                                 trace
                         ))
                 ) {
-                    if (TerrainAutoReplace.isEligible(stateClient, stateSchematic)) {
+                    if (TerrainAutoReplace.isEligible(pos, stateClient, stateSchematic)) {
                         TerrainAutoReplace.tryClearThenRetry(mc, traceWrapper, pos, trace.getDirection());
                         return InteractionResult.SUCCESS;
                     }
@@ -265,17 +258,21 @@ public class EasyPlaceHandler {
                     return InteractionResult.FAIL;
                 }
 
-
                 MultiPlayerGameMode interactionManager = Minecraft.getInstance().gameMode;
 
                 ItemStack itemStack2 = PlacementInventory.searchItem(mc, stack);
                 itemStack2 = loosenMode(itemStack2, stateSchematic);
-                if (itemStack2 == null) {//Cannot place when required item is missing
+                if (itemStack2 == null) {
                     report("easyplacefix.diagnostic.missing_item", stack.getHoverName());
                     return InteractionResult.FAIL;
                 }
 
-                Block block = stateSchematic.getBlock();//Block instance to operate on
+                Block block = stateSchematic.getBlock();
+                String placementBlocker = ((IBlock) block).getPlacementBlocker(stateSchematic, pos, stateClient);
+                if (placementBlocker != null) {
+                    report(placementBlocker, pos.toShortString());
+                    return InteractionResult.FAIL;
+                }
                 Tuple<RelativeBlockHitResult, Integer> blockHitResultIntegerPair =
                         ((IBlock) block).getHitResult(
                                 stateSchematic,
@@ -287,14 +284,11 @@ public class EasyPlaceHandler {
                     report("easyplacefix.diagnostic.no_hit_result", stateSchematic.getBlock().getName());
                     return InteractionResult.FAIL;
                 }
-                RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getA();//Placement hit result data
+                RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getA();
                 ItemStack finalStack = itemStack2;
-//                concurrentMap.put(pos,0L);
 
                 AtomicReference<InteractionHand> hand = new AtomicReference<>();
 
-//                Channel channel = ((ClientConnectionAccessor) MinecraftClient.getInstance().getNetworkHandler().getConnection()).getChannel();
-//                Pair<Float, Float> lookAtPair = ((IBlock) block).getLimitYawAndPitch(stateSchematic);
                 boolean hasSleep = ((IBlock) block).HasSleepTime(stateSchematic);
                 var YawAndPitch = ((IBlock) block).getYawAndPitch(stateSchematic);
                 boolean hasRotation = YawAndPitch != null;
@@ -336,9 +330,7 @@ public class EasyPlaceHandler {
                                         if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
                                         }
-                                        // Arm the piston placement-state override immediately before the
-                                        // interaction it applies to, so an unrelated getStateForPlacement
-                                        // call in between cannot consume it.
+
                                         if (stateSchematic.getBlock() instanceof PistonBaseBlock) {
                                             pistonBlockState = stateSchematic;
                                             modifyBoolean = true;
@@ -348,7 +340,9 @@ public class EasyPlaceHandler {
                                                 usedHand,
                                                 offsetBlockHitResult
                                         );
-                                        mc.player.swing(usedHand);
+                                        modifyBoolean = false;
+                                        pistonBlockState = null;
+                                        mc.player.swing(usedHand, mc.player.getItemInHand(usedHand).getInteractAnimation(), false);
                                         ExtraInteractionRunner.run(
                                                 mc,
                                                 interactionManager,
@@ -356,7 +350,9 @@ public class EasyPlaceHandler {
                                                 offsetBlockHitResult,
                                                 blockHitResultIntegerPair.getB(),
                                                 block,
-                                                trace.getBlockPos()
+                                                trace.getBlockPos(),
+                                                hasRotation ? rotationYaw : null,
+                                                hasRotation ? rotationPitch : null
                                         );
                                         ((IBlock) block).afterAction(stateSchematic, trace);
                                         ((IBlock) block).BlockAction(stateSchematic, trace);
@@ -405,9 +401,7 @@ public class EasyPlaceHandler {
                                         if (PlacementStateMatcher.shouldUsePlacementOverride(stateSchematic)) {
                                             armPlacementStateOverride(trace.getBlockPos(), stateSchematic, offsetBlockHitResult.getDirection());
                                         }
-                                        // Arm the piston placement-state override immediately before the
-                                        // interaction it applies to, so an unrelated getStateForPlacement
-                                        // call in between cannot consume it.
+
                                         if (stateSchematic.getBlock() instanceof PistonBaseBlock) {
                                             pistonBlockState = stateSchematic;
                                             modifyBoolean = true;
@@ -417,7 +411,9 @@ public class EasyPlaceHandler {
                                                 usedHand,
                                                 offsetBlockHitResult
                                         );
-                                        mc.player.swing(usedHand);
+                                        modifyBoolean = false;
+                                        pistonBlockState = null;
+                                        mc.player.swing(usedHand, mc.player.getItemInHand(usedHand).getInteractAnimation(), false);
                                         ExtraInteractionRunner.run(
                                                 mc,
                                                 interactionManager,
@@ -425,7 +421,9 @@ public class EasyPlaceHandler {
                                                 offsetBlockHitResult,
                                                 blockHitResultIntegerPair.getB(),
                                                 block,
-                                                trace.getBlockPos()
+                                                trace.getBlockPos(),
+                                                hasRotation ? rotationYaw : null,
+                                                hasRotation ? rotationPitch : null
                                         );
                                         ((IBlock) block).afterAction(stateSchematic, trace);
                                         ((IBlock) block).BlockAction(stateSchematic, trace);
@@ -436,15 +434,12 @@ public class EasyPlaceHandler {
                                     .build()
                     );
 
-
                 }
-
 
                 report("easyplacefix.diagnostic.placing", stack.getHoverName(), pos.toShortString());
             } else {
                 report("easyplacefix.diagnostic.no_block_item", stateSchematic.getBlock().getName());
             }
-
 
             return InteractionResult.SUCCESS;
 
@@ -475,9 +470,8 @@ public class EasyPlaceHandler {
 
     private static boolean placementRestrictionInEffect(BlockPos pos) {
 
-        ;//Use crosshair target position
-        //Target position should be near schematic regions
-        //Placement restriction radius check
+        ;
+
         return isPositionWithinRangeOfSchematicRegions(pos, 2);
     }
 
