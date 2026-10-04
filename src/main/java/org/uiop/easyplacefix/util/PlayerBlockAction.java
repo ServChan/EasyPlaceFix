@@ -138,7 +138,7 @@ public class PlayerBlockAction {
         }
 
         public static BlockState consumePlacementStateOverrideFor(Class<? extends Block> blockClass, BlockPos targetPos) {
-            if (blockClass == null || targetPos == null) {
+            if (blockClass == null || targetPos == null || !Minecraft.getInstance().isSameThread()) {
                 return null;
             }
 

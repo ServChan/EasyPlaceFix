@@ -1,10 +1,11 @@
 # Changelog
 
-## 0.7.0
+## 0.6.7
 
 ### Minecraft 26.3
 
 - Ported to Minecraft 26.3; 26.1.2 and 26.2 are no longer supported. Requires Litematica 0.29.1, MaLiLib 0.30.2 and Fabric API 0.161.0+26.3.
+- Fixed turtle egg placement silently losing its egg-count logic on 26.3: the turtle egg mixin referenced the old `playerDestroy` signature, so Mixin refused to apply it at startup.
 
 ### New features
 
@@ -16,6 +17,8 @@
 
 ### Fixes
 
+- Releasing the temporary sneak used to place onto chests, crafting tables and other interactive blocks now keeps the server in sync with the real Shift key, so a player who is actually sneaking is no longer shown as standing to the server.
+- Stairs, trapdoors, shelves and lecterns: the placement-state override is only applied on the client thread, so in singleplayer the integrated server can no longer consume it.
 - End rods placed in a column no longer alternate direction; Easy Place explains that the far end has to go first instead of placing a flipped rod.
 - Door upper halves and bed heads are no longer placed one block too high when the other half's cell is occupied.
 - Hanging signs under a crafting table, chest or other interactive block are placed without opening it (and without turning into an attached sign).
