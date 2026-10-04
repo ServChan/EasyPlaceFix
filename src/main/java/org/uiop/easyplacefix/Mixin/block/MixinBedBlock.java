@@ -17,7 +17,6 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 @Mixin(BedBlock.class)
 public class MixinBedBlock implements IBlock {
 
-
     @Override
     public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
         return switch (blockState.get(Properties.HORIZONTAL_FACING)) {

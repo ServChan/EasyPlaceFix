@@ -25,13 +25,12 @@ public abstract class MixinLeverBlock extends MixinWallMountedBlock implements I
     @Final
     public static BooleanProperty POWERED;
 
-
     @Override
     public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
         BlockFace blockFace = blockState.get(Properties.BLOCK_FACE);
         Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
         return canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos) ?
-                switch (blockFace) {//TODO TODO replace null with chained placement flow using position-aware easy place
+                switch (blockFace) {
                     case FLOOR -> new Pair<>(
                             new RelativeBlockHitResult(new Vec3d(0.5, 1, 0.5),
                                     Direction.UP,
@@ -57,7 +56,6 @@ public abstract class MixinLeverBlock extends MixinWallMountedBlock implements I
                             ), blockState.get(Properties.POWERED) ? 2 : 1);
                 } : null;
     }
-
 
     @Override
     public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
@@ -100,7 +98,6 @@ public abstract class MixinLeverBlock extends MixinWallMountedBlock implements I
                 PlayerInputAction.SetShift(true);
             }
         }
-
 
     }
 

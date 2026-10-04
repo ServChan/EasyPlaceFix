@@ -20,7 +20,6 @@ import org.uiop.easyplacefix.until.PlayerInputAction;
 @Mixin(WallTorchBlock.class)
 public abstract class MixinWallTorchBlock implements IBlock {
 
-
     @Shadow protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
 
     @Override
@@ -50,7 +49,6 @@ public abstract class MixinWallTorchBlock implements IBlock {
             PlayerInputAction.SetShift(false);
         }
 
-
     }
 
     @Override
@@ -60,7 +58,6 @@ public abstract class MixinWallTorchBlock implements IBlock {
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }
-
 
     }
 }

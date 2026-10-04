@@ -13,7 +13,7 @@ public class PlayerRotationAction {
                 new PlayerMoveC2SPacket.LookAndOnGround(
                         yaw,
                         pitch,
-                        MinecraftClient.getInstance().player.isOnGround(), hor//parameter kept from vanilla packet format
+                        MinecraftClient.getInstance().player.isOnGround(), hor
 
                 )
         );
@@ -26,7 +26,7 @@ public class PlayerRotationAction {
                         minecraftClient.player.getYaw(),
                         minecraftClient.player.getPitch(),
                         MinecraftClient.getInstance().player.isOnGround(),
-                        minecraftClient.player.horizontalCollision//parameter kept from vanilla packet format
+                        minecraftClient.player.horizontalCollision
 
                 )
         );

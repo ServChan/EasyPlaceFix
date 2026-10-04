@@ -30,7 +30,7 @@ public class MixinWallSkullBlock implements IBlock {
         };
     }
 
-    @Override//TODO TODO verify wall skull placement without adjacent support
+    @Override
     public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
         Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
         return
@@ -57,7 +57,6 @@ public class MixinWallSkullBlock implements IBlock {
             PlayerInputAction.SetShift(false);
         }
 
-
     }
 
     @Override
@@ -67,7 +66,6 @@ public class MixinWallSkullBlock implements IBlock {
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }
-
 
     }
 }

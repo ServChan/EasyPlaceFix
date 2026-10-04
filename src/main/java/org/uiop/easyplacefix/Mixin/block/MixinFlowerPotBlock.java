@@ -29,7 +29,7 @@ public abstract class MixinFlowerPotBlock implements IBlock {
 
     @Override
     public void BlockAction(BlockState blockState, BlockHitResult blockHitResult) {
-        if (!this.isEmpty()){//TODO extract placement logic and include block-to-item conversion
+        if (!this.isEmpty()){
 
             Block flower = this.getContent();
             ItemStack stack = new ItemStack(flower.asItem());
@@ -39,7 +39,6 @@ public abstract class MixinFlowerPotBlock implements IBlock {
             MinecraftClient.getInstance().interactionManager.interactBlock(MinecraftClient.getInstance().player, hand2, blockHitResult);
 
         }
-
 
     }
 }

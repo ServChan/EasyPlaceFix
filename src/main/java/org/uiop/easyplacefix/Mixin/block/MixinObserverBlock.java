@@ -39,18 +39,18 @@ public class MixinObserverBlock implements IBlock {
 
     @Override
     public ActionResult isSchemaTermination(BlockPos pos, BlockState blockState, BlockState worldBlockstate) {
-        // Observer placement validation
+
         if (OBSERVER_DETECT.getBooleanValue()) {
             Direction direction = blockState.get(Properties.FACING);
             BlockPos offset = pos.offset(direction);
             WorldSchematic schematicWorld = SchematicWorldHandler.getSchematicWorld();
-            // Check whether observer target is within schematic
+
             if (isSchematicBlock(offset) && schematicWorld != null) {
                 BlockState lookBlock = MinecraftClient.getInstance().world.getBlockState(offset);
                 if (!schematicWorld.getBlockState(offset).getBlock().equals(lookBlock.getBlock()))
                     return ActionResult.FAIL;
             }
-        }//Needs facing and position parameters
+        }
         return null;
     }
 }

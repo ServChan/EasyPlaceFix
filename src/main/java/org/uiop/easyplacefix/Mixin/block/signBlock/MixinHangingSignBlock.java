@@ -21,7 +21,6 @@ import org.uiop.easyplacefix.until.PlayerInputAction;
 @Mixin(HangingSignBlock.class)
 public abstract class MixinHangingSignBlock implements IBlock {
 
-
     @Shadow
     protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
     @Override
@@ -38,12 +37,6 @@ public abstract class MixinHangingSignBlock implements IBlock {
                 ((blockState.get(Properties.ROTATION) * 22.5F) + 180) % 360
         ), LookAt.PlayerPitch);
     }
-//@Override
-//public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-//    return new Pair<>(LookAt.of(
-//            ((blockState.get(Properties.ROTATION) * 22.5F) + 180) % 360
-//    ), LookAt.PlayerPitch);
-//}
 
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {

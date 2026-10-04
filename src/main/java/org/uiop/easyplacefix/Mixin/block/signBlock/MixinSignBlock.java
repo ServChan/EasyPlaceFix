@@ -52,7 +52,6 @@ public abstract class MixinSignBlock implements IBlock {
         }
     }
 
-
     @Override
     public Pair<Float, Float> getLimitYawAndPitch(BlockState blockState) {
         Pair<LookAt, LookAt> lookAtPair = getYawAndPitch(blockState);

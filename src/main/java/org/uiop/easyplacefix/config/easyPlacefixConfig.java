@@ -61,7 +61,6 @@ public final class easyPlacefixConfig {
         return preset.getDelayTicks(PLACEMENT_DELAY.getIntegerValue());
     }
 
-
     public static IConfigBase[] getExtraGenericConfigs() {
         return new IConfigBase[]{
                 ENABLE_FIX,

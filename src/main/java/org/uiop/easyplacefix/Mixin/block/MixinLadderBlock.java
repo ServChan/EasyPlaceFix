@@ -38,5 +38,4 @@ public abstract class MixinLadderBlock implements IBlock {
                 ) : null;
     }
 
-
 }

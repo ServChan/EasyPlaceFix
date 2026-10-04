@@ -48,12 +48,11 @@ public abstract class MixinMultifaceBlock implements IBlock {
             return null;
         }
 
-        // Wall-mounted style multiface blocks
         if (blockState.contains(Properties.BLOCK_FACE) && blockState.contains(Properties.HORIZONTAL_FACING)) {
         BlockFace blockFace = blockState.get(Properties.BLOCK_FACE);
         Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
             int clicks = blockState.contains(Properties.POWERED) && blockState.get(Properties.POWERED) ? 2 : 1;
-            return switch (blockFace) {//TODO TODO replace null with chained placement flow using position-aware easy place
+            return switch (blockFace) {
                     case FLOOR -> new Pair<>(
                             new RelativeBlockHitResult(new Vec3d(0.5, 1, 0.5),
                                     Direction.UP,
@@ -75,7 +74,6 @@ public abstract class MixinMultifaceBlock implements IBlock {
                 };
         }
 
-        // Generic multiface blocks (for example glow lichen): use one active face.
         Direction attachedFace = findAttachedFace(blockState);
         if (attachedFace == null) {
             return new Pair<>(

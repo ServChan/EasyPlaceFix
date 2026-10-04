@@ -23,9 +23,9 @@ public class MixinPillarBlock implements IBlock {
         return new Pair<>(new RelativeBlockHitResult(
                 new Vec3d(0.5, 0.5, 0.5),
                 switch (axis) {
-                    case X -> Direction.EAST;//x
-                    case Y -> Direction.DOWN;//y
-                    case Z -> Direction.NORTH;//z
+                    case X -> Direction.EAST;
+                    case Y -> Direction.DOWN;
+                    case Z -> Direction.NORTH;
                 },
                 blockPos, false
         ), 1);

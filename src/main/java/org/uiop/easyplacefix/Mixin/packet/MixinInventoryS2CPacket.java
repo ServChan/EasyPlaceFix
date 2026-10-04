@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
 @Mixin(InventoryS2CPacket.class)
-public class MixinInventoryS2CPacket {//Packet sends inventory slot contents
+public class MixinInventoryS2CPacket {
 
     @WrapWithCondition(
             method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",

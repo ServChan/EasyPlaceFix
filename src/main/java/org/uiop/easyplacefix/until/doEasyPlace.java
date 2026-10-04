@@ -43,7 +43,7 @@ import static org.uiop.easyplacefix.config.easyPlacefixConfig.*;
 import static org.uiop.easyplacefix.data.LoosenModeData.items;
 import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.*;
 
-public class doEasyPlace {//TODO Easy Place rewrite plan
+public class doEasyPlace {
 
     public static boolean shouldAllowVanillaInteraction(MinecraftClient mc,
                                                          RayTraceUtils.RayTraceWrapper traceWrapper) {
@@ -64,13 +64,12 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                 == ActionResult.PASS;
     }
 
-    // Whether the position belongs to any schematic area
     public static boolean isSchematicBlock(BlockPos pos) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
-        //Get loaded schematic placements touching this chunk position
+
         List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk
                 = schematicPlacementManager.getAllPlacementsTouchingChunk(pos);
-        //Check whether any placement part contains this position
+
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
             if (placementPart.getBox().containsPos(pos)) {
                 return true;
@@ -84,37 +83,32 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
         for (int i = 0; i < MinecraftClient.getInstance().player.getInventory().size(); i++) {
             ItemStack stack = MinecraftClient.getInstance().player.getInventory().getStack(i);
             stack = stack.copy();
-//                HashSet<Item> items =new HashSet<>();
-//                for (ItemStack itemStack :itemStackHashSet){
-//                    items.add(itemStack.getItem());
-//                }
+
             if (!stack.isEmpty()) {
                 if (items.contains(stack.getItem())) {
-//                    InventoryUtils.setPickedItemToHand(i, stack.copy(), MinecraftClient.getInstance());
-                    return stack; // Found a matching item stack and return it
-                }
 
+                    return stack;
+                }
 
             }
         }
 
         return null;
 
-
     }
 
     public static ItemStack loosenMode(ItemStack stack, BlockState stateSchema) {
         if (stack == null && LOOSEN_MODE.getBooleanValue()) {
             if (!EntityUtils.isCreativeMode(MinecraftClient.getInstance().player)) {
-                Block ReplacedBlock = stateSchema.getBlock();//The schematic block expected at this position
+                Block ReplacedBlock = stateSchema.getBlock();
                 Predicate<Block> predicate = null;
-                if (ReplacedBlock instanceof WallBlock)   //wall blocks
+                if (ReplacedBlock instanceof WallBlock)
                     predicate = block -> block instanceof WallBlock;
-                else if (ReplacedBlock instanceof FenceGateBlock)//fence gates
+                else if (ReplacedBlock instanceof FenceGateBlock)
                     predicate = block -> block instanceof FenceGateBlock;
-                else if (ReplacedBlock instanceof TrapdoorBlock)//trapdoors
+                else if (ReplacedBlock instanceof TrapdoorBlock)
                     predicate = block -> block instanceof TrapdoorBlock;
-                else if (ReplacedBlock instanceof CoralFanBlock)//coral fans
+                else if (ReplacedBlock instanceof CoralFanBlock)
                     predicate = block -> block instanceof CoralFanBlock;
                 ItemStack stack1 = null;
                 if (predicate != null) {
@@ -129,31 +123,28 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
 
             }
 
-
         }
         return stack;
     }
 
     public static ActionResult doEasyPlace2(MinecraftClient mc, RayTraceUtils.RayTraceWrapper traceWrapper) {
-        BlockHitResult trace = traceWrapper.getBlockHitResult();//Ray-traced hit from schematic
+        BlockHitResult trace = traceWrapper.getBlockHitResult();
         World schematicWorld = SchematicWorldHandler.getSchematicWorld();
         if (schematicWorld == null) {
             return ActionResult.PASS;
         }
-        BlockPos pos = trace.getBlockPos();//Target position from schematic hit
+        BlockPos pos = trace.getBlockPos();
 
-        if (isGlobalPlacementCooling()) return ActionResult.FAIL;// Global rate limit (anti-cheat)
-        if (isPlacementCooling(pos)) return ActionResult.FAIL;// Per-position cooldown check
-        BlockState stateClient = mc.world.getBlockState(pos);//Current client world block state
+        if (isGlobalPlacementCooling()) return ActionResult.FAIL;
+        if (isPlacementCooling(pos)) return ActionResult.FAIL;
+        BlockState stateClient = mc.world.getBlockState(pos);
         BlockState stateSchematic = schematicWorld.getBlockState(pos);
-        ActionResult isTermination = ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient);//termination check
-        if (isTermination != null) return isTermination;
-        // Two-phase termination checks
-        isTermination = ((IBlock) stateSchematic.getBlock()).isSchemaTermination(pos, stateSchematic, stateClient);//termination check
+        ActionResult isTermination = ((IBlock) stateClient.getBlock()).isWorldTermination(pos, stateSchematic, stateClient);
         if (isTermination != null) return isTermination;
 
+        isTermination = ((IBlock) stateSchematic.getBlock()).isSchemaTermination(pos, stateSchematic, stateClient);
+        if (isTermination != null) return isTermination;
 
-        //MISS happens when aiming at nothing, excluding schematic-only hits
         HitResult traceVanilla = RayTraceUtils.getRayTraceFromEntity(mc.world, mc.player, false, getValidBlockRange(mc));
         if (traceVanilla.getType() == HitResult.Type.ENTITY) {
             return ActionResult.PASS;
@@ -164,14 +155,14 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
             if (!stack.isEmpty()) {
 
                 BlockState currentState = mc.world.getBlockState(pos);
-                if (isPlacementStateSatisfied(stateSchematic, currentState))//compare states
+                if (isPlacementStateSatisfied(stateSchematic, currentState))
                 {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("EasyPlace skip at {} because world state already matches schematic", pos);
                     }
                     return ActionResult.FAIL;
                 }
-                //Removed old cache and speed checks
+
                 if (!stateClient.canReplace(
                         new ItemPlacementContext(
                                 MinecraftClient.getInstance().player,
@@ -198,16 +189,15 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                     }
                 }
 
-
                 ClientPlayerInteractionManager interactionManager = MinecraftClient.getInstance().interactionManager;
 
                 ItemStack itemStack2 = searchItem(mc, stack);
                 itemStack2 = loosenMode(itemStack2, stateSchematic);
-                if (itemStack2 == null) {//Cannot place when required item is missing
+                if (itemStack2 == null) {
                     return ActionResult.FAIL;
                 }
 
-                Block block = stateSchematic.getBlock();//Block instance to operate on
+                Block block = stateSchematic.getBlock();
                 Pair<RelativeBlockHitResult, Integer> blockHitResultIntegerPair =
                         ((IBlock) block).getHitResult(
                                 stateSchematic,
@@ -216,18 +206,15 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                         );
 
                 if (blockHitResultIntegerPair == null) return ActionResult.FAIL;
-                RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getLeft();//Placement hit result data
-                if (stateSchematic.getBlock() instanceof PistonBlock) {//TODO Investigate interactBlock internals and improve this branch
+                RelativeBlockHitResult offsetBlockHitResult = blockHitResultIntegerPair.getLeft();
+                if (stateSchematic.getBlock() instanceof PistonBlock) {
                     pistonBlockState = stateSchematic;
                     modifyBoolean = true;
                 }
                 ItemStack finalStack = itemStack2;
-//                concurrentMap.put(pos,0L);
 
                 AtomicReference<Hand> hand = new AtomicReference<>();
 
-//                Channel channel = ((ClientConnectionAccessor) MinecraftClient.getInstance().getNetworkHandler().getConnection()).getChannel();
-//                Pair<Float, Float> lookAtPair = ((IBlock) block).getLimitYawAndPitch(stateSchematic);
                 boolean hasSleep = ((IBlock) block).HasSleepTime(stateSchematic);
                 var YawAndPitch = ((IBlock) block).getYawAndPitch(stateSchematic);
                 boolean hasRotation = YawAndPitch != null;
@@ -355,12 +342,9 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                                     .build()
                     );
 
-
                 }
 
-
             }
-
 
             return ActionResult.SUCCESS;
 
@@ -390,7 +374,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                         slot = findSlotWithBoxWithItem(mc.player.playerScreenHandler, stack, false);
                         if (slot != -1) {
                             pickItem(mc, mc.player.playerScreenHandler.slots.get(slot).getStack());
-                            return null;//shulker box path
+                            return null;
                         }
                     }
                 }
@@ -423,9 +407,8 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
 
     private static boolean placementRestrictionInEffect(BlockPos pos) {
 
-        ;//Use crosshair target position
-        //Target position should be near schematic regions
-        //Placement restriction radius check
+        ;
+
         return isPositionWithinRangeOfSchematicRegions(pos, 2);
     }
 
@@ -435,7 +418,7 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
         }
 
         if (schematic.getBlock() instanceof StairsBlock) {
-            // For stairs we ignore SHAPE because it is neighbor-dependent and can lag behind on servers.
+
             boolean sameFacing = schematic.get(Properties.HORIZONTAL_FACING) == world.get(Properties.HORIZONTAL_FACING);
             boolean sameHalf = schematic.get(Properties.BLOCK_HALF) == world.get(Properties.BLOCK_HALF);
             return sameFacing && sameHalf;
@@ -448,7 +431,6 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
                 return false;
             }
 
-            // OPEN can be controlled by redstone on servers; don't force retries in powered state.
             boolean schematicPowered = schematic.contains(Properties.POWERED) && schematic.get(Properties.POWERED);
             boolean worldPowered = world.contains(Properties.POWERED) && world.get(Properties.POWERED);
             if (schematicPowered || worldPowered) {
@@ -486,8 +468,6 @@ public class doEasyPlace {//TODO Easy Place rewrite plan
             return;
         }
 
-        // Two ticks per extra click prevents rows of repeaters/trapdoors from
-        // producing same-tick packet bursts on Paper anti-cheat servers.
         for (int i = 1; i <= extraClicks; i++) {
             TickThread.addCountDownTask(new RunnableWithCountDown.Builder().setCount(i * 2).build(() -> {
                 if (mc.player == null || mc.world == null) return;

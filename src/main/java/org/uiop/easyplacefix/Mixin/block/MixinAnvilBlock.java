@@ -19,7 +19,6 @@ public class MixinAnvilBlock implements IBlock {
             case EAST -> new Pair<>(LookAt.North, LookAt.PlayerPitch);
             default -> new Pair<>(LookAt.West, LookAt.PlayerPitch);
         };
-        //Anvil orientation is perpendicular to piston-like facing
-        // IDE settings note
+
     }
 }

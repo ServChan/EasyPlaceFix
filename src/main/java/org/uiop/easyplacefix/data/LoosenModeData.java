@@ -20,7 +20,7 @@ import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class LoosenModeData {
-//    static HashSet<Item> itemHashSet = new HashSet<>();
+
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("loosenMode.json");
     private static final File CONFIG_FILE = CONFIG_PATH.toFile();
@@ -45,7 +45,7 @@ public class LoosenModeData {
             }
         } else {
             saveToFile(new HashSet<>());
-            // Create file on first load
+
         }
         return new HashSet<>();
     }

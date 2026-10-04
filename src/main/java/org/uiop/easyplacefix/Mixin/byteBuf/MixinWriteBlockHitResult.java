@@ -24,7 +24,7 @@ public abstract class MixinWriteBlockHitResult {
     @Shadow
     public abstract PacketByteBuf writeBoolean(boolean bl);
 
-    @WrapMethod(method = "writeBlockHitResult")//TODO Custom packet encoding path
+    @WrapMethod(method = "writeBlockHitResult")
     public void w(BlockHitResult hitResult, Operation<Void> original) {
         if (hitResult instanceof RelativeBlockHitResult) {
             this.writeBlockPos(hitResult.getBlockPos());
@@ -39,8 +39,6 @@ public abstract class MixinWriteBlockHitResult {
             original.call(hitResult);
         }
 
-
     }
-
 
 }

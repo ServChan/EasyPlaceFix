@@ -47,7 +47,6 @@ public class MixinAbstractSignBlock implements IBlock {
                         frontText.getMessage(2, false).getString(),
                         frontText.getMessage(3, false).getString()
 
-
                 )
         );
 
@@ -69,10 +68,8 @@ public class MixinAbstractSignBlock implements IBlock {
                                 backText.getMessage(2, false).getString(),
                                 backText.getMessage(3, false).getString()
 
-
                         )
                 );
-
 
                 break;
             }

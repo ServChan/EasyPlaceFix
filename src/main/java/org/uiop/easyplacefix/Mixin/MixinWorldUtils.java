@@ -20,34 +20,13 @@ import static org.uiop.easyplacefix.until.doEasyPlace.shouldAllowVanillaInteract
 
 @Mixin(WorldUtils.class)
 public abstract class MixinWorldUtils {
-    //    @WrapMethod(method = "doEasyPlaceAction")
-//    private static ActionResult fix(MinecraftClient mc, Operation<ActionResult> original) {//Main logic entry point
-//        if (PlacementHandler.getEffectiveProtocolVersion() == EasyPlaceProtocol.SLAB_ONLY) {
-//            RayTraceUtils.RayTraceWrapper traceWrapper;
-//
-//            double traceMaxRange = getValidBlockRange(mc);
-//            HitResult traceVanilla = RayTraceUtils.getRayTraceFromEntity(mc.world, mc.player, false, traceMaxRange);
-//            if (Configs.Generic.EASY_PLACE_FIRST.getBooleanValue()) {
-//                // Temporary hack, using this same config here
-//                boolean targetFluids = Configs.InfoOverlays.INFO_OVERLAYS_TARGET_FLUIDS.getBooleanValue();
-//                traceWrapper = RayTraceUtils.getGenericTrace(mc.world, mc.player, traceMaxRange, true, targetFluids, false);
-//            } else {
-////            Configs.Generic.EASY_PLACE_FIRST.setBooleanValue(true); Temporary workaround
-//                traceWrapper = RayTraceUtils.getFurthestSchematicWorldTraceBeforeVanilla(mc.world, mc.player, traceMaxRange);
-//            }
-//            if (traceWrapper == null) return ActionResult.PASS;
-//            return doEasyPlace2(mc, traceVanilla, traceWrapper);
-//        }
-//        return original.call(mc);
-//    }
+
     @Inject(method = "doEasyPlaceAction", at = @At(value = "INVOKE", target = "Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper;getHitType()Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper$HitType;",ordinal = 0), cancellable = true,remap = false)
     private static void t1(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir, @Local RayTraceUtils.RayTraceWrapper traceWrapper){
         if (!easyPlacefixConfig.ENABLE_FIX.getBooleanValue()) {
             return;
         }
 
-        // Allow normal use of containers and other interactive blocks regardless of
-        // the active Easy Place protocol. In AUTO mode Servux commonly selects V3.
         if (shouldAllowVanillaInteraction(mc, traceWrapper)) {
             cir.setReturnValue(ActionResult.PASS);
             return;
@@ -57,61 +36,8 @@ public abstract class MixinWorldUtils {
             return;
         }
 
-        // EasyPlaceFix owns the SLAB_ONLY path completely. PASS must also be
-        // propagated or Litematica can turn it into FAIL and block vanilla use.
         cir.setReturnValue(doEasyPlace2(mc, traceWrapper));
     }
-//    @Inject(method = "doEasyPlaceAction", at = @At("HEAD"), cancellable = true)
-//    private static void aa(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir) {
-//        if (PlacementHandler.getEffectiveProtocolVersion() == EasyPlaceProtocol.SLAB_ONLY) {
-//            RayTraceUtils.RayTraceWrapper traceWrapper;
-//
-//            double traceMaxRange = getValidBlockRange(mc);
-//            if (Configs.Generic.EASY_PLACE_FIRST.getBooleanValue()) {
-//                boolean targetFluids = Configs.InfoOverlays.INFO_OVERLAYS_TARGET_FLUIDS.getBooleanValue();
-//                traceWrapper = RayTraceUtils.getGenericTrace(mc.world, mc.player, traceMaxRange, true, targetFluids, false);
-//
-//            } else {
-////            Configs.Generic.EASY_PLACE_FIRST.setBooleanValue(true); Temporary workaround
-//                traceWrapper = RayTraceUtils.getFurthestSchematicWorldTraceBeforeVanilla(mc.world, mc.player, traceMaxRange);
-//            }
-//            if (traceWrapper == null) {
-//                cir.setReturnValue(ActionResult.PASS);
-//                return;
-//            }
-//            cir.setReturnValue(doEasyPlace2(mc, traceWrapper));
-//        }
-//
-//    }
 
-
-//    @Inject(method = "doEasyPlaceAction",
-//            at = @At(value = "INVOKE",
-//                    target = "Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper;" +
-//                            "getHitType()Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper$HitType;"),
-//    locals = LocalCapture.CAPTURE_FAILHARD)
-//    private static void getHitType(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir) {
-//        if(PlacementHandler.getEffectiveProtocolVersion() == EasyPlaceProtocol.SLAB_ONLY){
-//            doEasyPlace2(mc,traceWrapper);
-//        }
-//    }
-//@Inject(
-//        method = "doEasyPlaceAction",
-//        at = @At(
-//                value = "INVOKE",
-//                target = "Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper;getHitType()Lfi/dy/masa/litematica/util/RayTraceUtils$RayTraceWrapper$HitType;"
-//        ),
-//        locals = LocalCapture.CAPTURE_FAILSOFT // Capture local variables
-//)
-//private static void onAfterGetHitType(MinecraftClient mc, CallbackInfoReturnable<ActionResult> cir, RayTraceUtils.RayTraceWrapper traceWrapper) {
-//    if ( PlacementHandler.getEffectiveProtocolVersion() == EasyPlaceProtocol.SLAB_ONLY) {
-//        // Inject logic here
-//        doEasyPlace2(mc, traceWrapper);
-//        // Override return value
-//        cir.setReturnValue(ActionResult.SUCCESS); // Override return value
-//    }
-//}
 }
-
-
 

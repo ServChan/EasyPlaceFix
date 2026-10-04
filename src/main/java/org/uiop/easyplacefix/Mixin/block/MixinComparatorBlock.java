@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.uiop.easyplacefix.IBlock;
 import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 
-
 @Mixin(ComparatorBlock.class)
 public abstract class MixinComparatorBlock extends AbstractRedstoneGateBlock implements IBlock {
 
