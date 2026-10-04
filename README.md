@@ -3,7 +3,7 @@
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-26.3-brightgreen?style=flat-square&logo=minecraft)](README.md)
 [![Platform](https://img.shields.io/badge/Platform-Fabric-blue?style=flat-square&logo=fabric)](README.md)
 [![Java Target](https://img.shields.io/badge/Java-25-orange?style=flat-square&logo=openjdk)](README.md)
-[![Mod Version](https://img.shields.io/badge/Version-0.7.0-purple?style=flat-square)](README.md)
+[![Mod Version](https://img.shields.io/badge/Version-0.6.7-purple?style=flat-square)](README.md)
 [![Requires](https://img.shields.io/badge/Requires-Litematica%20%2B%20MaLiLib-lightgrey?style=flat-square)](README.md)
 [![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
@@ -59,7 +59,7 @@ Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer 
 
 1. **Fabric Loader** `0.19.3+` и **Fabric API**.
 2. Установите **MaLiLib** и **Litematica** (см. таблицу совместимости версий ниже).
-3. Скопируйте `EasyPlaceFix-0.7.0.jar` из `build/libs/` в папку `mods/`.
+3. Скопируйте `EasyPlaceFix-0.6.7.jar` из `build/libs/` в папку `mods/`.
 
 **Совместимость:**
 
@@ -75,7 +75,7 @@ Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer 
 .\gradlew.bat clean build
 ```
 
-Готовый JAR: `build/libs/EasyPlaceFix-0.7.0.jar`.
+Готовый JAR: `build/libs/EasyPlaceFix-0.6.7.jar`.
 
 ---
 
@@ -129,7 +129,7 @@ The `loosenMode` list is stored in `config/loosenMode.json` as item ids (`minecr
 
 1. **Fabric Loader** `0.19.3+` and **Fabric API**.
 2. Install **MaLiLib** and **Litematica** (see the version matrix below).
-3. Copy `EasyPlaceFix-0.7.0.jar` from `build/libs/` into `mods/`.
+3. Copy `EasyPlaceFix-0.6.7.jar` from `build/libs/` into `mods/`.
 
 | Minecraft | Litematica | MaLiLib | Fabric API |
 |---|---|---|---|
@@ -143,7 +143,7 @@ The `loosenMode` list is stored in `config/loosenMode.json` as item ids (`minecr
 .\gradlew.bat clean build
 ```
 
-Output JAR: `build/libs/EasyPlaceFix-0.7.0.jar`.
+Output JAR: `build/libs/EasyPlaceFix-0.6.7.jar`.
 
 ## Лицензия / License
 

@@ -8,6 +8,7 @@ public class PlayerInputAction {
 
     public static void SetShift(boolean isPressed) {
         Input playerInput = Minecraft.getInstance().player.getLastSentInput();
+        boolean shift = isPressed || Minecraft.getInstance().player.input.keyPresses.shift();
         Minecraft.getInstance().getConnection().send(
                 new ServerboundPlayerInputPacket(
                         new Input(
@@ -15,7 +16,7 @@ public class PlayerInputAction {
                                 playerInput.backward(),
                                 playerInput.left(), playerInput.
                                 right(), playerInput.jump(),
-                                isPressed,
+                                shift,
                                 playerInput.sprint()
                         ))
         );
