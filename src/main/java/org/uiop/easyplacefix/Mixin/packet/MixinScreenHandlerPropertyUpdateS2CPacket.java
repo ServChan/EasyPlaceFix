@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
 @Mixin(ScreenHandlerPropertyUpdateS2CPacket.class)
-public class MixinScreenHandlerPropertyUpdateS2CPacket {//Packet updates screen handler properties
+public class MixinScreenHandlerPropertyUpdateS2CPacket {
 
     @WrapWithCondition(
             method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",

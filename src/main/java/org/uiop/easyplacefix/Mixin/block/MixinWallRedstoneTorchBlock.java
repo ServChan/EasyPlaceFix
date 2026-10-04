@@ -48,7 +48,6 @@ public abstract class MixinWallRedstoneTorchBlock implements IBlock {
             PlayerInputAction.SetShift(false);
         }
 
-
     }
 
     @Override
@@ -58,7 +57,6 @@ public abstract class MixinWallRedstoneTorchBlock implements IBlock {
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }
-
 
     }
 }

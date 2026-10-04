@@ -50,7 +50,7 @@ public abstract class MixinGrindstoneBlock implements IBlock {
         BlockFace blockFace = blockState.get(Properties.BLOCK_FACE);
         Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
         return
-                switch (blockFace) {//TODO TODO replace null with chained placement flow using position-aware easy place
+                switch (blockFace) {
                     case FLOOR ->
                             canPlaceAt(blockState,MinecraftClient.getInstance().world, blockPos) ? new Pair<>(
                                     new RelativeBlockHitResult(new Vec3d(0.5, 1, 0.5),

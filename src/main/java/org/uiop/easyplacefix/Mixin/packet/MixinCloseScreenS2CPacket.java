@@ -7,9 +7,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 
-
 @Mixin(CloseScreenS2CPacket.class)
-public class MixinCloseScreenS2CPacket {//Packet forcibly closes current screen from server
+public class MixinCloseScreenS2CPacket {
 
     @WrapWithCondition(
             method = "apply(Lnet/minecraft/network/listener/ClientPlayPacketListener;)V",

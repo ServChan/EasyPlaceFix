@@ -25,7 +25,6 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 import org.uiop.easyplacefix.until.PlayerInputAction;
 
-
 @Mixin(WallSignBlock.class)
 public abstract class MixinWallSignBlock implements IBlock {
 

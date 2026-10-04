@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class PlayerBlockAction {
-    // Single-thread state holder
 
     public static class openScreenAction {
         public static volatile int count = 0;
@@ -36,10 +35,10 @@ public class PlayerBlockAction {
 
     public static class useItemOnAction {
         public static boolean modifyBoolean = false;
-        // Thread-safe placement cooldown cache
+
         public static Map<BlockPos, Long> lastPlacementTimeMap = new ConcurrentHashMap<>();
         public static BlockState pistonBlockState = null;
-        // Global placement rate limiter (anti-cheat protection)
+
         private static volatile int lastGlobalPlacementTick = Integer.MIN_VALUE;
         private static volatile long lastGlobalPlacementTime = 0;
         private static volatile int jitterExtraTicks = 0;
@@ -47,7 +46,6 @@ public class PlayerBlockAction {
         private static final int PLACEMENT_OVERRIDE_MAX_SIZE = 512;
         private static final int PLACEMENT_OVERRIDE_USES = 4;
         private static final ConcurrentLinkedDeque<PlacementStateOverride> placementStateOverrides = new ConcurrentLinkedDeque<>();
-        //   TODO Needs a better long-term design ^
 
         private static final class PlacementStateOverride {
             private final BlockPos targetPos;
@@ -135,7 +133,6 @@ public class PlayerBlockAction {
                 }
             }
 
-            // Fallback for rare desync path where context moved to the clicked side offset.
             iterator = placementStateOverrides.descendingIterator();
             while (iterator.hasNext()) {
                 PlacementStateOverride entry = iterator.next();
@@ -210,7 +207,6 @@ public class PlayerBlockAction {
             long now = System.currentTimeMillis();
             long threshold = Ping2Server.getRtt() + 100;
 
-            // Prune stale entries to prevent memory leak (entries older than 10 seconds)
             if (lastPlacementTimeMap.size() > 256) {
                 lastPlacementTimeMap.entrySet().removeIf(e -> now - e.getValue() > 10_000L);
             }

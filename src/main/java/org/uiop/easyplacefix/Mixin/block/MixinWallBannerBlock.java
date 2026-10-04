@@ -49,7 +49,6 @@ public abstract class MixinWallBannerBlock implements IBlock {
             PlayerInputAction.SetShift(false);
         }
 
-
     }
 
     @Override
@@ -59,7 +58,6 @@ public abstract class MixinWallBannerBlock implements IBlock {
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }
-
 
     }
 }

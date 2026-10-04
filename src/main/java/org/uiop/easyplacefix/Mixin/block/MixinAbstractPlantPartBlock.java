@@ -11,7 +11,6 @@ import org.uiop.easyplacefix.IBlock;
 @Mixin(AbstractPlantPartBlock.class)
 public abstract class MixinAbstractPlantPartBlock implements IBlock {
 
-
     @Shadow protected abstract AbstractPlantStemBlock getStem();
 
     @Override

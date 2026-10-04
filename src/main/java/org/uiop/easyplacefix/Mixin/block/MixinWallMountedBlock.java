@@ -20,25 +20,11 @@ import org.uiop.easyplacefix.data.RelativeBlockHitResult;
 import org.uiop.easyplacefix.until.PlayerBlockAction;
 import org.uiop.easyplacefix.until.PlayerInputAction;
 
-@Mixin(WallMountedBlock.class)//Lever,button
+@Mixin(WallMountedBlock.class)
 public abstract class MixinWallMountedBlock implements IBlock {
     @Shadow
     protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
-//    @Override
-//    public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-//        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.FACING).getOpposite()));
-//        if (blockState.getBlock() instanceof ICanUse){
-//            PlayerInputAction.SetShift(false);
-//        }
-//    }
-//
-//    @Override
-//    public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-//        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().offset(stateSchematic.get(Properties.FACING).getOpposite()));
-//        if (blockState.getBlock() instanceof ICanUse){
-//            PlayerInputAction.SetShift(true);
-//        }
-//    }
+
     @Override
     public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
         return switch (blockState.get(Properties.HORIZONTAL_FACING)) {
@@ -54,7 +40,7 @@ public abstract class MixinWallMountedBlock implements IBlock {
         BlockFace blockFace = blockState.get(Properties.BLOCK_FACE);
         Direction direction = blockState.get(Properties.HORIZONTAL_FACING);
         return canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos) ?
-                switch (blockFace) {//TODO TODO replace null with chained placement flow using position-aware easy place
+                switch (blockFace) {
                     case FLOOR -> new Pair<>(
                             new RelativeBlockHitResult(new Vec3d(0.5, 1, 0.5),
                                     Direction.UP,

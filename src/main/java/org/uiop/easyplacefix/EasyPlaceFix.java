@@ -29,23 +29,7 @@ public class EasyPlaceFix implements ModInitializer {
 
         Hotkeys.init();
         easyPlaceFixHotkeys.addCallbacks();
-//        ClientCommandRegistrationCallback.
-//                EVENT.
-//                register((dispatcher, registryAccess) ->
-//                                dispatcher.register(ClientCommandManager.literal("loosenMode").executes(context -> {
-////                            if (loosenMode){
-////                                context.getSource().sendFeedback(Text.literal("loosenModeSetting OFF"));
-////                                loosenMode=false;
-////                            }else {
-////                                context.getSource().sendFeedback(Text.literal("loosenModeSetting ON"));
-////                                loosenMode=true;
-////                            }
-//                                    MinecraftClient client = MinecraftClient.getInstance();
-//                                    client.getMessageHandler().onGameMessage(Text.of("Feature removed"),false);
-////                            client.send(()-> client.setScreen(screen));
-//                                    return 1;
-//                                }))
-//                );
+
     }
 
     public static ItemStack findBlockInInventory(PlayerInventory inv, Predicate<Block> predicate) {
@@ -54,12 +38,12 @@ public class EasyPlaceFix implements ModInitializer {
             if (!stack.isEmpty()) {
                 Block block = Block.getBlockFromItem(stack.getItem());
                 if (predicate.test(block)) {
-//                    InventoryUtils.setPickedItemToHand(slot, stack, MinecraftClient.getInstance());
-                    return stack; // Found a matching item stack and return it
+
+                    return stack;
                 }
             }
         }
-        return null; // Return null when nothing matches
+        return null;
     }
 
 }

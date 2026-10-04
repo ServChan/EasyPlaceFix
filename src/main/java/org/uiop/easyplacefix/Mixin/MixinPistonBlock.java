@@ -10,13 +10,13 @@ import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.modi
 import static org.uiop.easyplacefix.until.PlayerBlockAction.useItemOnAction.pistonBlockState;
 
 @Mixin(PistonBlock.class)
-public class MixinPistonBlock {//Sync piston client placement state to avoid client/server desync during placement.
+public class MixinPistonBlock {
 
     @ModifyReturnValue(method = "getPlacementState", at = @At(value = "RETURN"))
     private BlockState ModgetPlacementState(BlockState original) {
-        if (modifyBoolean) {//Only override while placing a piston
+        if (modifyBoolean) {
             modifyBoolean = false;
-            return pistonBlockState;//Schematic block state
+            return pistonBlockState;
         }
         return original;
     }

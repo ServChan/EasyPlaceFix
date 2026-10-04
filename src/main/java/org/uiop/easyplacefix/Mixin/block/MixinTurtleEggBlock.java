@@ -33,7 +33,6 @@ public abstract class MixinTurtleEggBlock implements IBlock {
             count = blockState.get(Properties.EGGS);
         }
 
-
         return new Pair<>(new RelativeBlockHitResult(
                 new Vec3d(0.5, 0.5, 0.5),
                 Direction.UP,

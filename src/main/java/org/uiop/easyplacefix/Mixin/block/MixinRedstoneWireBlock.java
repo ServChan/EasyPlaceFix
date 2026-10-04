@@ -21,7 +21,6 @@ public abstract class MixinRedstoneWireBlock implements IBlock {
     @Shadow
     protected abstract boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos);
 
-
     @Override
     public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
         return this.canPlaceAt(blockState, MinecraftClient.getInstance().world, blockPos)

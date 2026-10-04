@@ -36,7 +36,6 @@ public final class easyPlaceFixHotkeys {
         IGNORE_NBT_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.IGNORE_NBT, "easyplacefix.config.name.nbtIgnore"));
         Allow_Interaction_HOTKEY.getKeybind().setCallback(new PrettyToggleCallback(easyPlacefixConfig.Allow_Interaction, "easyplacefix.config.name.AllowInteraction"));
 
-
     }
 
 }

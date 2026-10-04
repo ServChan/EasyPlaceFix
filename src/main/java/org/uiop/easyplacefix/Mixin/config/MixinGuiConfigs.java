@@ -1,6 +1,5 @@
 package org.uiop.easyplacefix.Mixin.config;
 
-
 import fi.dy.masa.litematica.data.DataManager;
 import fi.dy.masa.litematica.gui.GuiConfigs;
 import fi.dy.masa.malilib.config.IConfigBase;

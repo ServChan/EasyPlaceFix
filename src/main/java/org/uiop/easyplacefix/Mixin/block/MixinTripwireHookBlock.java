@@ -44,7 +44,6 @@ public class MixinTripwireHookBlock implements IBlock {
             PlayerInputAction.SetShift(false);
         }
 
-
     }
 
     @Override
@@ -54,7 +53,6 @@ public class MixinTripwireHookBlock implements IBlock {
         if (blockState.getBlock() instanceof ICanUse) {
             PlayerInputAction.SetShift(true);
         }
-
 
     }
 }

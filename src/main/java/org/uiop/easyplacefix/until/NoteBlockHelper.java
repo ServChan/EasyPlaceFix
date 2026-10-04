@@ -20,16 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.uiop.easyplacefix.EasyPlaceFix.LOGGER;
 
-/**
- * Tunes note blocks to their schematic note by sending right-click interactions.
- * <p>
- * All positions being tuned share a single pump that emits at most one
- * interaction every {@link #TUNE_INTERVAL_TICKS} ticks, round-robin. Without this
- * a wall of note blocks would each spawn an independent per-tick clicker and the
- * combined packet rate would trip server "timer" anti-cheat.
- * <p>
- * Backported from EasyPlaceFix 0.6.5 (Minecraft 26.x) to Minecraft 1.21.11.
- */
 public final class NoteBlockHelper {
     public static final int MAX_NOTE = 24;
     public static final int NOTE_COUNT = 25;
@@ -129,8 +119,8 @@ public final class NoteBlockHelper {
                 interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hitResult);
                 mc.player.swingHand(Hand.MAIN_HAND);
 
-                QUEUE.addLast(pos); // still needs more clicks; back of the line
-                break;              // exactly one interaction per pump
+                QUEUE.addLast(pos);
+                break;
             }
         } catch (Exception error) {
             LOGGER.error("Error during NoteBlock tuning", error);

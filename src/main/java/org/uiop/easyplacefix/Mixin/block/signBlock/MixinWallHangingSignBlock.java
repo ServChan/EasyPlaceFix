@@ -34,21 +34,12 @@ public abstract class MixinWallHangingSignBlock implements IBlock {
     public boolean HasSleepTime(BlockState blockState) {
         return true;
     }
-//    @Override
-//    public void afterAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
-//        BlockState blockState = MinecraftClient.getInstance().world.getBlockState(blockHitResult.getBlockPos().down());
-////        if (blockState.getBlock() instanceof ICanUse){
-////            PlayerInputAction.SetShift(false);
-////        }
-//    }
-//This block does not use adjacent-side interaction
+
     @Override
     public void firstAction(BlockState stateSchematic, BlockHitResult blockHitResult) {
         PlayerBlockAction.openSignEditorAction.count++;
 }
 
-    //TODO TODO orientation packet may be avoidable, but support checks are unclear so keep it for now
-//Send orientation packet because text-facing side depends on facing
 @Override
 public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
     return switch (blockState.get(Properties.HORIZONTAL_FACING)) {
@@ -58,12 +49,6 @@ public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
         default -> new Pair<>(LookAt.North, LookAt.PlayerPitch);
     };
 }
-//    @Override
-//    public Pair<LookAt, LookAt> getYawAndPitch(BlockState blockState) {
-//        switch (blockState.get(Properties.FACING)){
-//            case WEST ->this.canAttachAt()
-//        }
-//    }
 
     @Override
     public Pair<RelativeBlockHitResult, Integer> getHitResult(BlockState blockState, BlockPos blockPos, BlockState worldBlockState) {
