@@ -9,6 +9,8 @@
 
 Client-side Fabric mod that makes Litematica Easy Place reliable in multiplayer through orientation correction, tick-accurate anti-cheat pacing, note-block auto-tuning, and seamless container interaction.
 
+**Руководство / User guide:** [Русский](docs/USER_GUIDE_RU.md) · [English](docs/USER_GUIDE_EN.md)
+
 ## Русский
 
 ### Что это
